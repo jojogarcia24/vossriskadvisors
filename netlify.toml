@@ -36,3 +36,8 @@
   from = "/newsletter/review"
   to   = "/.netlify/functions/newsletter-review"
   status = 200
+
+[[redirects]]
+  from = "/blog/review"
+  to   = "/.netlify/functions/blog-review"
+  status = 200
