@@ -50,6 +50,16 @@ create policy "public_read_published"
 
 -- Writes to blog_posts happen only via the service role (weekly function).
 
+-- ---------- NEWSLETTER SUBSCRIBERS ----------
+create table if not exists public.newsletter_subscribers (
+  id          uuid primary key default gen_random_uuid(),
+  created_at  timestamptz not null default now(),
+  email       text unique not null,
+  source      text default 'website'
+);
+-- No public access: only the service role (Netlify subscribe function) can read/write.
+alter table public.newsletter_subscribers enable row level security;
+
 -- ---------- SEED THE 4 STARTER ARTICLES ----------
 -- (Full bodies live in /content/articles/*.md. These seed rows let the site
 --  render them from the database on day one. Re-run safely: on conflict do nothing.)
