@@ -990,8 +990,7 @@
   window.VOSS_SUPABASE_URL = "https://zykvqpuibmfjrdlrtoyo.supabase.co";   // Supabase project URL
   window.VOSS_SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp5a3ZxcHVpYm1manJkbHJ0b3lvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0NDExMzAsImV4cCI6MjEwMDAxNzEzMH0.edLpuPeQvDJ9PFUY20FXZ5_WMZt9HWqU2ss10ZcbPL4";  // anon (public) key — safe client-side
   function mdToHtml(md){
-    var lines=(md||"").split(/
-/),html="",inUl=false;
+    var lines=(md||"").split(/\n/),html="",inUl=false;
     function closeUl(){if(inUl){html+="</ul>";inUl=false;}}
     lines.forEach(function(ln){
       ln=ln.trim();
@@ -1009,7 +1008,7 @@
       if(!r.ok)return;
       var posts=await r.json();if(!posts.length)return;
       window._voss_posts={};
-      var cards=posts.map(function(p){window._voss_posts[p.slug]=p;return '<div class="rcard" onclick="openPost(''+p.slug+'')"><div class="rtag">'+(p.category||"Guide")+'</div><div class="ric"><i class="ti ti-article"></i></div><h3 class="serif">'+p.title+'</h3><p>'+(p.excerpt||"")+'</p><span class="go-link">Read more &rarr;</span></div>';}).join("");
+      var cards=posts.map(function(p){window._voss_posts[p.slug]=p;return '<div class="rcard" onclick="openPost(\''+p.slug+'\')"><div class="rtag">'+(p.category||"Guide")+'</div><div class="ric"><i class="ti ti-article"></i></div><h3 class="serif">'+p.title+'</h3><p>'+(p.excerpt||"")+'</p><span class="go-link">Read more &rarr;</span></div>';}).join("");
       document.querySelectorAll(".r-grid").forEach(function(g){g.innerHTML=cards;});
     }catch(e){}
   }
