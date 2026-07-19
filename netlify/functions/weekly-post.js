@@ -8,17 +8,22 @@
 //     any claim Voss can't back up. Every post ends with a disclaimer.
 //   - REVIEW_MODE controls publishing:
 //       "auto"   -> post is published immediately (hands-off)
-//       "draft"  -> post is saved as 'draft' for you to approve first (SAFER)
+//       "draft"  -> post is saved as 'draft' AND the agency is emailed a preview
+//                   with a Publish/Discard link. Nothing goes live until approved.
 //     Set REVIEW_MODE=draft in Netlify env if you'd rather approve each one.
 //   - A keyword blocklist rejects a draft that slips past the prompt.
 //
 // Required environment variables:
 //   ANTHROPIC_API_KEY
 //   SUPABASE_URL, SUPABASE_SERVICE_ROLE
+//   RESEND_API_KEY, FROM_EMAIL, AGENCY_EMAIL   (for the approval email)
 //   REVIEW_MODE            "auto" or "draft"  (defaults to "draft")
 //   ANTHROPIC_MODEL        optional, defaults to a current Sonnet model string
+//   URL                    Netlify-provided site URL (fallback below)
 
+const { randomUUID } = require("crypto");
 const MODEL = process.env.ANTHROPIC_MODEL || "claude-sonnet-4-5";
+const SITE = process.env.URL || "https://www.vossriskadvisors.com";
 
 // Topics rotate so posts stay on-brand and within Voss's licensed lines.
 const TOPICS = [
@@ -96,6 +101,7 @@ exports.handler = async () => {
   const body_md = `${post.body_md}\n\n---\n\n*${DISCLAIMER}*`;
   const status = reviewMode === "auto" && !hit ? "published" : "draft";
   const slug = `${slugify(post.title)}-${Date.now().toString(36)}`;
+  const token = randomUUID();
 
   // 3) Store
   try {
@@ -111,11 +117,38 @@ exports.handler = async () => {
         slug, title: post.title, category: post.category || "General",
         excerpt: post.excerpt, body_md, read: "4 min read",
         status, published_at: status === "published" ? new Date().toISOString() : null,
-        generated_by: "ai",
+        generated_by: "ai", token,
       }),
     });
     if (!r.ok) { console.error("Insert failed:", await r.text()); return { statusCode: 500, body: "insert failed" }; }
   } catch (e) { console.error(e); return { statusCode: 500, body: "insert error" }; }
+
+  // 4) If it's a draft, email the agency a preview + Publish/Discard link.
+  if (status === "draft") {
+    const { RESEND_API_KEY, FROM_EMAIL, AGENCY_EMAIL } = process.env;
+    const reviewUrl = `${SITE}/blog/review?token=${token}`;
+    const flag = hit ? `<p style="color:#B4531F;font-size:13px"><strong>Heads up:</strong> a guardrail keyword ("${hit}") was detected — please read carefully before publishing.</p>` : "";
+    const esc = (s) => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    const html = `
+      <div style="font-family:Arial,sans-serif;color:#1C2433;max-width:560px">
+        <h2 style="font-family:Georgia,serif;color:#0C2340">This week's blog post is ready to review</h2>
+        <p style="color:#8A8578;font-size:12px;letter-spacing:.12em;text-transform:uppercase">${esc(post.category || "General")}</p>
+        <h3 style="font-family:Georgia,serif;color:#0C2340;margin:4px 0 8px">${esc(post.title)}</h3>
+        <p style="font-size:14px;line-height:1.6">${esc(post.excerpt || "")}</p>
+        ${flag}
+        <p style="margin:22px 0"><a href="${reviewUrl}" style="background:#0C2340;color:#fff;padding:13px 26px;text-decoration:none">Review, then Publish &rarr;</a></p>
+        <p style="color:#8A8578;font-size:12px">Nothing is live yet. Or open: ${reviewUrl}</p>
+      </div>`;
+    try {
+      if (RESEND_API_KEY && FROM_EMAIL && AGENCY_EMAIL) {
+        await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${RESEND_API_KEY}` },
+          body: JSON.stringify({ from: `Voss Risk Advisors <${FROM_EMAIL}>`, to: [AGENCY_EMAIL], subject: `[Review] New blog draft — ${post.title}`, html }),
+        });
+      }
+    } catch (e) { console.error("approval email failed", e); }
+  }
 
   return { statusCode: 200, body: `ok: ${status} — ${post.title}` };
 };

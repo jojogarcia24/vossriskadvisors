@@ -28,9 +28,10 @@ create table if not exists public.blog_posts (
   excerpt       text,
   body_md       text not null,
   read          text default '4 min read',
-  status        text not null default 'draft', -- draft | published
+  status        text not null default 'draft', -- draft | published | discarded
   published_at  timestamptz,
-  generated_by  text default 'human'           -- human | ai
+  generated_by  text default 'human',          -- human | ai
+  token         text                           -- approval token for AI drafts
 );
 
 -- ---------- ROW LEVEL SECURITY ----------
