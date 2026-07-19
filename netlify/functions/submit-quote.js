@@ -69,6 +69,13 @@ exports.handler = async (event) => {
   try { data = JSON.parse(event.body || "{}"); }
   catch { return json(400, { error: "Invalid JSON" }); }
 
+  // Silent bot filter: honeypot field filled, or form submitted implausibly
+  // fast (a real person can't complete it in under ~2.5s). Return a fake
+  // success so bots move on, without storing the row or sending emails.
+  if ((data.hp || "").toString().trim()) return json(200, { ok: true });
+  const elapsed = Number(data.elapsed_ms || 0);
+  if (elapsed > 0 && elapsed < 2500) return json(200, { ok: true });
+
   const first = (data.first_name || "").trim();
   const last  = (data.last_name  || "").trim();
   const email = (data.email      || "").trim();
