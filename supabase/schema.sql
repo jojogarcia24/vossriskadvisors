@@ -52,13 +52,28 @@ create policy "public_read_published"
 
 -- ---------- NEWSLETTER SUBSCRIBERS ----------
 create table if not exists public.newsletter_subscribers (
-  id          uuid primary key default gen_random_uuid(),
-  created_at  timestamptz not null default now(),
-  email       text unique not null,
-  source      text default 'website'
+  id           uuid primary key default gen_random_uuid(),
+  created_at   timestamptz not null default now(),
+  email        text unique not null,
+  source       text default 'website',
+  token        text,                                 -- per-person unsubscribe token
+  unsubscribed boolean not null default false
 );
--- No public access: only the service role (Netlify subscribe function) can read/write.
+-- No public access: only the service role (Netlify functions) can read/write.
 alter table public.newsletter_subscribers enable row level security;
+
+-- ---------- NEWSLETTER ISSUES (approve-before-send) ----------
+create table if not exists public.newsletters (
+  id              uuid primary key default gen_random_uuid(),
+  created_at      timestamptz not null default now(),
+  subject         text not null,
+  body_html       text not null,
+  status          text not null default 'draft',     -- draft | sent | discarded
+  token           text not null,
+  sent_at         timestamptz,
+  recipient_count int
+);
+alter table public.newsletters enable row level security;
 
 -- ---------- SEED THE 4 STARTER ARTICLES ----------
 -- (Full bodies live in /content/articles/*.md. These seed rows let the site

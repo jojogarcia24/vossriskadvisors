@@ -17,7 +17,22 @@
 [functions."weekly-post"]
   schedule = "0 14 * * 1"
 
+# Monthly newsletter — drafts an issue and emails the agency for approval on
+# the 1st of each month at 15:00 UTC (~10am CT). Nothing sends without approval.
+[functions."newsletter-monthly"]
+  schedule = "0 15 1 * *"
+
 [[redirects]]
   from = "/api/quote"
   to   = "/.netlify/functions/submit-quote"
+  status = 200
+
+[[redirects]]
+  from = "/unsubscribe"
+  to   = "/.netlify/functions/unsubscribe"
+  status = 200
+
+[[redirects]]
+  from = "/newsletter/review"
+  to   = "/.netlify/functions/newsletter-review"
   status = 200

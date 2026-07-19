@@ -5,6 +5,8 @@
 // Required environment variables:
 //   SUPABASE_URL, SUPABASE_SERVICE_ROLE
 
+const { randomUUID } = require("crypto");
+
 const json = (statusCode, body) => ({
   statusCode,
   headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
@@ -35,7 +37,7 @@ exports.handler = async (event) => {
         Authorization: `Bearer ${SUPABASE_SERVICE_ROLE}`,
         Prefer: "resolution=ignore-duplicates,return=minimal",
       },
-      body: JSON.stringify({ email, source: "website" }),
+      body: JSON.stringify({ email, source: "website", token: randomUUID(), unsubscribed: false }),
     });
     if (!r.ok && r.status !== 409) console.error("Subscribe insert failed:", await r.text());
   } catch (e) { console.error("Subscribe error:", e); }
