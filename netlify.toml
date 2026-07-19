@@ -4,6 +4,14 @@
   publish   = "public"
   functions = "netlify/functions"
 
+# The Supabase project URL and anon (public) key are embedded in
+# public/index.html on purpose — they're safe client-side and protected by
+# Row Level Security. Tell Netlify's secrets scanner to allow those two keys
+# so the build doesn't fail, while still guarding the real secrets
+# (SUPABASE_SERVICE_ROLE, RESEND_API_KEY, ANTHROPIC_API_KEY).
+[build.environment]
+  SECRETS_SCAN_OMIT_KEYS = "SUPABASE_URL,SUPABASE_ANON_KEY"
+
 # Weekly AI blog post — runs every Monday at 14:00 UTC (9am CT).
 # Adjust the cron as you like: https://crontab.guru
 [functions."weekly-post"]
