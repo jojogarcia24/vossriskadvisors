@@ -12,6 +12,7 @@ create table if not exists public.quote_requests (
   email         text not null,
   phone         text,
   coverage_type text,
+  address       text,
   message       text,
   source        text default 'website',
   status        text not null default 'new'   -- new | contacted | quoted | closed

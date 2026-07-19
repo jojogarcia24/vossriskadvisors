@@ -70,6 +70,14 @@
   .hd-cta{border:1px solid var(--navy)!important;color:var(--navy)!important;padding:11px 22px!important;letter-spacing:.14em!important}
   .hd-cta:hover{background:var(--navy);color:var(--white)!important}
   .burger{display:none;font-size:24px;color:var(--navy);background:none;border:none;cursor:pointer}
+  /* Transparent header over the hero photo -> white menu; solid (scrolled/inner pages) keeps navy */
+  header.site:not(.solid) .menu>a{color:var(--white)}
+  header.site:not(.solid) .menu>a:hover,header.site:not(.solid) .menu>a.active{color:var(--gold)}
+  header.site:not(.solid) .hd-cta{border-color:rgba(255,255,255,.7)!important;color:var(--white)!important}
+  header.site:not(.solid) .hd-cta:hover{background:var(--white);color:var(--navy-ink)!important}
+  header.site:not(.solid) .burger{color:var(--white)}
+  header.site:not(.solid) .brand .sub{color:var(--white)}
+  header.site:not(.solid) .brand img{filter:brightness(0) invert(1)}
 
   .page{display:none}
   .page.on{display:block;animation:fade .4s ease}
@@ -121,7 +129,7 @@
   .pillar p{font-size:14px;color:var(--muted);margin:0;font-weight:300;line-height:1.65}
 
   /* BLUE CARRIER BAND */
-  .cband{background:var(--navy);overflow:hidden;position:relative;padding:26px 0;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+  .cband{background:var(--navy);overflow:hidden;position:relative;padding:26px 0}
   .ctrack{display:flex;align-items:center;width:max-content;animation:scroll 38s linear infinite}
   .cband:hover .ctrack{animation-play-state:paused}
   @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
@@ -145,13 +153,13 @@
   .quote .who{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:500}
 
   /* RESOURCES */
-  .r-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
-  .rcard{background:var(--white);border:1px solid var(--line);padding:34px 30px;cursor:pointer;transition:all .25s}
+  .r-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:28px;max-width:1000px;margin:0 auto}
+  .rcard{background:var(--white);border:1px solid var(--line);padding:46px 44px;cursor:pointer;transition:all .25s}
   .rcard:hover{border-color:var(--navy);transform:translateY(-3px)}
-  .rtag{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
-  .ric{font-size:26px;color:var(--navy);margin-bottom:14px}
-  .rcard h3{font-family:'Cormorant Garamond',serif;font-size:23px;font-weight:600;color:var(--navy);margin-bottom:10px;line-height:1.2}
-  .rcard p{color:var(--muted);font-size:14px;font-weight:300;line-height:1.7}
+  .rtag{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:18px}
+  .ric{font-size:28px;color:var(--navy);margin-bottom:16px}
+  .rcard h3{font-family:'Cormorant Garamond',serif;font-size:27px;font-weight:600;color:var(--navy);margin-bottom:12px;line-height:1.22}
+  .rcard p{color:var(--muted);font-size:15px;font-weight:300;line-height:1.75}
 
   /* STRIP */
   .strip{background:var(--navy);padding:88px 0;text-align:center}
@@ -211,6 +219,7 @@
   .qform .fsub{font-size:13px;color:var(--muted);margin-bottom:24px;font-weight:300}
   .fld{width:100%;border:1px solid var(--line-cool);background:var(--white);padding:13px 14px;font-family:'Montserrat',sans-serif;font-size:14px;margin-bottom:12px;color:var(--ink)}
   .fld:focus{outline:none;border-color:var(--navy)}
+  textarea.fld{min-height:96px;resize:vertical;line-height:1.55}
   .frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   .qform .btn{width:100%;justify-content:center;margin-top:8px}
 
@@ -851,7 +860,10 @@
       <div class="frow"><input class="fld" id="q_first" type="text" placeholder="First name"><input class="fld" id="q_last" type="text" placeholder="Last name"></div>
       <input class="fld" id="q_email" type="email" placeholder="Email address">
       <input class="fld" id="q_phone" type="tel" placeholder="Phone number">
-      <select class="fld" id="q_cov"><option value="">What do you need covered?</option><option>Homeowners</option><option>Auto</option><option>Landlord / Rental</option><option>Flood</option><option>Bundle / multiple</option></select>
+      <select class="fld" id="q_cov" onchange="covChange()"><option value="">What do you need covered?</option><option>Homeowners</option><option>Auto</option><option>Landlord / Rental</option><option>Flood</option><option>Bundle / multiple</option></select>
+      <div id="grp_addr" style="display:none"><input class="fld" id="q_addr" type="text" placeholder="Property address (street, city, ZIP)"></div>
+      <div id="grp_veh" style="display:none"><input class="fld" id="q_veh" type="text" placeholder="Vehicle(s) — year, make &amp; model"></div>
+      <textarea class="fld" id="q_notes" placeholder="Anything else we should know? (optional)"></textarea>
       <a class="btn btn-solid" id="q_submit" onclick="submitQuote()">Request my quote &rarr;</a>
     </div>
   </div></section>
@@ -1040,17 +1052,28 @@
     else h.classList.remove('solid');
   }
 
+  function covChange(){
+    var v=document.getElementById('q_cov').value;
+    var showAddr=(v==='Homeowners'||v==='Landlord / Rental'||v==='Flood'||v==='Bundle / multiple');
+    var showVeh=(v==='Auto'||v==='Bundle / multiple');
+    document.getElementById('grp_addr').style.display=showAddr?'block':'none';
+    document.getElementById('grp_veh').style.display=showVeh?'block':'none';
+  }
   async function submitQuote(){
     var msg=document.getElementById('qmsg'),btn=document.getElementById('q_submit');
     function show(bg,bd,c,t){msg.style.display='block';msg.style.background=bg;msg.style.border='1px solid '+bd;msg.style.color=c;msg.innerHTML=t;}
-    var p={first_name:(q_first.value||'').trim(),last_name:(q_last.value||'').trim(),email:(q_email.value||'').trim(),phone:(q_phone.value||'').trim(),coverage_type:q_cov.value||''};
+    var notes=(document.getElementById('q_notes').value||'').trim();
+    var veh=(document.getElementById('q_veh').value||'').trim();
+    var addr=(document.getElementById('q_addr').value||'').trim();
+    var parts=[];if(veh)parts.push('Vehicle(s): '+veh);if(notes)parts.push(notes);
+    var p={first_name:(q_first.value||'').trim(),last_name:(q_last.value||'').trim(),email:(q_email.value||'').trim(),phone:(q_phone.value||'').trim(),coverage_type:q_cov.value||'',address:addr,message:parts.join('\n')};
     if(!p.first_name||!p.last_name||!p.email){show('#FCEBEB','#F09595','#791F1F','Please add your name and email so we can reach you.');return;}
     btn.textContent='Sending…';
     try{
       var r=await fetch('/.netlify/functions/submit-quote',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});
       if(!r.ok)throw 0;
       show('#EAF3DE','#97C459','#27500A','Thanks, '+p.first_name+"! We've got your request and will reach out within one business day.");
-      btn.textContent='Request sent ✓';['q_first','q_last','q_email','q_phone'].forEach(function(i){document.getElementById(i).value='';});q_cov.value='';
+      btn.textContent='Request sent ✓';['q_first','q_last','q_email','q_phone','q_addr','q_veh','q_notes'].forEach(function(i){document.getElementById(i).value='';});q_cov.value='';document.getElementById('grp_addr').style.display='none';document.getElementById('grp_veh').style.display='none';
     }catch(e){
       show('#FAEEDA','#EF9F27','#633806',"Form isn't connected yet — deploy to Netlify to enable it. For now, call <b>(214) 725-3348</b>.");
       btn.textContent='Request my quote →';
