@@ -1,0 +1,10 @@
+{
+  "name": "voss-risk-advisors",
+  "version": "1.0.0",
+  "description": "Voss Risk Advisors — independent insurance agency website (Netlify + Supabase + Resend).",
+  "private": true,
+  "scripts": {
+    "dev": "netlify dev"
+  },
+  "engines": { "node": ">=18" }
+}

@@ -1,0 +1,15 @@
+# Netlify configuration for Voss Risk Advisors
+
+[build]
+  publish   = "public"
+  functions = "netlify/functions"
+
+# Weekly AI blog post — runs every Monday at 14:00 UTC (9am CT).
+# Adjust the cron as you like: https://crontab.guru
+[functions."weekly-post"]
+  schedule = "0 14 * * 1"
+
+[[redirects]]
+  from = "/api/quote"
+  to   = "/.netlify/functions/submit-quote"
+  status = 200
