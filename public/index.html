@@ -190,6 +190,9 @@
   .subhero .crumb a{color:var(--gold);text-decoration:none}
   .subhero-ic{font-size:34px;color:var(--gold);margin-bottom:14px}
   .subhero h1{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(40px,5vw,68px);color:#fff;line-height:1}
+  .subhero.photo{position:relative;background-size:cover;background-position:center;background-repeat:no-repeat}
+  .subhero.photo:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(9,20,42,.60),rgba(9,20,42,.82))}
+  .subhero.photo>.wrap{position:relative;z-index:1}
   .detail-grid{display:grid;grid-template-columns:1.4fr .9fr;gap:64px;align-items:start}
   .lead{font-size:18px;color:var(--ink);font-weight:300;line-height:1.8;margin:22px 0 34px}
   .dhead{font-size:28px;color:var(--navy);margin-bottom:18px;font-weight:600}
@@ -577,7 +580,7 @@
 
 
   <section class="page" data-page="homeowners">
-    <div class="subhero">
+    <div class="subhero photo" style="background-image:url('/img/homeowners.webp')">
       <div class="wrap">
         <div class="crumb"><a onclick="go('coverage')">Coverage</a> &rsaquo; Homeowners</div>
         <div class="subhero-ic"><i class="ti ti-home"></i></div>
@@ -622,7 +625,7 @@
     </section>
   </section>
   <section class="page" data-page="auto">
-    <div class="subhero">
+    <div class="subhero photo" style="background-image:url('/img/auto.webp')">
       <div class="wrap">
         <div class="crumb"><a onclick="go('coverage')">Coverage</a> &rsaquo; Auto</div>
         <div class="subhero-ic"><i class="ti ti-car"></i></div>
@@ -667,7 +670,7 @@
     </section>
   </section>
   <section class="page" data-page="landlord">
-    <div class="subhero">
+    <div class="subhero photo" style="background-image:url('/img/landlord.webp')">
       <div class="wrap">
         <div class="crumb"><a onclick="go('coverage')">Coverage</a> &rsaquo; Landlord & Rental</div>
         <div class="subhero-ic"><i class="ti ti-building-community"></i></div>
@@ -712,7 +715,7 @@
     </section>
   </section>
   <section class="page" data-page="flood">
-    <div class="subhero">
+    <div class="subhero photo" style="background-image:url('/img/flood.webp')">
       <div class="wrap">
         <div class="crumb"><a onclick="go('coverage')">Coverage</a> &rsaquo; Flood</div>
         <div class="subhero-ic"><i class="ti ti-droplet"></i></div>
