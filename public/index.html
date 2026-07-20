@@ -178,6 +178,8 @@
   .ric{font-size:28px;color:var(--navy);margin-bottom:16px}
   .rcard h3{font-family:'Cormorant Garamond',serif;font-size:27px;font-weight:600;color:var(--navy);margin-bottom:12px;line-height:1.22}
   .rcard p{color:var(--muted);font-size:15px;font-weight:300;line-height:1.75}
+  .rcard.has-img{padding-top:0}
+  .rcard-img{height:200px;background-size:cover;background-position:center;margin:0 -44px 30px}
 
   /* STRIP */
   .strip{background:var(--navy);padding:88px 0;text-align:center}
@@ -1119,13 +1121,21 @@
       if(!r.ok)return;
       var posts=await r.json();if(!posts.length)return;
       window._voss_posts={};
-      var cards=posts.map(function(p){window._voss_posts[p.slug]=p;return '<div class="rcard" onclick="openPost(\''+p.slug+'\')"><div class="rtag">'+(p.category||"Guide")+'</div><div class="ric"><i class="ti ti-article"></i></div><h3 class="serif">'+p.title+'</h3><p>'+(p.excerpt||"")+'</p><span class="go-link">Read more &rarr;</span></div>';}).join("");
+      var cards=posts.map(function(p){window._voss_posts[p.slug]=p;return '<div class="rcard has-img" onclick="openPost(\''+p.slug+'\')"><div class="rcard-img" style="background-image:url(\''+catImg(p.category)+'\')"></div><div class="rtag">'+(p.category||"Guide")+'</div><h3 class="serif">'+p.title+'</h3><p>'+(p.excerpt||"")+'</p><span class="go-link">Read more &rarr;</span></div>';}).join("");
       document.querySelectorAll(".r-grid").forEach(function(g){g.innerHTML=cards;});
     }catch(e){}
+  }
+  function catImg(cat){
+    var c=(cat||'').toLowerCase();
+    if(c.indexOf('auto')>-1)return '/img/auto.webp';
+    if(c.indexOf('flood')>-1)return '/img/flood.webp';
+    if(c.indexOf('landlord')>-1||c.indexOf('rental')>-1)return '/img/landlord.webp';
+    return '/img/homeowners.webp';
   }
   function openPost(slug){
     var p=(window._voss_posts||{})[slug];if(!p){go("resources");return;}
     var host=document.getElementById("dynamic-article");
+    var sub=host.querySelector(".subhero");sub.classList.add("photo");sub.style.backgroundImage="url('"+catImg(p.category)+"')";
     host.querySelector(".da-cat").textContent=(p.category||"Guide")+" · "+(p.read||"");
     host.querySelector(".da-title").textContent=p.title;
     host.querySelector(".da-body").innerHTML=mdToHtml(p.body_md);
