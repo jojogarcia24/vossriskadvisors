@@ -25,7 +25,13 @@
 
 // ---- CONFIG (edit these two) ----
 var SECRET = 'PUT-THE-SAME-SECRET-AS-NETLIFY-HERE';
-var VOSS_WEBHOOK = 'https://www.vossriskadvisors.com/.netlify/functions/carriers-webhook';
+// IMPORTANT: use your site's PRIMARY domain with NO redirect. If your canonical
+// domain is the "www" one, use that instead. A domain redirect (e.g. www ->
+// apex) turns the POST into a GET and the webhook answers 405 "Method not
+// allowed". Test it: open this URL in a browser — you should get
+// {"error":"Method not allowed"} with the address bar UNCHANGED. If the address
+// bar changes, use the domain it lands on here.
+var VOSS_WEBHOOK = 'https://vossriskadvisors.com/.netlify/functions/carriers-webhook';
 
 // Columns written to the sheet, in order. Must match the Voss field names.
 var COLS = [
