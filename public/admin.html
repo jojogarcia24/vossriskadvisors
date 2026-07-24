@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Carrier Appointments — Voss Risk Advisors Admin</title>
+<style>
+  :root{
+    --navy:#0C2340; --navy-ink:#001830; --gold:#C09C48; --cream:#F5F0E6;
+    --paper:#FBFAF7; --ink:#1C2433; --muted:#8A8578; --line:#e7e2d6;
+    --green:#1E7A4C; --amber:#B9852B; --gray:#8A8578; --red:#B23A34;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--cream);color:var(--ink);font-size:15px;line-height:1.5}
+  h1,h2,h3{font-family:Georgia,'Times New Roman',serif;color:var(--navy);font-weight:normal;margin:0}
+  a{color:var(--navy)}
+  button{font-family:inherit;cursor:pointer}
+  .btn{border:none;padding:10px 18px;font-size:14px;color:#fff;background:var(--navy);border-radius:4px}
+  .btn.gold{background:var(--gold);color:var(--navy-ink);font-weight:bold}
+  .btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}
+  .btn.danger{background:var(--red)}
+  .btn:disabled{opacity:.5;cursor:default}
+  .btn.sm{padding:6px 12px;font-size:13px}
+  input,select,textarea{font-family:inherit;font-size:14px;padding:9px 11px;border:1px solid var(--line);border-radius:4px;background:#fff;color:var(--ink);width:100%}
+  textarea{resize:vertical;line-height:1.5}
+  label{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 5px}
+  .wrap{max-width:1160px;margin:0 auto;padding:0 18px}
+
+  /* header */
+  header{background:var(--navy);color:var(--cream);padding:18px 0}
+  header .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand .mark{font-family:Georgia,serif;font-size:22px;letter-spacing:.2em;color:var(--cream)}
+  .brand .sub{color:var(--gold);font-size:10px;letter-spacing:.3em;text-transform:uppercase}
+  .top-red{height:6px;background:var(--red)}
+
+  /* login */
+  #login{max-width:420px;margin:9vh auto;background:#fff;border:1px solid var(--line);border-radius:8px;padding:34px}
+  #login h1{font-size:24px;margin-bottom:6px}
+  #login p{color:var(--muted);margin:0 0 20px}
+
+  /* toolbar */
+  .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:22px 0 8px}
+  .toolbar .grow{flex:1 1 220px}
+  .filters{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 18px}
+  .chip{border:1px solid var(--line);background:#fff;border-radius:20px;padding:7px 14px;font-size:13px;color:var(--ink);display:inline-flex;align-items:center;gap:7px}
+  .chip.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .chip .n{font-size:11px;opacity:.8}
+  .chip.s-approved.active{background:var(--green);border-color:var(--green)}
+  .chip.s-pending.active{background:var(--amber);border-color:var(--amber)}
+  .chip.s-declined.active{background:var(--red);border-color:var(--red)}
+
+  /* carrier grid */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px;margin-bottom:40px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:8px;padding:16px;cursor:pointer;transition:box-shadow .12s,transform .12s;position:relative;border-left:5px solid var(--gray)}
+  .card:hover{box-shadow:0 4px 16px rgba(12,35,64,.12)}
+  .card.s-approved{border-left-color:var(--green)}
+  .card.s-pending{border-left-color:var(--amber)}
+  .card.s-not_started{border-left-color:var(--gray)}
+  .card.s-declined{border-left-color:var(--red)}
+  .card h3{font-size:18px;margin-bottom:4px}
+  .badge{display:inline-block;font-size:11px;letter-spacing:.05em;text-transform:uppercase;padding:3px 9px;border-radius:20px;color:#fff;background:var(--gray);font-family:Arial}
+  .badge.s-approved{background:var(--green)}
+  .badge.s-pending{background:var(--amber)}
+  .badge.s-not_started{background:var(--gray)}
+  .badge.s-declined{background:var(--red)}
+  .card .best{color:var(--muted);font-size:13px;margin:8px 0}
+  .lines{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+  .pill{background:var(--cream);border:1px solid var(--line);border-radius:4px;font-size:11px;padding:2px 7px;color:var(--navy)}
+  .card .login-flag{position:absolute;top:14px;right:14px;font-size:15px}
+
+  /* modal / drawer */
+  .overlay{position:fixed;inset:0;background:rgba(12,35,64,.45);display:none;z-index:50}
+  .overlay.open{display:block}
+  .drawer{position:fixed;top:0;right:0;height:100%;width:min(620px,100%);background:var(--paper);box-shadow:-6px 0 26px rgba(0,0,0,.2);overflow-y:auto;z-index:60;transform:translateX(100%);transition:transform .18s}
+  .drawer.open{transform:translateX(0)}
+  .drawer .dhead{position:sticky;top:0;background:var(--navy);color:#fff;padding:16px 22px;display:flex;justify-content:space-between;align-items:center;z-index:2}
+  .drawer .dhead h2{color:#fff;font-size:20px}
+  .drawer .x{background:none;border:none;color:#fff;font-size:24px;line-height:1}
+  .drawer .body{padding:22px}
+  .field{margin-bottom:16px}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .pwwrap{display:flex;gap:6px}
+  .pwwrap input{flex:1}
+  .dactions{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;padding-top:16px;border-top:1px solid var(--line)}
+  .dactions .spacer{flex:1}
+
+  /* sections */
+  .panel{background:#fff;border:1px solid var(--line);border-radius:8px;padding:20px;margin-bottom:22px}
+  .panel h2{font-size:20px;margin-bottom:4px}
+  .panel .hint{color:var(--muted);font-size:13px;margin:0 0 16px}
+  details.acc{border:1px solid var(--line);border-radius:6px;margin-bottom:10px;background:#fff}
+  details.acc>summary{padding:11px 14px;cursor:pointer;font-weight:bold;color:var(--navy);list-style:none}
+  details.acc>summary::-webkit-details-marker{display:none}
+  details.acc>summary::before{content:"▸ ";color:var(--gold)}
+  details.acc[open]>summary::before{content:"▾ "}
+  details.acc .content{padding:0 14px 14px;white-space:pre-wrap;font-size:14px;color:var(--ink)}
+
+  /* proposal diff */
+  .diff{border:1px solid var(--line);border-radius:6px;margin:10px 0;overflow:hidden}
+  .diff .fname{background:var(--cream);padding:7px 12px;font-weight:bold;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--navy);display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .diff .cols{display:grid;grid-template-columns:1fr 1fr}
+  @media(max-width:640px){.diff .cols{grid-template-columns:1fr}.row2{grid-template-columns:1fr}}
+  .diff .col{padding:10px 12px;font-size:13px;white-space:pre-wrap}
+  .diff .before{background:#faf0ef;border-right:1px solid var(--line)}
+  .diff .after{background:#e7f3ec}
+  .diff .lab{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px}
+
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--navy-ink);color:#fff;padding:12px 20px;border-radius:6px;z-index:100;opacity:0;transition:opacity .2s;font-size:14px;box-shadow:0 6px 20px rgba(0,0,0,.3)}
+  .toast.show{opacity:1}
+  .muted{color:var(--muted)}
+  .hidden{display:none!important}
+  .spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;vertical-align:-2px}
+  @keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="top-red"></div>
+
+<!-- LOGIN -->
+<div id="login">
+  <h1>Carrier Admin</h1>
+  <p>Voss Risk Advisors — appointment tracker</p>
+  <div class="field">
+    <label>Admin password</label>
+    <input id="pw" type="password" placeholder="Enter password" autocomplete="current-password">
+  </div>
+  <button class="btn gold" style="width:100%" onclick="login()">Sign in</button>
+  <p id="loginErr" class="muted" style="color:var(--red);margin-top:12px"></p>
+</div>
+
+<!-- APP -->
+<div id="app" class="hidden">
+  <header>
+    <div class="wrap">
+      <div class="brand">
+        <div>
+          <div class="mark">VOSS</div>
+          <div class="sub">Risk Advisors</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn ghost sm" onclick="exportCsv()">⬇ Export CSV</button>
+        <button class="btn ghost sm" onclick="syncGoogle()" id="gsyncBtn">⟳ Sync to Google</button>
+        <button class="btn ghost sm" onclick="logout()">Sign out</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="toolbar">
+      <h1 style="font-size:26px">Carrier Appointments</h1>
+      <span class="spacer" style="flex:1"></span>
+      <button class="btn gold" onclick="openEditor(null)">＋ Add carrier</button>
+    </div>
+
+    <div class="toolbar">
+      <input class="grow" id="search" placeholder="Search carriers, appetite, states…" oninput="render()">
+      <select id="lineFilter" style="max-width:230px" onchange="render()"><option value="">All product lines</option></select>
+    </div>
+
+    <div class="filters" id="statusFilters"></div>
+
+    <div class="grid" id="grid"></div>
+
+    <!-- BULLETIN REVIEW -->
+    <div class="panel">
+      <h2>Update from a carrier bulletin</h2>
+      <p class="hint">Paste (or upload a .txt/.md/.csv of) a new carrier update. Claude reads it and proposes <strong>only the fields that changed</strong> — you approve before anything is saved. Nothing is overwritten wholesale.</p>
+      <div class="row2" style="margin-bottom:12px">
+        <div>
+          <label>Which carrier is this update for?</label>
+          <select id="reviewCarrier"></select>
+        </div>
+        <div>
+          <label>Or upload a text file</label>
+          <input type="file" id="reviewFile" accept=".txt,.md,.csv,.text" onchange="loadFile()">
+        </div>
+      </div>
+      <div class="field">
+        <label>Paste the bulletin text</label>
+        <textarea id="reviewText" rows="6" placeholder="Paste the carrier's new appetite guide / bulletin / update here…"></textarea>
+      </div>
+      <button class="btn gold" id="reviewBtn" onclick="reviewDoc()">Review with Claude</button>
+      <div id="proposalArea"></div>
+    </div>
+
+    <!-- PENDING PROPOSALS -->
+    <div class="panel hidden" id="pendingPanel">
+      <h2>Pending updates awaiting approval</h2>
+      <div id="pendingList"></div>
+    </div>
+
+    <p class="muted" style="margin:26px 0 50px;font-size:13px">
+      Statuses: <strong style="color:var(--green)">Approved</strong> = appointment in hand ·
+      <strong style="color:var(--amber)">Pending</strong> = applied / in progress ·
+      <strong style="color:var(--gray)">Not started</strong> · <strong style="color:var(--red)">Declined</strong>.
+      Login passwords are stored server-side and only sent to this page after you sign in.
+    </p>
+  </div>
+</div>
+
+<!-- EDITOR DRAWER -->
+<div class="overlay" id="overlay" onclick="closeEditor()"></div>
+<div class="drawer" id="drawer">
+  <div class="dhead">
+    <h2 id="edTitle">Edit carrier</h2>
+    <button class="x" onclick="closeEditor()">×</button>
+  </div>
+  <div class="body">
+    <input type="hidden" id="ed_id">
+    <div class="field">
+      <label>Carrier name</label>
+      <input id="ed_name">
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Appointment status</label>
+        <select id="ed_status">
+          <option value="approved">✅ Approved (have it)</option>
+          <option value="pending">🟡 Pending / applied</option>
+          <option value="not_started">⚪ Not started</option>
+          <option value="declined">🔴 Declined</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Sort order</label>
+        <input id="ed_sort_order" type="number">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Best for (one-line summary)</label>
+      <textarea id="ed_best_for" rows="2"></textarea>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Product lines (comma or semicolon separated)</label>
+        <input id="ed_product_lines" placeholder="Home, Auto (Standard), Condo">
+      </div>
+      <div class="field">
+        <label>States (comma separated)</label>
+        <input id="ed_states" placeholder="TX, CA, FL">
+      </div>
+    </div>
+
+    <h3 style="font-size:16px;margin:6px 0 12px;padding-top:6px;border-top:1px solid var(--line)">Login &amp; portal</h3>
+    <div class="field">
+      <label>Login URL</label>
+      <input id="ed_login_url" placeholder="https://…">
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Username</label>
+        <input id="ed_login_username" autocomplete="off">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <div class="pwwrap">
+          <input id="ed_login_password" type="password" autocomplete="off">
+          <button class="btn ghost sm" type="button" onclick="togglePw()" id="pwToggle">Show</button>
+        </div>
+      </div>
+    </div>
+    <div class="field">
+      <label>Website (optional)</label>
+      <input id="ed_website" placeholder="https://…">
+    </div>
+    <div class="field">
+      <label>Portal notes (agent code, 2FA, contacts…)</label>
+      <textarea id="ed_portal_notes" rows="2"></textarea>
+    </div>
+
+    <h3 style="font-size:16px;margin:6px 0 12px;padding-top:6px;border-top:1px solid var(--line)">Appetite guide</h3>
+    <div class="field"><label>Appetite</label><textarea id="ed_appetite" rows="5"></textarea></div>
+    <div class="field"><label>Requirements</label><textarea id="ed_requirements" rows="5"></textarea></div>
+    <div class="field"><label>Do not submit if</label><textarea id="ed_do_not_submit" rows="5"></textarea></div>
+    <div class="field"><label>Helpful hints</label><textarea id="ed_helpful_hints" rows="5"></textarea></div>
+
+    <div class="dactions">
+      <button class="btn gold" onclick="saveCarrier()" id="saveBtn">Save</button>
+      <span class="spacer"></span>
+      <button class="btn danger" onclick="deleteCarrier()" id="delBtn">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = "/.netlify/functions/carriers-admin";
+const STATUSES = [
+  {key:"approved", label:"Approved"},
+  {key:"pending", label:"Pending"},
+  {key:"not_started", label:"Not started"},
+  {key:"declined", label:"Declined"},
+];
+const TEXT_FIELDS = ["appetite","requirements","do_not_submit","helpful_hints"];
+let PW = sessionStorage.getItem("voss_admin_pw") || "";
+let carriers = [];
+let activeStatus = "all";
+
+// ---------- auth ----------
+document.getElementById("pw").addEventListener("keydown", e => { if(e.key==="Enter") login(); });
+if (PW) verifyAndLoad();
+
+async function api(action, payload){
+  const res = await fetch(API, {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ action, password: PW, ...(payload||{}) })
+  });
+  const data = await res.json().catch(()=>({error:"Bad response"}));
+  if (res.status === 401){ logout(); throw new Error("Wrong password"); }
+  if (!res.ok) throw new Error(data.error || ("Error "+res.status));
+  return data;
+}
+
+async function login(){
+  PW = document.getElementById("pw").value;
+  document.getElementById("loginErr").textContent = "";
+  try { await verifyAndLoad(); sessionStorage.setItem("voss_admin_pw", PW); }
+  catch(e){ document.getElementById("loginErr").textContent = e.message || "Sign-in failed"; }
+}
+function logout(){
+  sessionStorage.removeItem("voss_admin_pw"); PW="";
+  document.getElementById("app").classList.add("hidden");
+  document.getElementById("login").style.display="block";
+  document.getElementById("pw").value="";
+}
+async function verifyAndLoad(){
+  const data = await api("list");
+  carriers = data.carriers || [];
+  document.getElementById("login").style.display="none";
+  document.getElementById("app").classList.remove("hidden");
+  buildLineFilter();
+  buildCarrierSelect();
+  render();
+  loadProposals();
+}
+
+// ---------- helpers ----------
+function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2600); }
+function arr(v){ return Array.isArray(v)?v:(v?String(v).split(/[;,]/).map(x=>x.trim()).filter(Boolean):[]); }
+function statusLabel(k){ const s=STATUSES.find(s=>s.key===k); return s?s.label:k; }
+
+// ---------- filters + grid ----------
+function buildLineFilter(){
+  const set = new Set();
+  carriers.forEach(c => arr(c.product_lines).forEach(l => set.add(l)));
+  const sel = document.getElementById("lineFilter");
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">All product lines</option>' +
+    [...set].sort().map(l=>`<option value="${esc(l)}">${esc(l)}</option>`).join("");
+  sel.value = cur;
+}
+function buildStatusFilters(){
+  const counts = {all:carriers.length};
+  STATUSES.forEach(s=>counts[s.key]=carriers.filter(c=>c.status===s.key).length);
+  const el = document.getElementById("statusFilters");
+  const chips = [{key:"all",label:"All"}, ...STATUSES];
+  el.innerHTML = chips.map(s=>
+    `<button class="chip s-${s.key} ${activeStatus===s.key?'active':''}" onclick="setStatus('${s.key}')">${s.label} <span class="n">${counts[s.key]||0}</span></button>`
+  ).join("");
+}
+function setStatus(k){ activeStatus=k; render(); }
+
+function render(){
+  buildStatusFilters();
+  const q = document.getElementById("search").value.toLowerCase().trim();
+  const line = document.getElementById("lineFilter").value;
+  let list = carriers.slice();
+  if (activeStatus!=="all") list = list.filter(c=>c.status===activeStatus);
+  if (line) list = list.filter(c=>arr(c.product_lines).includes(line));
+  if (q) list = list.filter(c => {
+    const hay = [c.name,c.best_for,c.appetite,c.requirements,c.do_not_submit,c.helpful_hints,(arr(c.states).join(" ")),(arr(c.product_lines).join(" "))].join(" ").toLowerCase();
+    return hay.includes(q);
+  });
+  const grid = document.getElementById("grid");
+  if (!list.length){ grid.innerHTML = '<p class="muted">No carriers match.</p>'; return; }
+  grid.innerHTML = list.map(c=>{
+    const lines = arr(c.product_lines).slice(0,6).map(l=>`<span class="pill">${esc(l)}</span>`).join("");
+    const states = arr(c.states);
+    const stateStr = states.length ? `<span class="pill">${states.slice(0,8).join(", ")}${states.length>8?"…":""}</span>` : "";
+    const hasLogin = (c.login_url||c.login_username||c.login_password) ? '<span class="login-flag" title="Login saved">🔑</span>' : "";
+    return `<div class="card s-${c.status}" onclick='openEditor("${c.id}")'>
+      ${hasLogin}
+      <span class="badge s-${c.status}">${statusLabel(c.status)}</span>
+      <h3 style="margin-top:8px">${esc(c.name)}</h3>
+      <div class="best">${esc(c.best_for||"")}</div>
+      <div class="lines">${lines}${stateStr}</div>
+    </div>`;
+  }).join("");
+}
+
+// ---------- editor ----------
+function val(id){ return document.getElementById(id).value; }
+function set(id,v){ document.getElementById(id).value = (v==null?"":v); }
+
+function openEditor(id){
+  const c = id ? carriers.find(x=>x.id===id) : {};
+  document.getElementById("ed_id").value = c.id || "";
+  document.getElementById("edTitle").textContent = c.id ? esc(c.name) : "Add carrier";
+  set("ed_name", c.name); set("ed_status", c.status||"not_started");
+  set("ed_sort_order", c.sort_order!=null?c.sort_order:100);
+  set("ed_best_for", c.best_for);
+  set("ed_product_lines", arr(c.product_lines).join(", "));
+  set("ed_states", arr(c.states).join(", "));
+  set("ed_login_url", c.login_url); set("ed_login_username", c.login_username);
+  set("ed_login_password", c.login_password); set("ed_website", c.website);
+  set("ed_portal_notes", c.portal_notes);
+  TEXT_FIELDS.forEach(f=>set("ed_"+f, c[f]));
+  document.getElementById("ed_login_password").type="password";
+  document.getElementById("pwToggle").textContent="Show";
+  document.getElementById("delBtn").style.display = c.id ? "" : "none";
+  document.getElementById("overlay").classList.add("open");
+  document.getElementById("drawer").classList.add("open");
+}
+function closeEditor(){
+  document.getElementById("overlay").classList.remove("open");
+  document.getElementById("drawer").classList.remove("open");
+}
+function togglePw(){
+  const el=document.getElementById("ed_login_password");
+  const show = el.type==="password";
+  el.type = show?"text":"password";
+  document.getElementById("pwToggle").textContent = show?"Hide":"Show";
+}
+
+async function saveCarrier(){
+  const carrier = {
+    id: val("ed_id")||undefined,
+    name: val("ed_name").trim(),
+    status: val("ed_status"),
+    sort_order: val("ed_sort_order"),
+    best_for: val("ed_best_for"),
+    product_lines: val("ed_product_lines"),
+    states: val("ed_states"),
+    login_url: val("ed_login_url"), login_username: val("ed_login_username"),
+    login_password: val("ed_login_password"), website: val("ed_website"),
+    portal_notes: val("ed_portal_notes"),
+    appetite: val("ed_appetite"), requirements: val("ed_requirements"),
+    do_not_submit: val("ed_do_not_submit"), helpful_hints: val("ed_helpful_hints"),
+  };
+  if (!carrier.name){ toast("Carrier name is required."); return; }
+  const btn=document.getElementById("saveBtn"); btn.disabled=true; btn.innerHTML='<span class="spin"></span> Saving';
+  try{
+    const data = await api("save",{carrier});
+    upsertLocal(data.carrier);
+    closeEditor();
+    toast(data.google && data.google.synced ? "Saved & synced to Google ✓" : "Saved ✓");
+    buildLineFilter(); buildCarrierSelect(); render();
+  }catch(e){ toast(e.message); }
+  finally{ btn.disabled=false; btn.textContent="Save"; }
+}
+function upsertLocal(c){
+  if(!c) return;
+  const i = carriers.findIndex(x=>x.id===c.id);
+  if(i>=0) carriers[i]=c; else carriers.push(c);
+}
+async function deleteCarrier(){
+  const id=val("ed_id"); if(!id) return;
+  if(!confirm("Delete this carrier? This cannot be undone.")) return;
+  try{ await api("delete",{id}); carriers=carriers.filter(x=>x.id!==id); closeEditor(); render(); buildCarrierSelect(); toast("Deleted."); }
+  catch(e){ toast(e.message); }
+}
+
+// quick status change from a card would go here; using editor for now.
+
+// ---------- CSV + Google ----------
+async function exportCsv(){
+  try{
+    const data = await api("export_csv");
+    const blob = new Blob([data.csv], {type:"text/csv;charset=utf-8;"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const d = new Date().toISOString().slice(0,10);
+    a.href=url; a.download=`voss-carriers-${d}.csv`; a.click();
+    URL.revokeObjectURL(url);
+    toast(`Exported ${data.count} carriers.`);
+  }catch(e){ toast(e.message); }
+}
+async function syncGoogle(){
+  const btn=document.getElementById("gsyncBtn"); btn.disabled=true; btn.innerHTML='<span class="spin"></span> Syncing';
+  try{
+    const data = await api("sync_all_to_google");
+    if (data.google && data.google.synced) toast(`Synced ${data.count} carriers to Google ✓`);
+    else if (data.google && data.google.reason==="not_configured") toast("Google sync isn't set up yet (see README).");
+    else toast("Google sync didn't complete — check the Apps Script URL/secret.");
+  }catch(e){ toast(e.message); }
+  finally{ btn.disabled=false; btn.textContent="⟳ Sync to Google"; }
+}
+
+// ---------- bulletin review ----------
+function buildCarrierSelect(){
+  const sel=document.getElementById("reviewCarrier");
+  const cur=sel.value;
+  sel.innerHTML = carriers.slice().sort((a,b)=>a.name.localeCompare(b.name))
+    .map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join("");
+  if(cur) sel.value=cur;
+}
+function loadFile(){
+  const f=document.getElementById("reviewFile").files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{ document.getElementById("reviewText").value=r.result; toast("File loaded — review or edit, then click Review."); };
+  r.readAsText(f);
+}
+async function reviewDoc(){
+  const carrier_id=document.getElementById("reviewCarrier").value;
+  const text=document.getElementById("reviewText").value.trim();
+  if(!carrier_id){ toast("Pick a carrier."); return; }
+  if(!text){ toast("Paste the bulletin text first."); return; }
+  const btn=document.getElementById("reviewBtn"); btn.disabled=true; btn.innerHTML='<span class="spin"></span> Claude is reading…';
+  document.getElementById("proposalArea").innerHTML="";
+  try{
+    const data = await api("review_doc",{carrier_id, text});
+    renderProposal(data.proposal, data.before, "proposalArea", true);
+  }catch(e){ toast(e.message); }
+  finally{ btn.disabled=false; btn.textContent="Review with Claude"; }
+}
+
+function fmtVal(v){ return Array.isArray(v)?v.join(", "):(v==null?"":String(v)); }
+function renderProposal(p, before, targetId, clearInput){
+  const changes = p.changes||{};
+  const keys = Object.keys(changes);
+  // If no explicit "before" was passed (e.g. reloaded pending proposals),
+  // fall back to the carrier's current values.
+  if(!before){
+    const cur = carriers.find(c=>c.id===p.carrier_id);
+    if(cur){ before={}; keys.forEach(k=>before[k]=cur[k]); }
+  }
+  let html;
+  if(!keys.length){
+    html = `<div class="panel" style="margin-top:16px;border-left:5px solid var(--gold)"><strong>${esc(p.carrier_name)}:</strong> ${esc(p.summary)}<br><span class="muted">Claude found nothing that needed changing.</span>
+      <div class="dactions"><button class="btn ghost sm" onclick="discardProposal('${p.id}',this)">Dismiss</button></div></div>`;
+  } else {
+    const diffs = keys.map(k=>{
+      const bef = before ? before[k] : (p._before?p._before[k]:"");
+      return `<div class="diff"><div class="fname">${esc(k.replace(/_/g,' '))}</div>
+        <div class="cols">
+          <div class="col before"><div class="lab">Before</div>${esc(fmtVal(bef))||'<span class="muted">(empty)</span>'}</div>
+          <div class="col after"><div class="lab">After</div>${esc(fmtVal(changes[k]))}</div>
+        </div></div>`;
+    }).join("");
+    html = `<div class="panel" style="margin-top:16px;border-left:5px solid var(--green)">
+      <h3 style="font-size:17px;margin-bottom:4px">Proposed update — ${esc(p.carrier_name)}</h3>
+      <p class="muted" style="margin:0 0 6px">${esc(p.summary)}</p>
+      ${diffs}
+      <div class="dactions">
+        <button class="btn gold" onclick="applyProposal('${p.id}',this)">Approve &amp; save these changes</button>
+        <button class="btn ghost" onclick="discardProposal('${p.id}',this)">Discard</button>
+      </div></div>`;
+  }
+  document.getElementById(targetId).innerHTML = html;
+  if(clearInput){ /* keep text so user can re-run if needed */ }
+}
+
+async function applyProposal(id, btn){
+  btn.disabled=true; btn.innerHTML='<span class="spin"></span> Saving';
+  try{
+    const data = await api("apply_proposal",{id});
+    upsertLocal(data.carrier);
+    render(); buildLineFilter();
+    toast(data.google && data.google.synced ? "Applied & synced to Google ✓" : "Applied ✓");
+    btn.closest(".panel").remove();
+    document.getElementById("reviewText").value="";
+    loadProposals();
+  }catch(e){ toast(e.message); btn.disabled=false; btn.textContent="Approve & save these changes"; }
+}
+async function discardProposal(id, btn){
+  try{ await api("discard_proposal",{id}); btn.closest(".panel").remove(); loadProposals(); toast("Discarded."); }
+  catch(e){ toast(e.message); }
+}
+
+async function loadProposals(){
+  try{
+    const data = await api("list_proposals");
+    const list = data.proposals||[];
+    const panel=document.getElementById("pendingPanel");
+    const box=document.getElementById("pendingList");
+    if(!list.length){ panel.classList.add("hidden"); box.innerHTML=""; return; }
+    panel.classList.remove("hidden");
+    box.innerHTML="";
+    list.forEach(p=>{
+      const div=document.createElement("div");
+      div.id="prop_"+p.id;
+      box.appendChild(div);
+      renderProposal(p, null, "prop_"+p.id, false);
+    });
+  }catch(e){ /* silent */ }
+}
+</script>
+</body>
+</html>

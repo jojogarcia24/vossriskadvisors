@@ -77,11 +77,54 @@ The generator's instructions forbid specific rates, savings guarantees, legal ad
 ## File map
 ```
 public/index.html            The website (single self-contained file)
+public/admin.html            Carrier Appointments admin portal (password-gated)
 netlify/functions/
   submit-quote.js            Quote form -> Supabase + Resend emails
   weekly-post.js             Scheduled weekly AI article -> Supabase
-supabase/schema.sql          Database tables, security, seed articles
+  carriers-admin.js          Carrier tracker API (CRUD, CSV, Claude bulletin review)
+  carriers-webhook.js        Receives Google Sheet edits (Google -> Voss sync)
+  lib/carriers.js            Shared helpers for the two carrier functions
+supabase/schema.sql          Core tables (quotes, blog, newsletter)
+supabase/carriers-schema.sql Carrier tracker tables (carriers, proposals)
+supabase/carriers-seed.sql   All ~28 carriers with appetite guides (seed data)
+google/carriers-sync.gs      Apps Script for two-way Google Sheets sync
+google/README.md             How to turn on the Google sync
 content/articles/*.md        The 4 starter articles (source of truth)
 netlify.toml                 Hosting + weekly schedule config
 .env.example                 Environment variable checklist
 ```
+
+---
+
+## Carrier Appointments admin portal
+
+A private tracker for every carrier you're appointed with (or working toward),
+reachable at **`/admin`**.
+
+**What it does**
+- Track each carrier's **status**: Approved (have it) · Pending/applied ·
+  Not started · Declined — with one-click filter buttons and live counts.
+- Store each carrier's **login URL, username, password, and portal notes**.
+- Record **which product lines and states** each carrier is best for, plus the
+  full **appetite / requirements / do-not-submit / helpful-hints** one-sheets
+  (all ~28 carriers come pre-loaded, including Geico as a blank to fill in).
+- **Export CSV** for a Google/Excel copy in one click.
+- **Update from a bulletin**: paste or upload a new carrier update and Claude
+  proposes *only the fields that changed* — you approve a before/after diff and
+  nothing is overwritten wholesale.
+- Optional **two-way Google Sheets sync** (see `google/README.md`): a change in
+  Voss or in Google updates the other.
+
+**Setup**
+1. Run `supabase/carriers-schema.sql` then `supabase/carriers-seed.sql` in the
+   Supabase SQL Editor (the schema + all carriers). *(Already applied to the
+   live project if Claude set this up for you.)*
+2. Add `ADMIN_PASSWORD` in Netlify env (this gates `/admin`). The existing
+   `ANTHROPIC_API_KEY` powers the "review a bulletin" tool.
+3. (Optional) Turn on Google sync by following `google/README.md` and adding
+   `GOOGLE_SHEET_WEBAPP_URL` + `CARRIER_SYNC_SECRET`.
+
+**Security note** — carrier logins live in a table with Row Level Security on
+and *no* public policy, so the anon key in `index.html` can't read them. Only
+the server-side function (behind `ADMIN_PASSWORD`) can. Still, treat
+`ADMIN_PASSWORD` like a real password and use HTTPS (Netlify does).
