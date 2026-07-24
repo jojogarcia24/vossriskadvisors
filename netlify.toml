@@ -27,6 +27,23 @@
   to   = "/.netlify/functions/submit-quote"
   status = 200
 
+# Carrier appointments admin portal (password-protected page + API)
+[[redirects]]
+  from = "/admin"
+  to   = "/admin.html"
+  status = 200
+
+[[redirects]]
+  from = "/api/carriers"
+  to   = "/.netlify/functions/carriers-admin"
+  status = 200
+
+# Endpoint the Google Sheet's Apps Script posts edits back to (Google -> Voss)
+[[redirects]]
+  from = "/api/carriers-webhook"
+  to   = "/.netlify/functions/carriers-webhook"
+  status = 200
+
 [[redirects]]
   from = "/unsubscribe"
   to   = "/.netlify/functions/unsubscribe"
