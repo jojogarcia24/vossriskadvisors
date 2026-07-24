@@ -33,9 +33,15 @@ through one small Apps Script that lives inside your sheet.
    [`carriers-sync.gs`](./carriers-sync.gs), and **Save**.
 3. Near the top of the script, set the two config lines:
    - `SECRET` — make up a strong random string (e.g. a password-manager value).
-   - `VOSS_WEBHOOK` — leave as
-     `https://www.vossriskadvisors.com/.netlify/functions/carriers-webhook`
+   - `VOSS_WEBHOOK` —
+     `https://vossriskadvisors.com/.netlify/functions/carriers-webhook`
      (change the domain only if your site lives elsewhere).
+     **Use your site's primary domain with no redirect.** If your canonical
+     domain redirects `www` → apex (or vice-versa), a POST gets downgraded to a
+     GET and the webhook replies `405 Method not allowed`, so edits won't sync
+     back. Quick check: open the `VOSS_WEBHOOK` URL in a browser — you should see
+     `{"error":"Method not allowed"}` and the address bar should **not** change.
+     If it changes, use the domain it lands on.
 
 ### 3. Install the trigger + headers
 1. In the Apps Script toolbar, pick the function **`setupTrigger`** and click **Run**.
