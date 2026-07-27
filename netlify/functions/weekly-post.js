@@ -67,14 +67,27 @@ const slugify = (s) =>
 // Normalise a title for fuzzy duplicate comparison.
 const norm = (s) => String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 
-// On-brand category photo already shipped in /public/img. Relative path so it
-// works on any domain the site is served from.
-const catImage = (cat) => {
+// On-brand category photos in /public/img. Each category has a small pool
+// (agency-supplied blog photos + the original section photo); we pick one at
+// random per article so posts don't reuse the same shot. Relative paths so
+// they work on any domain the site is served from. To add more variety, drop
+// files in /public/img/blog and add their paths to the matching list.
+const IMAGE_POOL = {
+  auto: ["/img/blog/auto-1.jpg", "/img/auto.webp"],
+  flood: ["/img/blog/flood-1.jpg", "/img/flood.webp"],
+  landlord: ["/img/blog/landlord-1.jpg", "/img/landlord.webp"],
+  home: ["/img/blog/home-1.jpg", "/img/homeowners.webp"],
+};
+const poolFor = (cat) => {
   const c = (cat || "").toLowerCase();
-  if (c.indexOf("auto") > -1) return "/img/auto.webp";
-  if (c.indexOf("flood") > -1) return "/img/flood.webp";
-  if (c.indexOf("landlord") > -1 || c.indexOf("rental") > -1) return "/img/landlord.webp";
-  return "/img/homeowners.webp";
+  if (c.indexOf("auto") > -1) return IMAGE_POOL.auto;
+  if (c.indexOf("flood") > -1) return IMAGE_POOL.flood;
+  if (c.indexOf("landlord") > -1 || c.indexOf("rental") > -1) return IMAGE_POOL.landlord;
+  return IMAGE_POOL.home;
+};
+const pickImage = (cat) => {
+  const p = poolFor(cat);
+  return p[Math.floor(Math.random() * p.length)];
 };
 const catAlt = (cat) => {
   const c = (cat || "").toLowerCase();
@@ -87,7 +100,7 @@ const catAlt = (cat) => {
 // Insert one inline image into the body: right before the first "## " subhead
 // (i.e. just after the intro), so the reader hits a visual early.
 function withInlineImage(bodyMd, category) {
-  const img = `![${catAlt(category)}](${catImage(category)})`;
+  const img = `![${catAlt(category)}](${pickImage(category)})`;
   const idx = bodyMd.indexOf("\n## ");
   if (idx === -1) return `${bodyMd}\n\n${img}`;
   return `${bodyMd.slice(0, idx)}\n\n${img}\n${bodyMd.slice(idx)}`;
