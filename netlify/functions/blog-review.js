@@ -22,6 +22,8 @@ const mdToHtml = (md) => {
   const closeUl = () => { if (ul) { out += "</ul>"; ul = false; } };
   for (let raw of lines) {
     const ln = raw.trim();
+    const im = ln.match(/^!\[(.*?)\]\((.*?)\)$/);
+    if (im) { closeUl(); out += `<img src="${esc(im[2])}" alt="${esc(im[1])}" style="display:block;width:100%;border-radius:10px;margin:22px 0">`; continue; }
     if (ln.startsWith("## ")) { closeUl(); out += `<h2 style="font-family:Georgia,serif;color:#0C2340;margin-top:26px">${esc(ln.slice(3))}</h2>`; }
     else if (ln.startsWith("- ")) { if (!ul) { out += "<ul>"; ul = true; } out += `<li>${esc(ln.slice(2))}</li>`; }
     else if (ln === "---") { closeUl(); out += "<hr style='border:none;border-top:1px solid #eee;margin:20px 0'>"; }
