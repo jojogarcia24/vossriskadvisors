@@ -1107,6 +1107,8 @@
     function closeUl(){if(inUl){html+="</ul>";inUl=false;}}
     lines.forEach(function(ln){
       ln=ln.trim();
+      var im=ln.match(/^!\[(.*?)\]\((.*?)\)$/);
+      if(im){closeUl();html+='<img src="'+im[2]+'" alt="'+im[1]+'" loading="lazy" style="display:block;width:100%;border-radius:12px;margin:28px 0">';return;}
       if(ln.indexOf("## ")===0){closeUl();html+='<h2 class="serif dhead" style="margin-top:34px">'+ln.slice(3)+'</h2>';}
       else if(ln.indexOf("- ")===0){if(!inUl){html+='<ul class="checks" style="margin:6px 0 20px">';inUl=true;}html+='<li><i class="ti ti-check"></i>'+ln.slice(2)+'</li>';}
       else if(ln==="---"){closeUl();html+='<hr style="border:none;border-top:1px solid var(--line);margin:24px 0">';}
