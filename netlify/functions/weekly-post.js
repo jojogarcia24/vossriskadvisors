@@ -73,10 +73,10 @@ const norm = (s) => String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").tr
 // they work on any domain the site is served from. To add more variety, drop
 // files in /public/img/blog and add their paths to the matching list.
 const IMAGE_POOL = {
-  auto: ["/img/blog/auto-1.jpg", "/img/blog/auto-2.jpg", "/img/blog/auto-3.jpg", "/img/auto.webp"],
-  flood: ["/img/blog/flood-1.jpg", "/img/blog/flood-2.jpg", "/img/blog/flood-3.jpg", "/img/flood.webp"],
-  landlord: ["/img/blog/landlord-1.jpg", "/img/blog/home-1.jpg", "/img/landlord.webp"],
-  home: ["/img/blog/home-1.jpg", "/img/blog/home-2.jpg", "/img/homeowners.webp"],
+  auto: ["/img/blog/auto-1.jpg", "/img/blog/auto-2.jpg", "/img/blog/auto-3.jpg", "/img/blog/auto-4.webp", "/img/auto.webp"],
+  flood: ["/img/blog/flood-1.jpg", "/img/blog/flood-2.jpg", "/img/blog/flood-3.jpg", "/img/blog/flood-4.webp", "/img/flood.webp"],
+  landlord: ["/img/blog/landlord-1.jpg", "/img/blog/landlord-2.webp", "/img/blog/home-1.jpg", "/img/landlord.webp"],
+  home: ["/img/blog/home-1.jpg", "/img/blog/home-2.jpg", "/img/blog/home-3.webp", "/img/homeowners.webp"],
 };
 const poolFor = (cat) => {
   const c = (cat || "").toLowerCase();
