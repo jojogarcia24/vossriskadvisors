@@ -34,5 +34,5 @@ exports.handler = async (event) => {
     if (!r.ok) console.error("unsubscribe failed", await r.text());
   } catch (e) { console.error("unsubscribe error", e); }
 
-  return confirm("You're unsubscribed", "You won't receive any more newsletters from Voss Risk Advisors. You can still reach us any time at (214) 725-3348.");
+  return confirm("You're unsubscribed", "You won't receive any more newsletters from Voss Risk Advisors. You can still reach us any time at (945) 407-8370.");
 };

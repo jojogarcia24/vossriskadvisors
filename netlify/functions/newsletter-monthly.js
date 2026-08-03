@@ -24,7 +24,7 @@ const shell = (inner) => `
    </td></tr>
    <tr><td style="padding:30px 34px">${inner}</td></tr>
    <tr><td style="background:${NAVY_INK};padding:20px 34px">
-     <div style="color:${CREAM};font-size:12px;line-height:1.7"><strong>Voss Risk Advisors LLC</strong><br>13155 Noel Rd Ste 900, Dallas, TX 75240 &middot; (214) 725-3348</div>
+     <div style="color:${CREAM};font-size:12px;line-height:1.7"><strong>Voss Risk Advisors LLC</strong><br>13155 Noel Rd Ste 900, Dallas, TX 75240 &middot; (945) 407-8370</div>
      <div style="color:${MUTED};font-size:11px;margin-top:10px">You're receiving this because you subscribed at vossriskadvisors.com. <a href="{{UNSUBSCRIBE_URL}}" style="color:${GOLD}">Unsubscribe</a>.</div>
    </td></tr>
   </table>
@@ -54,7 +54,7 @@ exports.handler = async () => {
   const inner = `
     <h2 style="font-family:Georgia,serif;color:${NAVY};font-size:22px;margin:0 0 6px">This month from Voss Risk Advisors</h2>
     <p style="color:${INK};font-size:14px;line-height:1.7;margin:0 0 18px">A few quick reads to help you protect your home, auto, and property in Texas.</p>
-    ${cards || `<p style="color:${INK};font-size:14px">Have questions about your coverage? Reply any time or call (214) 725-3348.</p>`}
+    ${cards || `<p style="color:${INK};font-size:14px">Have questions about your coverage? Reply any time or call (945) 407-8370.</p>`}
     <div style="margin-top:22px"><a href="${SITE}/" style="background:${GOLD};color:${NAVY_INK};padding:12px 22px;text-decoration:none;font-size:13px;letter-spacing:.1em;text-transform:uppercase">Read more on our site</a></div>`;
 
   const subject = "Voss Risk Advisors — this month's insurance tips";

@@ -44,6 +44,12 @@
   to   = "/.netlify/functions/carriers-webhook"
   status = 200
 
+# AI carrier-matching assistant (admin)
+[[redirects]]
+  from = "/api/carrier-match"
+  to   = "/.netlify/functions/carrier-match"
+  status = 200
+
 [[redirects]]
   from = "/unsubscribe"
   to   = "/.netlify/functions/unsubscribe"

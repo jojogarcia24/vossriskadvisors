@@ -6,8 +6,8 @@
 //   SUPABASE_URL            e.g. https://xxxx.supabase.co
 //   SUPABASE_SERVICE_ROLE   the service_role key (SECRET — server only)
 //   RESEND_API_KEY          from resend.com
-//   FROM_EMAIL              e.g. info@vossriskadvisors.com  (verified domain)
-//   AGENCY_EMAIL            where lead alerts go, e.g. info@vossriskadvisors.com
+//   FROM_EMAIL              e.g. info@VossRiskAdvisors.com  (verified domain)
+//   AGENCY_EMAIL            where lead alerts go, e.g. info@VossRiskAdvisors.com
 
 const json = (statusCode, body) => ({
   statusCode,
@@ -19,7 +19,7 @@ const json = (statusCode, body) => ({
 const NAVY = "#0C2340", NAVY_INK = "#001830", GOLD = "#C09C48",
       CREAM = "#F5F0E6", PAPER = "#FBFAF7", INK = "#1C2433", MUTED = "#8A8578";
 const LOGO_URL = "https://www.vossriskadvisors.com/email-logo.png";
-const PHONE = "(214) 725-3348";
+const PHONE = "(945) 407-8370";
 const AGENCY_ADDRESS = "13155 Noel Rd Ste 900, Dallas, TX 75240";
 
 const esc = (s) =>
@@ -48,7 +48,7 @@ const shell = (inner) => `
             <div style="color:${CREAM};font-size:12px;line-height:1.7">
               <strong>Voss Risk Advisors LLC</strong><br>
               ${AGENCY_ADDRESS}<br>
-              ${PHONE} &middot; <a href="mailto:info@vossriskadvisors.com" style="color:${GOLD};text-decoration:none">info@vossriskadvisors.com</a>
+              ${PHONE} &middot; <a href="mailto:info@VossRiskAdvisors.com" style="color:${GOLD};text-decoration:none">info@VossRiskAdvisors.com</a>
             </div>
             <div style="color:${MUTED};font-size:10px;line-height:1.6;margin-top:12px">
               Licensed in Texas &middot; Personal Lines Property &amp; Casualty &middot; Mon&ndash;Fri, 9am&ndash;6pm CT
