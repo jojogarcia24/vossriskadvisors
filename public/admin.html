@@ -111,6 +111,24 @@
   .toast.show{opacity:1}
   .muted{color:var(--muted)}
   .hidden{display:none!important}
+  /* tabs */
+  .tabs{display:flex;gap:6px;border-bottom:1px solid var(--line)}
+  .tab{background:none;border:none;padding:12px 18px;font-size:15px;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-1px}
+  .tab.active{color:var(--navy);border-bottom-color:var(--gold);font-weight:bold}
+  /* assistant */
+  .switch{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--ink);text-transform:none;letter-spacing:0;margin:0}
+  .switch input{width:auto;margin:0}
+  .rec-fit{display:inline-block;font-size:11px;text-transform:uppercase;letter-spacing:.05em;padding:2px 9px;border-radius:20px;color:#fff;background:var(--gray)}
+  .fit-Strong{background:var(--green)} .fit-Possible{background:var(--amber)} .fit-Avoid{background:var(--red)}
+  .rec-item{border:1px solid var(--line);border-radius:8px;padding:14px;margin:10px 0;background:#fff}
+  .rec-item h4{font-family:Georgia,serif;color:var(--navy);margin:0 0 4px;font-size:16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .rec-why{font-size:14px;margin:6px 0;line-height:1.55}
+  .rec-caution{font-size:13px;color:#8a5a1a;background:#fdf6e9;border:1px solid #f0e2c4;border-radius:6px;padding:7px 10px;margin-top:6px}
+  .confirm-box{background:var(--cream);border:1px solid var(--line);border-radius:6px;padding:10px 12px;margin-top:10px;font-size:13px}
+  .rec-card{border:1px solid var(--line);border-left:5px solid var(--gold);border-radius:8px;padding:14px;margin:10px 0;background:#fff;cursor:pointer}
+  .rec-card h4{margin:0 0 3px;font-family:Georgia,serif;color:var(--navy);font-size:16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .rec-card .meta{font-size:12px;color:var(--muted)}
+  .mic-live{background:var(--red)!important;color:#fff!important;border-color:var(--red)!important}
   .spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;vertical-align:-2px}
   @keyframes sp{to{transform:rotate(360deg)}}
 </style>
@@ -148,7 +166,14 @@
     </div>
   </header>
 
-  <div class="wrap">
+  <div class="wrap" style="padding-top:16px">
+    <div class="tabs">
+      <button class="tab active" id="tab-carriers" onclick="showTab('carriers')">Carriers</button>
+      <button class="tab" id="tab-assistant" onclick="showTab('assistant')">✦ AI Assistant</button>
+    </div>
+  </div>
+
+  <div class="wrap" id="view-carriers">
     <div class="toolbar">
       <h1 style="font-size:26px">Carrier Appointments</h1>
       <span class="spacer" style="flex:1"></span>
@@ -197,6 +222,46 @@
       <strong style="color:var(--amber)">Pending</strong> = applied / in progress ·
       <strong style="color:var(--gray)">Not started</strong> · <strong style="color:var(--red)">Declined</strong>.
       Login passwords are stored server-side and only sent to this page after you sign in.
+    </p>
+  </div>
+
+  <!-- ============ AI ASSISTANT VIEW ============ -->
+  <div class="wrap hidden" id="view-assistant">
+    <div class="toolbar"><h1 style="font-size:26px">AI Placement Assistant</h1></div>
+
+    <div class="panel">
+      <p class="hint">Describe a client and the risk — <strong>type it, or hold the mic and talk</strong>. Claude checks it against your <strong>Approved</strong> carriers only, ranks the best fits, and explains why (plus any do-not-submit cautions).</p>
+      <div class="row2" style="margin-bottom:12px">
+        <div class="field" style="margin-bottom:0"><label>Client name (optional)</label><input id="am_client" placeholder="e.g. The Ramirez family"></div>
+        <div class="field" style="margin-bottom:0"><label>Options</label>
+          <label class="switch"><input type="checkbox" id="am_tts"> Read the recommendation aloud</label>
+        </div>
+      </div>
+      <div class="field">
+        <label>The client / risk</label>
+        <textarea id="am_scenario" rows="5" placeholder="e.g. New client in Plano, TX. Homeowners on a 2015 build, ~$480K replacement cost, architectural roof, one small water claim 2 years ago. Also wants auto for two clean drivers. Prefers to bundle."></textarea>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <button class="btn gold" id="am_go" onclick="runMatch()">Find best fit</button>
+        <button class="btn ghost" id="am_mic" onmousedown="micDown(event)" onmouseup="micUp(event)" onmouseleave="micUp(event)" ontouchstart="micDown(event)" ontouchend="micUp(event)">🎤 Hold to talk</button>
+        <span id="am_micstate" class="muted" style="font-size:13px"></span>
+        <span class="spacer" style="flex:1"></span>
+        <button class="btn ghost sm" onclick="clearScenario()">Clear</button>
+      </div>
+      <div id="am_result"></div>
+    </div>
+
+    <div class="panel">
+      <div style="display:flex;align-items:center;gap:10px">
+        <h2 style="flex:1">Saved recommendations</h2>
+        <button class="btn ghost sm" id="recToggle" onclick="toggleAllRecs()">View all</button>
+      </div>
+      <p class="hint">Every recommendation is saved here — showing the latest 3. Click a card to expand.</p>
+      <div id="recList"></div>
+    </div>
+
+    <p class="muted" style="margin:10px 0 50px;font-size:13px">
+      The assistant only sees carriers marked <strong style="color:var(--green)">Approved</strong>. It won't quote prices — it points you to the right market and flags cautions. Always confirm eligibility with the carrier.
     </p>
   </div>
 </div>
@@ -337,6 +402,7 @@ async function verifyAndLoad(){
   buildCarrierSelect();
   render();
   loadProposals();
+  loadRecs();
 }
 
 // ---------- helpers ----------
@@ -589,6 +655,132 @@ async function loadProposals(){
       renderProposal(p, null, "prop_"+p.id, false);
     });
   }catch(e){ /* silent */ }
+}
+
+// ============ TABS ============
+function showTab(t){
+  document.getElementById('view-carriers').classList.toggle('hidden', t!=='carriers');
+  document.getElementById('view-assistant').classList.toggle('hidden', t!=='assistant');
+  document.getElementById('tab-carriers').classList.toggle('active', t==='carriers');
+  document.getElementById('tab-assistant').classList.toggle('active', t==='assistant');
+  if(t==='assistant') loadRecs();
+}
+
+// ============ AI ASSISTANT ============
+const MATCH_API = "/.netlify/functions/carrier-match";
+async function matchApi(action, payload){
+  const res = await fetch(MATCH_API, {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action,password:PW,...(payload||{})})});
+  const data = await res.json().catch(()=>({error:"Bad response"}));
+  if(res.status===401){ logout(); throw new Error("Wrong password"); }
+  if(!res.ok) throw new Error(data.error||("Error "+res.status));
+  return data;
+}
+function clearScenario(){ document.getElementById('am_scenario').value=''; document.getElementById('am_result').innerHTML=''; }
+async function runMatch(){
+  const scenario=document.getElementById('am_scenario').value.trim();
+  const client_name=document.getElementById('am_client').value.trim();
+  if(!scenario){ toast("Describe the client / risk first."); return; }
+  const btn=document.getElementById('am_go'); btn.disabled=true; btn.innerHTML='<span class="spin"></span> Thinking…';
+  document.getElementById('am_result').innerHTML='';
+  try{
+    const data=await matchApi("match",{scenario,client_name});
+    renderRecommendation(data.recommendation, data.saved);
+    if(document.getElementById('am_tts').checked) speak(data.recommendation);
+    loadRecs();
+  }catch(e){ toast(e.message); }
+  finally{ btn.disabled=false; btn.textContent="Find best fit"; }
+}
+function recItemsHtml(list){
+  return (list||[]).map(function(x){
+    var fit=x.fit||'Possible';
+    return '<div class="rec-item"><h4>'+esc(x.carrier)+' <span class="rec-fit fit-'+esc(fit)+'">'+esc(fit)+'</span></h4>'+
+      (x.why?'<div class="rec-why">'+esc(x.why)+'</div>':'')+
+      (x.cautions?'<div class="rec-caution">⚠ '+esc(x.cautions)+'</div>':'')+'</div>';
+  }).join("");
+}
+function renderRecommendation(r, saved){
+  if(!r) return;
+  var items=recItemsHtml(r.recommendations);
+  if(!items) items='<p class="muted">'+esc(r.note||"No matching approved carriers yet.")+'</p>';
+  var confirm=(r.confirm&&r.confirm.length)?'<div class="confirm-box"><strong>Confirm with the client:</strong><ul style="margin:6px 0 0;padding-left:18px">'+r.confirm.map(function(c){return '<li>'+esc(c)+'</li>';}).join("")+'</ul></div>':'';
+  document.getElementById('am_result').innerHTML=
+    '<div class="panel" style="margin-top:16px;border-left:5px solid var(--green)">'+
+    (r.top_carrier?'<div style="color:var(--gold);font-size:11px;letter-spacing:.14em;text-transform:uppercase">Top pick</div><h3 class="serif" style="margin:2px 0 6px">'+esc(r.top_carrier)+'</h3>':'')+
+    (r.summary?'<p style="margin:0 0 8px">'+esc(r.summary)+'</p>':'')+
+    items+confirm+
+    (saved?'<p class="muted" style="font-size:12px;margin-top:10px">Saved to recommendations ✓</p>':'')+
+    '</div>';
+}
+function speak(r){
+  try{
+    if(!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    var t=(r.top_carrier?('Top pick: '+r.top_carrier+'. '):'')+(r.summary||'');
+    (r.recommendations||[]).slice(0,3).forEach(function(x){ t+=' '+x.carrier+', '+(x.fit||'')+' fit. '+(x.why||''); });
+    var u=new SpeechSynthesisUtterance(t); u.rate=1; u.pitch=1;
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+// ---------- voice: push-to-talk (hold the mic, talk, release) ----------
+var _rec=null,_recBase="";
+function micDown(e){
+  if(e&&e.preventDefault)e.preventDefault();
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){ toast("Voice input needs Chrome, Edge, or Safari."); return; }
+  var ta=document.getElementById('am_scenario'); _recBase=ta.value?ta.value.replace(/\s+$/,'')+' ':'';
+  _rec=new SR(); _rec.lang='en-US'; _rec.continuous=true; _rec.interimResults=true;
+  _rec.onresult=function(ev){
+    var s=''; for(var i=0;i<ev.results.length;i++){ s+=ev.results[i][0].transcript; }
+    ta.value=_recBase+s;
+  };
+  _rec.onerror=function(){};
+  try{
+    _rec.start();
+    var m=document.getElementById('am_mic'); m.classList.add('mic-live'); m.textContent='● Listening — release to stop';
+    document.getElementById('am_micstate').textContent='Listening…';
+  }catch(err){}
+}
+function micUp(e){
+  if(e&&e.preventDefault)e.preventDefault();
+  if(_rec){ try{_rec.stop();}catch(err){} _rec=null; }
+  var m=document.getElementById('am_mic'); if(m){ m.classList.remove('mic-live'); m.textContent='🎤 Hold to talk'; }
+  var st=document.getElementById('am_micstate'); if(st) st.textContent='';
+}
+
+// ---------- recommendations history ----------
+var _recs=[], _recsExpanded=false;
+async function loadRecs(){
+  if(!PW) return;
+  try{ var data=await matchApi("list_recs"); _recs=data.recommendations||[]; renderRecs(); }catch(e){}
+}
+function toggleAllRecs(){ _recsExpanded=!_recsExpanded; renderRecs(); }
+function renderRecs(){
+  var box=document.getElementById('recList'); if(!box) return;
+  var tgl=document.getElementById('recToggle');
+  if(!_recs.length){ box.innerHTML='<p class="muted">No saved recommendations yet — run one above.</p>'; if(tgl)tgl.style.display='none'; return; }
+  if(tgl){ tgl.style.display=_recs.length>3?'':'none'; tgl.textContent=_recsExpanded?'Show latest 3':('View all ('+_recs.length+')'); }
+  var list=_recsExpanded?_recs:_recs.slice(0,3);
+  box.innerHTML=list.map(function(r){
+    var d=new Date(r.created_at); var ds=isNaN(d.getTime())?'':d.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'});
+    return '<div class="rec-card" onclick="toggleRecCard(this)">'+
+      '<h4>'+esc(r.top_carrier||'—')+' <span class="rec-fit" style="background:var(--navy)">'+esc(r.client_name||'Client')+'</span></h4>'+
+      '<div class="meta">'+ds+'</div>'+
+      '<p style="font-size:14px;margin:6px 0 0">'+esc(r.summary||'')+'</p>'+
+      '<div class="rec-detail hidden">'+recDetailHtml(r)+'</div>'+
+    '</div>';
+  }).join("");
+}
+function recDetailHtml(r){
+  return '<div style="margin-top:8px">'+
+    '<div class="muted" style="font-size:12px;margin-bottom:6px"><strong>What you asked:</strong> '+esc(r.scenario||'')+'</div>'+
+    recItemsHtml(r.recommendations)+
+    '<button class="btn ghost sm" style="margin-top:8px" onclick="event.stopPropagation();deleteRec(\''+r.id+'\')">Delete</button></div>';
+}
+function toggleRecCard(el){ var d=el.querySelector('.rec-detail'); if(d) d.classList.toggle('hidden'); }
+async function deleteRec(id){
+  if(!confirm('Delete this saved recommendation?')) return;
+  try{ await matchApi("delete_rec",{id}); _recs=_recs.filter(function(r){return r.id!==id;}); renderRecs(); toast('Deleted.'); }catch(e){ toast(e.message); }
 }
 </script>
 </body>
