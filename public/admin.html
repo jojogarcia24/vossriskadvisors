@@ -290,8 +290,9 @@
           <select id="tu_role"><option value="agent">Agent</option><option value="owner">Owner (full access + manage team)</option></select>
         </div>
       </div>
-      <button class="btn gold" id="tu_add" onclick="addUser()">Add agent</button>
-      <p class="muted" style="font-size:12px;margin-top:8px">Give them the email + temporary password you set here. They can change it after signing in (under Team → Change my password).</p>
+      <label class="switch" style="margin:0 0 12px"><input type="checkbox" id="tu_email_send" checked> Email them their login + temporary password</label>
+      <div><button class="btn gold" id="tu_add" onclick="addUser()">Add agent</button></div>
+      <p class="muted" style="font-size:12px;margin-top:8px">With the box checked, they get a welcome email with the login link and temporary password. They can change it after signing in (Team → Change my password).</p>
     </div>
 
     <div class="panel">
@@ -881,11 +882,14 @@ async function addUser(){
   var email=document.getElementById('tu_email').value.trim();
   var password=document.getElementById('tu_pass').value;
   var role=document.getElementById('tu_role').value;
+  var sendEmail=document.getElementById('tu_email_send').checked;
   if(!email||!password){ toast("Email and a temporary password are required."); return; }
   var btn=document.getElementById('tu_add'); btn.disabled=true; btn.innerHTML='<span class="spin"></span> Adding';
   try{
-    await authApi("add_user",{name,email,password,role});
-    toast("Agent added ✓ — give them the email + password.");
+    var r=await authApi("add_user",{name,email,password,role,sendEmail});
+    if(sendEmail && r.emailed) toast("Agent added ✓ — login emailed to "+email);
+    else if(sendEmail) toast("Agent added ✓ — but the email didn't send; share the password manually.");
+    else toast("Agent added ✓ — give them the email + password.");
     document.getElementById('tu_name').value=''; document.getElementById('tu_email').value=''; document.getElementById('tu_pass').value='';
     loadUsers();
   }catch(e){ toast(e.message); }
