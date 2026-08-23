@@ -141,7 +141,11 @@
   <h1>Carrier Admin</h1>
   <p>Voss Risk Advisors — appointment tracker</p>
   <div class="field">
-    <label>Admin password</label>
+    <label>Email</label>
+    <input id="em" type="email" placeholder="you@vossriskadvisors.com" autocomplete="username">
+  </div>
+  <div class="field">
+    <label>Password</label>
     <input id="pw" type="password" placeholder="Enter password" autocomplete="current-password">
   </div>
   <button class="btn gold" style="width:100%" onclick="login()">Sign in</button>
@@ -158,7 +162,8 @@
           <div class="sub">Risk Advisors</div>
         </div>
       </div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <span id="whoami" style="font-size:12px;color:var(--cream);opacity:.85"></span>
         <button class="btn ghost sm" onclick="exportCsv()">⬇ Export CSV</button>
         <button class="btn ghost sm" onclick="syncGoogle()" id="gsyncBtn">⟳ Sync to Google</button>
         <button class="btn ghost sm" onclick="logout()">Sign out</button>
@@ -170,6 +175,7 @@
     <div class="tabs">
       <button class="tab active" id="tab-carriers" onclick="showTab('carriers')">Carriers</button>
       <button class="tab" id="tab-assistant" onclick="showTab('assistant')">✦ AI Assistant</button>
+      <button class="tab hidden" id="tab-team" onclick="showTab('team')">Team</button>
     </div>
   </div>
 
@@ -263,6 +269,43 @@
     <p class="muted" style="margin:10px 0 50px;font-size:13px">
       The assistant only sees carriers marked <strong style="color:var(--green)">Approved</strong>. It won't quote prices — it points you to the right market and flags cautions. Always confirm eligibility with the carrier.
     </p>
+  </div>
+
+  <!-- ============ TEAM VIEW ============ -->
+  <div class="wrap hidden" id="view-team">
+    <div class="toolbar"><h1 style="font-size:26px">Team</h1></div>
+
+    <div class="panel">
+      <h2>Add an agent</h2>
+      <p class="hint">Create a login for someone on your team — they sign in with their own email and password. <strong>Owners</strong> can manage the team and everything else; <strong>Agents</strong> can use the carriers and AI assistant but can't manage people.</p>
+      <div class="row2">
+        <div class="field"><label>Name</label><input id="tu_name" placeholder="Agent name"></div>
+        <div class="field"><label>Email</label><input id="tu_email" type="email" placeholder="agent@vossriskadvisors.com"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Temporary password</label>
+          <div class="pwwrap"><input id="tu_pass" type="text" placeholder="At least 6 characters"><button class="btn ghost sm" type="button" onclick="genPass()">Generate</button></div>
+        </div>
+        <div class="field"><label>Role</label>
+          <select id="tu_role"><option value="agent">Agent</option><option value="owner">Owner (full access + manage team)</option></select>
+        </div>
+      </div>
+      <button class="btn gold" id="tu_add" onclick="addUser()">Add agent</button>
+      <p class="muted" style="font-size:12px;margin-top:8px">Give them the email + temporary password you set here. They can change it after signing in (under Team → Change my password).</p>
+    </div>
+
+    <div class="panel">
+      <h2>People with access</h2>
+      <div id="userList"></div>
+    </div>
+
+    <div class="panel">
+      <h2>Change my password</h2>
+      <div class="row2">
+        <div class="field"><label>New password</label><input id="my_pass" type="password" placeholder="At least 6 characters"></div>
+        <div class="field" style="display:flex;align-items:flex-end;margin-bottom:16px"><button class="btn gold" onclick="changeMyPassword()">Update my password</button></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -362,33 +405,54 @@ const STATUSES = [
   {key:"declined", label:"Declined"},
 ];
 const TEXT_FIELDS = ["appetite","requirements","do_not_submit","helpful_hints"];
-let PW = sessionStorage.getItem("voss_admin_pw") || "";
+const AUTH_API = "/.netlify/functions/admin-auth";
+let TOKEN = sessionStorage.getItem("voss_admin_token") || "";
+let USER = null; try{ USER = JSON.parse(sessionStorage.getItem("voss_admin_user")||"null"); }catch(e){}
 let carriers = [];
 let activeStatus = "all";
 
 // ---------- auth ----------
 document.getElementById("pw").addEventListener("keydown", e => { if(e.key==="Enter") login(); });
-if (PW) verifyAndLoad();
+document.getElementById("em").addEventListener("keydown", e => { if(e.key==="Enter") login(); });
+if (TOKEN) verifyAndLoad().catch(()=>logout());
 
 async function api(action, payload){
   const res = await fetch(API, {
     method:"POST", headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({ action, password: PW, ...(payload||{}) })
+    body: JSON.stringify({ action, token: TOKEN, ...(payload||{}) })
   });
   const data = await res.json().catch(()=>({error:"Bad response"}));
-  if (res.status === 401){ logout(); throw new Error("Wrong password"); }
+  if (res.status === 401){ logout(); throw new Error("Please sign in again."); }
+  if (!res.ok) throw new Error(data.error || ("Error "+res.status));
+  return data;
+}
+async function authApi(action, payload){
+  const res = await fetch(AUTH_API, {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ action, token: TOKEN, ...(payload||{}) })
+  });
+  const data = await res.json().catch(()=>({error:"Bad response"}));
+  if (res.status === 401 && action!=="login"){ logout(); throw new Error("Please sign in again."); }
   if (!res.ok) throw new Error(data.error || ("Error "+res.status));
   return data;
 }
 
 async function login(){
-  PW = document.getElementById("pw").value;
+  const email = document.getElementById("em").value.trim();
+  const password = document.getElementById("pw").value;
   document.getElementById("loginErr").textContent = "";
-  try { await verifyAndLoad(); sessionStorage.setItem("voss_admin_pw", PW); }
+  try {
+    const data = await authApi("login", { email, password });
+    TOKEN = data.token; USER = data.user || null;
+    sessionStorage.setItem("voss_admin_token", TOKEN);
+    sessionStorage.setItem("voss_admin_user", JSON.stringify(USER));
+    await verifyAndLoad();
+  }
   catch(e){ document.getElementById("loginErr").textContent = e.message || "Sign-in failed"; }
 }
 function logout(){
-  sessionStorage.removeItem("voss_admin_pw"); PW="";
+  sessionStorage.removeItem("voss_admin_token"); sessionStorage.removeItem("voss_admin_user");
+  TOKEN=""; USER=null;
   document.getElementById("app").classList.add("hidden");
   document.getElementById("login").style.display="block";
   document.getElementById("pw").value="";
@@ -398,6 +462,8 @@ async function verifyAndLoad(){
   carriers = data.carriers || [];
   document.getElementById("login").style.display="none";
   document.getElementById("app").classList.remove("hidden");
+  if(USER){ document.getElementById("whoami").textContent = (USER.name||USER.email||"") + (USER.role==="owner"?" · Owner":" · Agent"); }
+  document.getElementById("tab-team").classList.toggle("hidden", !(USER && USER.role==="owner"));
   buildLineFilter();
   buildCarrierSelect();
   render();
@@ -661,15 +727,18 @@ async function loadProposals(){
 function showTab(t){
   document.getElementById('view-carriers').classList.toggle('hidden', t!=='carriers');
   document.getElementById('view-assistant').classList.toggle('hidden', t!=='assistant');
+  document.getElementById('view-team').classList.toggle('hidden', t!=='team');
   document.getElementById('tab-carriers').classList.toggle('active', t==='carriers');
   document.getElementById('tab-assistant').classList.toggle('active', t==='assistant');
+  document.getElementById('tab-team').classList.toggle('active', t==='team');
   if(t==='assistant') loadRecs();
+  if(t==='team') loadUsers();
 }
 
 // ============ AI ASSISTANT ============
 const MATCH_API = "/.netlify/functions/carrier-match";
 async function matchApi(action, payload){
-  const res = await fetch(MATCH_API, {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action,password:PW,...(payload||{})})});
+  const res = await fetch(MATCH_API, {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action,token:TOKEN,...(payload||{})})});
   const data = await res.json().catch(()=>({error:"Bad response"}));
   if(res.status===401){ logout(); throw new Error("Wrong password"); }
   if(!res.ok) throw new Error(data.error||("Error "+res.status));
@@ -781,6 +850,64 @@ function toggleRecCard(el){ var d=el.querySelector('.rec-detail'); if(d) d.class
 async function deleteRec(id){
   if(!confirm('Delete this saved recommendation?')) return;
   try{ await matchApi("delete_rec",{id}); _recs=_recs.filter(function(r){return r.id!==id;}); renderRecs(); toast('Deleted.'); }catch(e){ toast(e.message); }
+}
+
+// ============ TEAM (owner) ============
+function genPass(){
+  var c="ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
+  var s=""; for(var i=0;i<10;i++) s+=c[Math.floor(Math.random()*c.length)];
+  document.getElementById('tu_pass').value=s;
+}
+async function loadUsers(){
+  if(!USER||USER.role!=='owner') return;
+  try{ var data=await authApi("list_users"); renderUsers(data.users||[]); }catch(e){ toast(e.message); }
+}
+function renderUsers(users){
+  var box=document.getElementById('userList'); if(!box) return;
+  if(!users.length){ box.innerHTML='<p class="muted">No accounts yet.</p>'; return; }
+  box.innerHTML=users.map(function(u){
+    var me=(USER&&USER.id&&USER.id===u.id);
+    return '<div class="rec-item" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+
+      '<div style="flex:1;min-width:200px"><strong>'+esc(u.name||u.email)+'</strong>'+(me?' <span class="rec-fit" style="background:var(--navy)">you</span>':'')+
+      '<div class="muted" style="font-size:12px">'+esc(u.email)+' · '+esc(u.role)+(u.active?'':' · <span style="color:var(--red)">inactive</span>')+'</div></div>'+
+      (me?'':('<button class="btn ghost sm" onclick="resetUserPw(\''+u.id+'\')">Reset password</button>'+
+             '<button class="btn ghost sm" onclick="toggleActive(\''+u.id+'\','+(!u.active)+')">'+(u.active?'Deactivate':'Activate')+'</button>'+
+             '<button class="btn danger sm" onclick="removeUser(\''+u.id+'\')">Delete</button>'))+
+      '</div>';
+  }).join("");
+}
+async function addUser(){
+  var name=document.getElementById('tu_name').value.trim();
+  var email=document.getElementById('tu_email').value.trim();
+  var password=document.getElementById('tu_pass').value;
+  var role=document.getElementById('tu_role').value;
+  if(!email||!password){ toast("Email and a temporary password are required."); return; }
+  var btn=document.getElementById('tu_add'); btn.disabled=true; btn.innerHTML='<span class="spin"></span> Adding';
+  try{
+    await authApi("add_user",{name,email,password,role});
+    toast("Agent added ✓ — give them the email + password.");
+    document.getElementById('tu_name').value=''; document.getElementById('tu_email').value=''; document.getElementById('tu_pass').value='';
+    loadUsers();
+  }catch(e){ toast(e.message); }
+  finally{ btn.disabled=false; btn.textContent="Add agent"; }
+}
+async function toggleActive(id,active){
+  try{ await authApi("set_active",{id,active}); loadUsers(); }catch(e){ toast(e.message); }
+}
+async function removeUser(id){
+  if(!confirm("Delete this account? They will lose access immediately.")) return;
+  try{ await authApi("delete_user",{id}); loadUsers(); toast("Deleted."); }catch(e){ toast(e.message); }
+}
+async function resetUserPw(id){
+  var p=prompt("New password for this agent (at least 6 characters):");
+  if(!p) return;
+  try{ await authApi("set_password",{id:id,password:p}); toast("Password reset ✓ — share the new one with them."); }catch(e){ toast(e.message); }
+}
+async function changeMyPassword(){
+  var p=document.getElementById('my_pass').value;
+  if(!p||p.length<6){ toast("Enter at least 6 characters."); return; }
+  if(!USER||!USER.id){ toast("You're signed in with the master password. Add yourself as an Owner account above, then sign in with it to manage your own password."); return; }
+  try{ await authApi("set_password",{id:USER.id,password:p}); document.getElementById('my_pass').value=''; toast("Your password is updated ✓"); }catch(e){ toast(e.message); }
 }
 </script>
 </body>

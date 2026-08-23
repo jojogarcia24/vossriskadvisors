@@ -50,6 +50,12 @@
   to   = "/.netlify/functions/carrier-match"
   status = 200
 
+# Admin login + agent management
+[[redirects]]
+  from = "/api/admin-auth"
+  to   = "/.netlify/functions/admin-auth"
+  status = 200
+
 [[redirects]]
   from = "/unsubscribe"
   to   = "/.netlify/functions/unsubscribe"

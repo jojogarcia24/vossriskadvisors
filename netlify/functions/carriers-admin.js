@@ -25,7 +25,7 @@
 const { randomUUID } = require("crypto");
 const {
   REVIEWABLE_FIELDS, ARRAY_FIELDS, VALID_STATUS,
-  json, sbSelect, sbWrite, checkAuth, slugify, toCsv, pushToGoogle,
+  json, sbSelect, sbWrite, authOk, slugify, toCsv, pushToGoogle,
 } = require("./lib/carriers");
 
 const MODEL = process.env.ANTHROPIC_MODEL || "claude-sonnet-4-5";
@@ -58,7 +58,7 @@ exports.handler = async (event) => {
   try { data = JSON.parse(event.body || "{}"); }
   catch { return json(400, { error: "Invalid JSON" }); }
 
-  if (!checkAuth(data.password)) return json(401, { error: "Wrong password." });
+  if (!authOk(data)) return json(401, { error: "Please sign in again." });
 
   const action = data.action;
   try {
