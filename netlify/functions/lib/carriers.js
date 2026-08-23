@@ -88,15 +88,63 @@ async function sbWrite(method, path, body) {
   try { return JSON.parse(text); } catch { return []; }
 }
 
-// Constant-ish-time admin password check.
+// Constant-ish-time master-password check (legacy / break-glass).
+// Trimmed on both sides so a stray space/newline in the env var doesn't lock
+// everyone out — a common cause of "wrong password".
 function checkAuth(password) {
-  const expected = process.env.ADMIN_PASSWORD || "";
+  const expected = (process.env.ADMIN_PASSWORD || "").trim();
   if (!expected) return false;
-  const a = String(password || "");
+  const a = String(password || "").trim();
   if (a.length !== expected.length) return false;
   let diff = 0;
   for (let i = 0; i < expected.length; i++) diff |= a.charCodeAt(i) ^ expected.charCodeAt(i);
   return diff === 0;
+}
+
+// ---- Multi-user auth (email + password accounts) ----
+const crypto = require("crypto");
+
+// Signing key for session tokens. SERVICE_ROLE is always set, so tokens work
+// even if ADMIN_PASSWORD is missing/misconfigured.
+const tokenSecret = () => process.env.SUPABASE_SERVICE_ROLE || process.env.ADMIN_PASSWORD || "voss-fallback";
+
+function hashPassword(password, salt) {
+  salt = salt || crypto.randomBytes(16).toString("hex");
+  const hash = crypto.scryptSync(String(password), salt, 32).toString("hex");
+  return { salt, hash };
+}
+function verifyPassword(password, salt, hash) {
+  if (!salt || !hash) return false;
+  try {
+    const h = crypto.scryptSync(String(password), salt, 32).toString("hex");
+    return crypto.timingSafeEqual(Buffer.from(h, "hex"), Buffer.from(hash, "hex"));
+  } catch { return false; }
+}
+function makeToken(payload) {
+  const body = Buffer.from(JSON.stringify({ ...payload, exp: Date.now() + 1000 * 60 * 60 * 24 * 30 })).toString("base64url");
+  const sig = crypto.createHmac("sha256", tokenSecret()).update(body).digest("base64url");
+  return body + "." + sig;
+}
+function verifyToken(token) {
+  try {
+    const [body, sig] = String(token || "").split(".");
+    if (!body || !sig) return null;
+    const expect = crypto.createHmac("sha256", tokenSecret()).update(body).digest("base64url");
+    if (sig.length !== expect.length || !crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expect))) return null;
+    const p = JSON.parse(Buffer.from(body, "base64url").toString());
+    if (p.exp && Date.now() > p.exp) return null;
+    return p;
+  } catch { return null; }
+}
+// Accepts a session token, or the legacy master password. Returns the identity
+// ({email, role, ...}) or null.
+function authOk(data) {
+  if (data && data.token) {
+    const p = verifyToken(data.token);
+    if (p) return p;
+  }
+  if (data && data.password && checkAuth(data.password)) return { email: "owner", role: "owner", name: "Owner" };
+  return null;
 }
 
 const slugify = (s) =>
@@ -154,6 +202,11 @@ module.exports = {
   sbUrl,
   sbHeaders,
   checkAuth,
+  hashPassword,
+  verifyPassword,
+  makeToken,
+  verifyToken,
+  authOk,
   slugify,
   toCsv,
   pushToGoogle,

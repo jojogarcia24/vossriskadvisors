@@ -12,7 +12,7 @@
 // Env: SUPABASE_URL, SUPABASE_SERVICE_ROLE, ADMIN_PASSWORD, ANTHROPIC_API_KEY,
 //      ANTHROPIC_MODEL (optional)
 
-const { json, sbSelect, sbWrite, checkAuth } = require("./lib/carriers");
+const { json, sbSelect, sbWrite, authOk } = require("./lib/carriers");
 
 const MODEL = process.env.ANTHROPIC_MODEL || "claude-sonnet-4-5";
 
@@ -31,7 +31,7 @@ exports.handler = async (event) => {
   try { data = JSON.parse(event.body || "{}"); }
   catch { return json(400, { error: "Invalid JSON" }); }
 
-  if (!checkAuth(data.password)) return json(401, { error: "Wrong password." });
+  if (!authOk(data)) return json(401, { error: "Please sign in again." });
 
   try {
     if (data.action === "list_recs") {

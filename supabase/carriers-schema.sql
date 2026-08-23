@@ -77,3 +77,37 @@ create index if not exists proposals_status_idx  on public.carrier_change_propos
 alter table public.carriers                  enable row level security;
 alter table public.carrier_change_proposals  enable row level security;
 -- (No policies for anon/authenticated = no access. Service role bypasses RLS.)
+
+-- ============================================================
+-- Added later: AI recommendations + multi-user admin auth
+-- ============================================================
+
+-- ---------- AI PLACEMENT RECOMMENDATIONS ----------
+create table if not exists public.carrier_recommendations (
+  id              uuid primary key default gen_random_uuid(),
+  created_at      timestamptz not null default now(),
+  client_name     text,
+  scenario        text not null,
+  summary         text,
+  top_carrier     text,
+  recommendations jsonb not null default '[]'::jsonb,
+  transcript      jsonb
+);
+create index if not exists carrier_recs_created_idx on public.carrier_recommendations (created_at desc);
+alter table public.carrier_recommendations enable row level security;
+
+-- ---------- ADMIN USERS (email + password logins) ----------
+create table if not exists public.admin_users (
+  id          uuid primary key default gen_random_uuid(),
+  created_at  timestamptz not null default now(),
+  email       text unique not null,
+  name        text,
+  role        text not null default 'agent',   -- owner | agent
+  active      boolean not null default true,
+  pass_salt   text not null,
+  pass_hash   text not null,                    -- scrypt(password, salt), hex
+  created_by  text
+);
+alter table public.admin_users enable row level security;
+-- No public policies on either table: only the service role (behind the
+-- password-protected functions) can read/write.
