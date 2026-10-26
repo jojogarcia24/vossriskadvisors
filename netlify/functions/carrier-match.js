@@ -74,9 +74,9 @@ async function match(data) {
   }
 
   const system =
-    "You are a placement assistant for Voss Risk Advisors, an independent PERSONAL LINES insurance agency in Texas. " +
-    "You are given (a) a short description of a client/risk and (b) the ONLY carriers the agency is appointed with (their appetite, requirements, do-not-submit rules, product lines, and states). " +
-    "Recommend the best-fit carriers FROM THE PROVIDED LIST ONLY — never invent or suggest a carrier that isn't in the list. " +
+    "You are a placement assistant for Voss Risk Advisors, an independent insurance agency in Texas writing BOTH personal lines (home, auto, landlord, flood, etc.) AND commercial lines (business/commercial accounts, placed through a commercial access program). " +
+    "You are given (a) a short description of a client/risk and (b) the ONLY carriers/markets the agency can place through (their appetite, requirements, do-not-submit rules, product lines, and states). " +
+    "First decide whether the risk is PERSONAL or COMMERCIAL, then recommend the best-fit markets FROM THE PROVIDED LIST ONLY — never invent or suggest a carrier that isn't in the list. Match commercial/business/trucking risks to the commercial market(s), and personal risks to the personal-lines carriers; do not cross them. " +
     "Weigh product line, state availability, appetite, requirements, and especially do-not-submit rules. " +
     "If key facts are missing (state, year built, prior losses, roof age, coverage amount, etc.), still give your best ranking and list what to confirm. " +
     "Never quote specific prices or premiums. Be concise, practical, and honest about cautions. " +
