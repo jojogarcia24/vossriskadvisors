@@ -84,6 +84,18 @@ exports.handler = async (event) => {
   const address  = (data.address || "").trim();
   const message  = (data.message || "").trim();
 
+  // Waitlist signups (Life / Disability / Health "Coming soon" pages) come
+  // through this same endpoint with a coverage_type ending in "_waitlist".
+  // They are NOT quotes — we aren't licensed for those lines yet — so they get
+  // waitlist-appropriate emails and are tagged source="waitlist".
+  const isWaitlist = /_waitlist$/.test(coverage);
+  const WL_LABELS = {
+    life_waitlist: "life insurance",
+    disability_waitlist: "disability income",
+    health_waitlist: "Marketplace (ACA) health",
+  };
+  const wlLabel = WL_LABELS[coverage] || "this coverage";
+
   // basic validation
   if (!first || !last || !email) return json(400, { error: "Name and email are required." });
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return json(400, { error: "Enter a valid email." });
@@ -100,7 +112,7 @@ exports.handler = async (event) => {
         Authorization: `Bearer ${SUPABASE_SERVICE_ROLE}`,
         Prefer: "return=minimal",
       },
-      body: JSON.stringify({ first_name: first, last_name: last, email, phone, coverage_type: coverage, address, message, source: "website" }),
+      body: JSON.stringify({ first_name: first, last_name: last, email, phone, coverage_type: coverage, address, message, source: isWaitlist ? "waitlist" : "website" }),
     });
     if (!r.ok) console.error("Supabase insert failed:", await r.text());
   } catch (e) { console.error("Supabase error:", e); }
@@ -119,19 +131,31 @@ exports.handler = async (event) => {
            <td style="padding:7px 0;color:${INK};font-size:14px">${esc(val).replace(/\n/g, "<br>")}</td></tr>`
     : "";
   const agencyInner = `
-    <h2 style="font-family:Georgia,serif;color:${NAVY};font-size:22px;margin:0 0 6px">New quote request</h2>
-    <p style="color:${GOLD};font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin:0 0 18px">Website lead</p>
+    <h2 style="font-family:Georgia,serif;color:${NAVY};font-size:22px;margin:0 0 6px">${isWaitlist ? "New waitlist signup" : "New quote request"}</h2>
+    <p style="color:${GOLD};font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin:0 0 18px">${isWaitlist ? esc(wlLabel) + " &middot; coming soon" : "Website lead"}</p>
     <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;border-top:1px solid #eee">
       ${row("Name", `${first} ${last}`)}
       ${row("Email", email)}
       ${row("Phone", phone || "—")}
-      ${row("Coverage", coverage || "—")}
+      ${row(isWaitlist ? "Interest" : "Coverage", isWaitlist ? wlLabel : (coverage || "—"))}
       ${row("Address", address)}
       ${row("Details", message)}
     </table>`;
 
   // ----- Client confirmation (branded) -----
-  const clientInner = `
+  const clientInner = isWaitlist ? `
+    <h2 style="font-family:Georgia,serif;color:${NAVY};font-size:23px;margin:0 0 14px">Thanks, ${esc(first)} — you're on the list.</h2>
+    <p style="color:${INK};font-size:15px;line-height:1.7;margin:0 0 16px">
+      We'll reach out the moment <strong>${esc(wlLabel)}</strong> is available at Voss Risk Advisors. There's nothing more you need to do right now — we just wanted to confirm we have you.
+    </p>
+    ${coverage === "health_waitlist" ? `
+    <p style="color:${INK};font-size:15px;line-height:1.7;margin:0 0 16px">
+      Need health coverage before we're ready? You can enroll directly at
+      <a href="https://www.healthcare.gov" style="color:${NAVY}">HealthCare.gov</a>. Open enrollment for 2027 runs Nov 1 – Jan 15.
+    </p>` : ""}
+    <p style="color:${INK};font-size:15px;line-height:1.7;margin:0 0 6px">
+      Questions in the meantime? Call us at <strong>${PHONE}</strong>.
+    </p>` : `
     <h2 style="font-family:Georgia,serif;color:${NAVY};font-size:23px;margin:0 0 14px">Thanks, ${esc(first)} — we've got your request.</h2>
     <p style="color:${INK};font-size:15px;line-height:1.7;margin:0 0 16px">
       A licensed advisor at Voss Risk Advisors will reach out within <strong>one business day</strong> to shop your
