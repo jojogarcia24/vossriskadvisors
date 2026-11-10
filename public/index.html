@@ -132,6 +132,9 @@
   .cov p{color:var(--muted);font-size:14px;font-weight:300;line-height:1.75}
   .cov.soon{background:var(--paper)}
   .cov.soon .badge{display:inline-block;margin-top:16px;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold);padding:4px 10px}
+  .nsoon{display:inline-block;font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold);border-radius:3px;padding:1px 5px;margin-left:6px;vertical-align:middle}
+  .wl-check{display:flex;gap:9px;align-items:flex-start;font-size:12.5px;line-height:1.5;color:var(--muted);margin:2px 0 12px;cursor:pointer}
+  .wl-check input{margin-top:2px;flex:none}
 
   /* WHY / band */
   .band-wrap{background:var(--paper)}
@@ -352,6 +355,9 @@
           <a onclick="go('landlord')">Landlord &amp; Rental</a>
           <a onclick="go('flood')">Flood</a>
           <a onclick="go('commercial')">Commercial</a>
+          <a onclick="go('life')">Life <span class="nsoon">Soon</span></a>
+          <a onclick="go('disability')">Disability <span class="nsoon">Soon</span></a>
+          <a onclick="go('health')">Health &mdash; Marketplace <span class="nsoon">Soon</span></a>
         </div>
       </div>
       <a onclick="go('carriers')" data-nav="carriers">Carriers</a>
@@ -374,6 +380,9 @@
   <a class="small" onclick="go('landlord')">Landlord &amp; Rental</a>
   <a class="small" onclick="go('flood')">Flood</a>
   <a class="small" onclick="go('commercial')">Commercial</a>
+  <a class="small" onclick="go('life')">Life <span class="nsoon">Soon</span></a>
+  <a class="small" onclick="go('disability')">Disability <span class="nsoon">Soon</span></a>
+  <a class="small" onclick="go('health')">Health — Marketplace <span class="nsoon">Soon</span></a>
   <a onclick="go('carriers')" style="margin-top:22px">Carriers</a>
   <a onclick="go('support')">Claims &amp; Payments</a>
   <a onclick="go('about')">About</a>
@@ -435,6 +444,24 @@
         <h3 class="serif">Commercial</h3>
         <p>Business coverage for Texas owners and operators — from GL, property, and workers' comp to commercial auto and trucking.</p>
         <span class="go-link">Learn more &rarr;</span>
+      </div>
+      <div class="cov soon" onclick="go('life')">
+        <div class="ic"><i class="ti ti-heart-handshake"></i></div>
+        <h3 class="serif">Life</h3>
+        <p>Term and permanent life insurance to protect the people who depend on you.</p>
+        <span class="badge">Coming soon</span>
+      </div>
+      <div class="cov soon" onclick="go('disability')">
+        <div class="ic"><i class="ti ti-shield-heart"></i></div>
+        <h3 class="serif">Disability</h3>
+        <p>Income protection for self-employed Texans and 1099 real estate agents.</p>
+        <span class="badge">Coming soon</span>
+      </div>
+      <div class="cov soon" onclick="go('health')">
+        <div class="ic"><i class="ti ti-stethoscope"></i></div>
+        <h3 class="serif">Health — Marketplace</h3>
+        <p>Individual &amp; family ACA plans, with help finding the premium tax credit you qualify for.</p>
+        <span class="badge">Coming soon</span>
       </div>
       </div>
     </div>
@@ -584,6 +611,24 @@
         <h3 class="serif">Commercial</h3>
         <p>Business coverage for Texas owners and operators — from GL, property, and workers' comp to commercial auto and trucking.</p>
         <span class="go-link">Learn more &rarr;</span>
+      </div>
+      <div class="cov soon" onclick="go('life')">
+        <div class="ic"><i class="ti ti-heart-handshake"></i></div>
+        <h3 class="serif">Life</h3>
+        <p>Term and permanent life insurance to protect the people who depend on you.</p>
+        <span class="badge">Coming soon</span>
+      </div>
+      <div class="cov soon" onclick="go('disability')">
+        <div class="ic"><i class="ti ti-shield-heart"></i></div>
+        <h3 class="serif">Disability</h3>
+        <p>Income protection for self-employed Texans and 1099 real estate agents.</p>
+        <span class="badge">Coming soon</span>
+      </div>
+      <div class="cov soon" onclick="go('health')">
+        <div class="ic"><i class="ti ti-stethoscope"></i></div>
+        <h3 class="serif">Health — Marketplace</h3>
+        <p>Individual &amp; family ACA plans, with help finding the premium tax credit you qualify for.</p>
+        <span class="badge">Coming soon</span>
       </div>
     </div>
   </div></section>
@@ -842,6 +887,123 @@
     </section>
   </section>
 
+  <section class="page" data-page="life">
+    <div class="subhero">
+      <div class="wrap">
+        <div class="crumb"><a onclick="go('coverage')">Coverage</a> &rsaquo; Life</div>
+        <div class="subhero-ic"><i class="ti ti-heart-handshake"></i></div>
+        <h1 class="serif">Life Insurance <span class="nsoon">Coming soon</span></h1>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="wrap detail-grid">
+        <div>
+          <div class="gline"></div>
+          <p class="lead">A mortgage is a promise your family keeps even if you're gone — which is why life insurance so often starts as a homeowners conversation. We're adding life insurance so we can protect the people who depend on you, not just the property. <strong>It's coming soon</strong> — join the waitlist and we'll reach out the moment it's available.</p>
+          <h3 class="serif dhead">The two kinds, in plain words</h3>
+          <ul class="checks">
+          <li><i class="ti ti-check"></i><strong>Term life</strong> — coverage for a set period (often 10–30 years) at the lowest cost; a good fit for mortgage and kids-at-home years</li>
+          <li><i class="ti ti-check"></i><strong>Permanent life</strong> — lifelong coverage that can build cash value over time</li>
+          <li><i class="ti ti-check"></i>Coverage sized to your income, mortgage, and the people who rely on you</li>
+          <li><i class="ti ti-check"></i>Especially worth it for new homeowners and parents</li>
+          <li><i class="ti ti-check"></i>Self-employed? With no employer policy, this one's on you</li>
+          </ul>
+          <p class="carrier-note" style="margin-top:28px">Voss Risk Advisors is completing licensing for life insurance. This page is for information and to join the waitlist — it isn't an offer of coverage, and nothing is bound until a licensed agent and carrier confirm it.</p>
+        </div>
+        <aside class="detail-cta">
+          <h4 class="serif">Join the waitlist</h4>
+          <p>Be first to know when life insurance goes live. We'll reach out — no obligation.</p>
+          <div id="wl_life_msg" style="display:none;font-size:13px;margin:0 0 12px"></div>
+          <div class="frow"><input class="fld" id="wl_life_first" type="text" placeholder="First name"><input class="fld" id="wl_life_last" type="text" placeholder="Last name"></div>
+          <input class="fld" id="wl_life_email" type="email" placeholder="Email address">
+          <input class="fld" id="wl_life_phone" type="tel" placeholder="Phone (optional)">
+          <label class="wl-check"><input type="checkbox" id="wl_life_agent"> I'm a real estate agent</label>
+          <label class="wl-check"><input type="checkbox" id="wl_life_consent"> I agree that Voss Risk Advisors may contact me by phone, text, or email about this. Consent isn't a condition of purchase.</label>
+          <input id="wl_life_co" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" placeholder="Company" style="position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;opacity:0">
+          <a class="btn btn-solid" onclick="submitWaitlist('life',this)">Join the waitlist &rarr;</a>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="page" data-page="disability">
+    <div class="subhero">
+      <div class="wrap">
+        <div class="crumb"><a onclick="go('coverage')">Coverage</a> &rsaquo; Disability</div>
+        <div class="subhero-ic"><i class="ti ti-shield-heart"></i></div>
+        <h1 class="serif">Disability Income <span class="nsoon">Coming soon</span></h1>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="wrap detail-grid">
+        <div>
+          <div class="gline"></div>
+          <p class="lead">If you're self-employed — a real estate agent, contractor, or any 1099 earner — a few months unable to work can hit your finances harder than almost anything, and there's no employer coverage to fall back on. Disability income insurance replaces part of your paycheck when illness or injury keeps you from working. <strong>It's coming soon</strong> — join the waitlist.</p>
+          <h3 class="serif dhead">What it does</h3>
+          <ul class="checks">
+          <li><i class="ti ti-check"></i>Replaces a portion of your income if you can't work</li>
+          <li><i class="ti ti-check"></i>Built for self-employed and 1099 earners — real estate agents especially</li>
+          <li><i class="ti ti-check"></i>Short-term and long-term options</li>
+          <li><i class="ti ti-check"></i>Protects the paycheck your family counts on</li>
+          <li><i class="ti ti-check"></i>No employer plan? This is how you fill that gap</li>
+          </ul>
+          <p class="carrier-note" style="margin-top:28px">Voss Risk Advisors is completing licensing for disability insurance. This page is for information and to join the waitlist — it isn't an offer of coverage, and nothing is bound until a licensed agent and carrier confirm it.</p>
+        </div>
+        <aside class="detail-cta">
+          <h4 class="serif">Join the waitlist</h4>
+          <p>Be first to know when disability coverage goes live. We'll reach out — no obligation.</p>
+          <div id="wl_disability_msg" style="display:none;font-size:13px;margin:0 0 12px"></div>
+          <div class="frow"><input class="fld" id="wl_disability_first" type="text" placeholder="First name"><input class="fld" id="wl_disability_last" type="text" placeholder="Last name"></div>
+          <input class="fld" id="wl_disability_email" type="email" placeholder="Email address">
+          <input class="fld" id="wl_disability_phone" type="tel" placeholder="Phone (optional)">
+          <label class="wl-check"><input type="checkbox" id="wl_disability_agent"> I'm a real estate agent</label>
+          <label class="wl-check"><input type="checkbox" id="wl_disability_consent"> I agree that Voss Risk Advisors may contact me by phone, text, or email about this. Consent isn't a condition of purchase.</label>
+          <input id="wl_disability_co" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" placeholder="Company" style="position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;opacity:0">
+          <a class="btn btn-solid" onclick="submitWaitlist('disability',this)">Join the waitlist &rarr;</a>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="page" data-page="health">
+    <div class="subhero">
+      <div class="wrap">
+        <div class="crumb"><a onclick="go('coverage')">Coverage</a> &rsaquo; Health — Marketplace</div>
+        <div class="subhero-ic"><i class="ti ti-stethoscope"></i></div>
+        <h1 class="serif">Marketplace Health <span class="nsoon">Coming soon</span></h1>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="wrap detail-grid">
+        <div>
+          <div class="gline"></div>
+          <p class="lead">Marketplace (ACA) health plans are individual and family health insurance you buy on HealthCare.gov — and most people qualify for a <strong>premium tax credit</strong> that lowers the monthly cost. We're getting set up to help you compare plans and find the credit you qualify for. <strong>It's coming soon.</strong> Open enrollment for 2027 coverage runs <strong>Nov 1, 2026 – Jan 15, 2027</strong>. Need coverage before we're ready? You can enroll directly at <a href="https://www.healthcare.gov" target="_blank" rel="noopener">HealthCare.gov</a>.</p>
+          <h3 class="serif dhead">What we'll help with</h3>
+          <ul class="checks">
+          <li><i class="ti ti-check"></i>Individual &amp; family plans on HealthCare.gov</li>
+          <li><i class="ti ti-check"></i>Finding the premium tax credit you may qualify for</li>
+          <li><i class="ti ti-check"></i>Coverage for the self-employed and between-jobs</li>
+          <li><i class="ti ti-check"></i>Making sense of open enrollment (Nov 1 – Jan 15)</li>
+          <li><i class="ti ti-check"></i>We'll never ask for medical details online — that's a phone conversation</li>
+          </ul>
+          <p class="carrier-note" style="margin-top:28px">Voss Risk Advisors is completing Marketplace (ACA) registration. This page is general information and a waitlist — not insurance, tax, or medical advice, and not an offer of coverage. For official plan and subsidy information, or to enroll now, visit <a href="https://www.healthcare.gov" target="_blank" rel="noopener">HealthCare.gov</a>.</p>
+        </div>
+        <aside class="detail-cta">
+          <h4 class="serif">Join the waitlist</h4>
+          <p>Be first to know when we can help you enroll. We'll reach out — no obligation.</p>
+          <div id="wl_health_msg" style="display:none;font-size:13px;margin:0 0 12px"></div>
+          <div class="frow"><input class="fld" id="wl_health_first" type="text" placeholder="First name"><input class="fld" id="wl_health_last" type="text" placeholder="Last name"></div>
+          <input class="fld" id="wl_health_email" type="email" placeholder="Email address">
+          <input class="fld" id="wl_health_phone" type="tel" placeholder="Phone (optional)">
+          <label class="wl-check"><input type="checkbox" id="wl_health_agent"> I'm a real estate agent</label>
+          <label class="wl-check"><input type="checkbox" id="wl_health_consent"> I agree that Voss Risk Advisors may contact me by phone, text, or email about this. Consent isn't a condition of purchase.</label>
+          <input id="wl_health_co" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" placeholder="Company" style="position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;opacity:0">
+          <a class="btn btn-solid" onclick="submitWaitlist('health',this)">Join the waitlist &rarr;</a>
+        </aside>
+      </div>
+    </div>
+  </section>
+
 <!-- CARRIERS -->
 <section class="page" data-page="carriers">
   <div class="subhero"><div class="wrap"><div class="crumb"><a onclick="go('home')">Home</a> &rsaquo; Carriers</div><div class="subhero-ic"><i class="ti ti-building-bank"></i></div><h1 class="serif">Carriers we represent</h1></div></div>
@@ -1086,6 +1248,7 @@
     <div class="faq-item"><div class="faq-q">Does bundling my home and auto always save money?</div><div class="faq-a">Often, but not always. Sometimes the carrier with the best home rate isn't the one with the best auto rate. Because we're independent, we can quote it both ways &mdash; bundled and split &mdash; and simply show you which costs less.</div></div>
     <div class="faq-item"><div class="faq-q">I'm renting out a property &mdash; does my homeowners policy cover it?</div><div class="faq-a">Generally no. Once tenants move in, a homeowners policy's assumptions change and a claim can be denied. Rentals need a landlord or dwelling policy, which covers the structure, loss of rent, and landlord liability. We place these through investor-friendly carriers.</div></div>
     <div class="faq-item"><div class="faq-q">What information do you need to shop my coverage?</div><div class="faq-a">To start, just your name, contact info, and what you'd like covered &mdash; the property address for home, landlord, or flood, or your vehicle details for auto. From there we'll ask a few follow-ups and shop the market on your behalf.</div></div>
+    <div class="faq-item"><div class="faq-q">Do you offer life or health insurance?</div><div class="faq-a">Soon. We're adding <a onclick="go('life')">life</a>, <a onclick="go('disability')">disability income</a>, and <a onclick="go('health')">Marketplace (ACA) health</a> &mdash; built especially for self-employed Texans and 1099 real estate agents who have no employer benefits. These are completing licensing and registration now, so for the moment you can <strong>join the waitlist</strong> on each page and we'll reach out the moment they're available. If you need health coverage before then, you can enroll directly at <a href="https://www.healthcare.gov" target="_blank" rel="noopener">HealthCare.gov</a>.</div></div>
     <div style="margin-top:34px"><a class="btn btn-solid" onclick="go('contact')">Request a quote &rarr;</a></div>
   </div></section>
 </section>
@@ -1142,6 +1305,9 @@
         <li><a onclick="go('landlord')">Landlord &amp; Rental</a></li>
         <li><a onclick="go('flood')">Flood</a></li>
         <li><a onclick="go('commercial')">Commercial</a></li>
+        <li><a onclick="go('life')">Life <span class="nsoon">Soon</span></a></li>
+        <li><a onclick="go('disability')">Disability <span class="nsoon">Soon</span></a></li>
+        <li><a onclick="go('health')">Health — Marketplace <span class="nsoon">Soon</span></a></li>
       </ul></div>
       <div><h5>Agency</h5><ul>
         <li><a onclick="go('about')">About</a></li>
@@ -1235,7 +1401,7 @@
     document.querySelectorAll('[data-nav]').forEach(a=>a.classList.remove('active'));
     var nav=document.querySelector('[data-nav="'+id+'"]');
     if(nav)nav.classList.add('active');
-    else{var map={homeowners:'coverage',auto:'coverage',landlord:'coverage',flood:'coverage',commercial:'coverage'};if(map[id]){var n2=document.querySelector('[data-nav="'+map[id]+'"]');if(n2)n2.classList.add('active');}}
+    else{var map={homeowners:'coverage',auto:'coverage',landlord:'coverage',flood:'coverage',commercial:'coverage',life:'coverage',disability:'coverage',health:'coverage'};if(map[id]){var n2=document.querySelector('[data-nav="'+map[id]+'"]');if(n2)n2.classList.add('active');}}
     window.scrollTo({top:0,behavior:'instant'});
     onScroll();
   }
@@ -1273,6 +1439,28 @@
       show('#FAEEDA','#EF9F27','#633806',"Form isn't connected yet — deploy to Netlify to enable it. For now, call <b>(945) 407-8370</b>.");
       btn.textContent='Request my quote →';
     }
+  }
+  async function submitWaitlist(line,btn){
+    var g=function(s){return document.getElementById('wl_'+line+'_'+s);};
+    var msg=document.getElementById('wl_'+line+'_msg');
+    function show(c,t){msg.style.display='block';msg.style.color=c;msg.innerHTML=t;}
+    var first=(g('first').value||'').trim(),last=(g('last').value||'').trim(),email=(g('email').value||'').trim(),phone=(g('phone').value||'').trim();
+    var agent=g('agent').checked,consent=g('consent').checked,hp=(g('co').value||'').trim();
+    if(!first||!last||!email){show('#C0392B','Please add your name and email.');return;}
+    if(!consent){show('#C0392B','Please check the box so we can contact you.');return;}
+    var labels={life:'life insurance',disability:'disability income',health:'Marketplace (ACA) health'};
+    var p={first_name:first,last_name:last,email:email,phone:phone,coverage_type:line+'_waitlist',
+      message:'Waitlist signup — '+labels[line]+'. Real estate agent: '+(agent?'Yes':'No')+'. Consented to contact: Yes.',
+      hp:hp,elapsed_ms:Date.now()-VOSS_T0};
+    var t=btn.textContent;btn.textContent='Joining…';
+    try{
+      var r=await fetch('/.netlify/functions/submit-quote',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});
+      if(!r.ok)throw 0;
+      if(window.gtag){gtag('event','join_waitlist',{line:line});}
+      show('#4F7A28',"You're on the list — we'll reach out the moment "+labels[line]+" is available.");
+      ['first','last','email','phone'].forEach(function(s){g(s).value='';});g('agent').checked=false;g('consent').checked=false;
+      btn.textContent='Added ✓';
+    }catch(e){show('#B9741B',"Couldn't submit just now — please call (945) 407-8370.");btn.textContent=t;}
   }
   async function subscribeNews(){
     var em=(document.getElementById('nl_email').value||'').trim();
