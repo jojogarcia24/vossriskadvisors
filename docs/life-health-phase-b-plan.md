@@ -6,6 +6,18 @@ Each item below is one small PR JoJo can merge on its own, in roughly this order
 
 ---
 
+## Operating model — how selling ACA marketplace health actually works
+
+The "find the tax credit you qualify for" opportunity = **ACA marketplace (HealthCare.gov) plans**, which is what most 1099 agents buy. In Texas the license is **General Lines – Life, Accident & Health**, and it covers life, health and disability together. The commission opportunity: once licensed + marketplace-registered + appointed, Voss's insurance division can sell agents (and the public) their actual health plans and earn the carrier commissions. What it takes:
+
+1. **CMS / HealthCare.gov agent registration** — Texas uses the federally-facilitated marketplace. Each plan year: a CMS Enterprise Portal account, the annual Marketplace agent/broker training + exams, signed FFM agreements, and your NPN on file. This is what lets you be credited (and paid) for enrollments.
+2. **Carrier appointments = the commission source** — registration lets you *use* HealthCare.gov; the commissions come from the **carriers** (BCBS of TX, Ambetter/Superior, Oscar, UnitedHealthcare, Aetna, Molina — whoever is on-exchange + appointing in our DFW counties). Most agents do this through an **FMO/GA** (field marketing org / general agency) rather than one-by-one — the FMO handles appointments, training support, and often overrides. **This is the key practical step for "earn commissions."**
+3. **Enrollment platform** — HealthSherpa (EDE). Quote, calculate the premium tax credit (APTC), and enroll without bouncing clients to HealthCare.gov. Free for agents; ties to CMS registration + carrier appointments so enrollments credit to you (agent of record).
+4. **Concierge pairing (value-add)** — a healthcare-concierge/advocacy partner (e.g. TouchCare — which Compass uses — Health Advocate, Rightway) handles doctor-finding, bills, and EOB help. Refer or white-label so agents get it bundled; some have agent/affinity programs. This differentiates us from buying direct.
+5. **How you get paid** — ACA commissions are typically per-member-per-month (or a %), paid by the carrier while the member keeps the plan and names you agent of record. Renewals auto-credit each year you stay AOR, so the book compounds.
+
+Why 1099 real-estate agents are the ideal target: no employer plan, variable income (often subsidy-eligible). Enroll during open enrollment (Nov 1 – Jan 15) or a Special Enrollment Period, stay AOR, earn renewals. *(Research reminder set for 2026-12-01.)*
+
 ## Decisions JoJo makes (gather these during the licensing wait)
 
 Status as of 2026-11-10: 1, 2, 4, 5 decided; 3 pending (reminder set for 2026-12-01); 6 is per-launch.
