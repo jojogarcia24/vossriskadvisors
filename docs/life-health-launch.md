@@ -8,7 +8,7 @@ Tracking doc for adding three new lines to Voss Risk Advisors: **Life**, **Disab
 
 ## JoJo's to-do (licensing, registration, carriers)
 
-- [ ] **Texas license** — General Lines: Life, Accident & Health (Texas Dept. of Insurance). *In progress — expected within a few weeks.*
+- [x] **Texas license** — General Lines Agent: Property & Casualty, Life, Accident, Health & HMO (TDI). ✅ **Active** (License #1779704, NPN 16748036, exp. 03/31/2028). Covers life, health & disability together. *(Life & Disability went live on the site 2026-11-22; Health stays on the waitlist until CMS registration + ACA appointment.)*
 - [ ] **Agency license line** — confirm with TDI whether the agency license itself needs the Life/Health line added (separate from the individual license).
 - [ ] **Federal Marketplace registration** (Texas uses HealthCare.gov):
   - [ ] Create a CMS Enterprise Portal account
