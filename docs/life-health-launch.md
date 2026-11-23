@@ -9,11 +9,16 @@ Tracking doc for adding three new lines to Voss Risk Advisors: **Life**, **Disab
 ## JoJo's to-do (licensing, registration, carriers)
 
 - [x] **Texas license** — General Lines Agent: Property & Casualty, Life, Accident, Health & HMO (TDI). ✅ **Active** (License #1779704, NPN 16748036, exp. 03/31/2028). Covers life, health & disability together. *(Life & Disability went live on the site 2026-11-22; Health stays on the waitlist until CMS registration + ACA appointment.)*
-- [ ] **Agency license line** — confirm with TDI whether the agency license itself needs the Life/Health line added (separate from the individual license).
-- [~] **Federal Marketplace registration** (Texas uses HealthCare.gov):
-  - [x] Create a CMS Enterprise Portal account
-  - [x] Complete the annual Marketplace agent/broker training + agreements — ✅ **PY2027 Agent/Broker Marketplace training certificate on file (2026-11-22)**
-  - [x] National Producer Number (NPN) on file — **16748036**
+- [~] **Agency license line** — Agency license **#3514065** is General Lines **P&C**. To route health (and life) commissions to Voss Risk Advisors LLC, confirm with TDI/NIPR that the **agency** license carries the **Life/Health line** and has an active appointment, and look up the **agency's own NPN** on NIPR (separate from the individual NPN).
+- [~] **Federal Marketplace registration** — CMS status for NPN **16748036** as of 2026-11-23:
+  - [x] **Portal (RIDP)** — ✅ Complete
+  - [x] **FFM Registered** — ✅ Complete (individual Marketplace training + agreements; PY2027 cert on file 2026-11-22). **This is the key one for individual ACA.**
+  - [ ] **Valid NPN — ❗ Incomplete.** CMS hasn't confirmed the NPN against an active health license — likely just license-sync timing (license newly issued). Fix: confirm NPN 16748036 is in the CMS/MLMS profile and the new TX Life/Health license is active in NIPR; wait 24–72h and re-check; if still red, call the Marketplace Agent/Broker Help Desk (855-267-1515). **Carriers/FMO generally won't finalize ACA appointments until this is green.**
+  - [–] **SHOP Registered** — ❗ Incomplete, but **not needed** for individual ACA (SHOP = small-employer group plans). Skip unless selling group.
+
+**Which license number does CMS / the FMO need?**
+- **CMS "Valid NPN" + being agent of record on HealthCare.gov** → your **INDIVIDUAL** license (#1779704) + **individual NPN 16748036**. The agency number is not what CMS validates for your personal registration.
+- **FMO / carrier ACA onboarding** → give **both**: your individual producer license + NPN (you're the writing/registered agent), **and** the **agency** license (#3514065), the **agency NPN**, and **EIN/TIN** so commissions pay to Voss Risk Advisors LLC. The FMO will ask how you want commissions assigned.
 - [ ] **Carrier appointments:**
   - [ ] Marketplace health — ACA carriers in Dallas-area counties (e.g. BCBS of Texas, Ambetter, Oscar, UnitedHealthcare — check each; some have paused new ACA agents). Many agents appoint through an FMO rather than one-by-one.
   - [ ] Life — term & permanent life carriers
