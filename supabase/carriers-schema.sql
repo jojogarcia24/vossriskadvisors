@@ -111,3 +111,35 @@ create table if not exists public.admin_users (
 alter table public.admin_users enable row level security;
 -- No public policies on either table: only the service role (behind the
 -- password-protected functions) can read/write.
+
+-- ---------- MARKETPLACE CONSENTS (ACA / CMS consent records) ----------
+-- Append-only record of a consumer's consent to let us help with a HealthCare.gov
+-- Marketplace application. CMS requires documenting consent and retaining it; this
+-- table blocks UPDATE and DELETE (even for the service role) so records can't be
+-- altered or removed. Retain at least 5 years, or the current CMS minimum if longer.
+create table if not exists public.marketplace_consents (
+  id               uuid primary key default gen_random_uuid(),
+  created_at       timestamptz not null default now(),
+  consumer_name    text,
+  email            text,
+  phone            text,
+  zip              text,
+  county           text,
+  household_size   text,
+  income           text,
+  ages             text,
+  current_coverage text,
+  is_agent         boolean default false,
+  consent          boolean not null default true,
+  consent_text     text not null,          -- server-owned canonical wording
+  consent_version  text,
+  consented_at     timestamptz not null default now(),
+  ip               text,
+  user_agent       text,
+  quote_id         uuid
+);
+alter table public.marketplace_consents enable row level security;
+-- Append-only: no policies (service role only via functions) + rules that block
+-- updates/deletes for everyone, so consent records are immutable for retention.
+create rule marketplace_consents_no_delete as on delete to public.marketplace_consents do instead nothing;
+create rule marketplace_consents_no_update as on update to public.marketplace_consents do instead nothing;

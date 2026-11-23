@@ -10,10 +10,10 @@ Tracking doc for adding three new lines to Voss Risk Advisors: **Life**, **Disab
 
 - [x] **Texas license** — General Lines Agent: Property & Casualty, Life, Accident, Health & HMO (TDI). ✅ **Active** (License #1779704, NPN 16748036, exp. 03/31/2028). Covers life, health & disability together. *(Life & Disability went live on the site 2026-11-22; Health stays on the waitlist until CMS registration + ACA appointment.)*
 - [ ] **Agency license line** — confirm with TDI whether the agency license itself needs the Life/Health line added (separate from the individual license).
-- [ ] **Federal Marketplace registration** (Texas uses HealthCare.gov):
-  - [ ] Create a CMS Enterprise Portal account
-  - [ ] Complete the annual Marketplace agent/broker training + agreements (CMS learning system — free, repeats every plan year)
-  - [ ] National Producer Number (NPN) on file
+- [~] **Federal Marketplace registration** (Texas uses HealthCare.gov):
+  - [x] Create a CMS Enterprise Portal account
+  - [x] Complete the annual Marketplace agent/broker training + agreements — ✅ **PY2027 Agent/Broker Marketplace training certificate on file (2026-11-22)**
+  - [x] National Producer Number (NPN) on file — **16748036**
 - [ ] **Carrier appointments:**
   - [ ] Marketplace health — ACA carriers in Dallas-area counties (e.g. BCBS of Texas, Ambetter, Oscar, UnitedHealthcare — check each; some have paused new ACA agents). Many agents appoint through an FMO rather than one-by-one.
   - [ ] Life — term & permanent life carriers
