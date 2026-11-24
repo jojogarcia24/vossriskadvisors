@@ -1506,7 +1506,7 @@
       if(!r.ok)return;
       var posts=await r.json();if(!posts.length)return;
       window._voss_posts={};
-      var cards=posts.map(function(p){window._voss_posts[p.slug]=p;return '<div class="rcard has-img" onclick="openPost(\''+p.slug+'\')"><div class="rcard-img" style="background-image:url(\''+catImg(p.category)+'\')"></div><div class="rtag">'+(p.category||"Guide")+'</div><h3 class="serif">'+p.title+'</h3><p>'+(p.excerpt||"")+'</p><span class="go-link">Read more &rarr;</span></div>';}).join("");
+      var cards=posts.map(function(p){window._voss_posts[p.slug]=p;return '<div class="rcard has-img" onclick="openPost(\''+p.slug+'\')"><div class="rcard-img" style="background-image:url(\''+coverFor(p)+'\')"></div><div class="rtag">'+(p.category||"Guide")+'</div><h3 class="serif">'+p.title+'</h3><p>'+(p.excerpt||"")+'</p><span class="go-link">Read more &rarr;</span></div>';}).join("");
       document.querySelectorAll(".r-grid").forEach(function(g){g.innerHTML=cards;});
     }catch(e){}
   }
@@ -1516,6 +1516,22 @@
     if(c.indexOf('flood')>-1)return '/img/flood.webp';
     if(c.indexOf('landlord')>-1||c.indexOf('rental')>-1)return '/img/landlord.webp';
     return '/img/homeowners.webp';
+  }
+  // Build a unique, on-brand SVG cover for a post from its title/category/slug,
+  // so every post's card looks distinct instead of sharing a category photo.
+  function _covHash(s){var h=0;s=String(s||'');for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))>>>0;return h;}
+  function _covEsc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function _covWrap(t,max,maxLines){var words=String(t||'').trim().split(/\s+/),lines=[],cur='';for(var i=0;i<words.length;i++){var w=words[i];if((cur+' '+w).trim().length>max&&cur){lines.push(cur);cur=w;}else cur=(cur+' '+w).trim();}if(cur)lines.push(cur);if(lines.length>maxLines){lines.length=maxLines;lines[maxLines-1]=lines[maxLines-1].replace(/\s+\S*$/,'')+'…';}return lines;}
+  function coverFor(p){
+    var NAVY='#0C2340',GOLD='#C09C48',CREAM='#F5F0E6';
+    var V=['#001830','#0b1f3a','#10243f','#13314f','#0a2730','#1d1b3a','#15213a'];
+    var v=V[_covHash(p.slug||p.title||'x')%V.length];
+    var cat=_covEsc((p.category||'Insurance').toUpperCase());
+    var lines=_covWrap(p.title,22,4);
+    var fs=lines.length>=4?46:lines.length===3?54:62,lh=Math.round(fs*1.18),baseY=250;
+    var tt=lines.map(function(ln,i){return '<text x="80" y="'+(baseY+i*lh)+'" fill="'+CREAM+'" font-family="Georgia,serif" font-size="'+fs+'" font-weight="600">'+_covEsc(ln)+'</text>';}).join('');
+    var svg='<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+NAVY+'"/><stop offset="1" stop-color="'+v+'"/></linearGradient></defs><rect width="1200" height="630" fill="url(#g)"/><text x="1140" y="610" text-anchor="end" fill="'+CREAM+'" opacity="0.05" font-family="Georgia,serif" font-size="340" font-weight="700">V</text><text x="80" y="132" fill="'+GOLD+'" font-family="Arial,sans-serif" font-size="22" letter-spacing="6">'+cat+'</text><rect x="80" y="150" width="64" height="3" fill="'+GOLD+'"/>'+tt+'<text x="80" y="560" fill="'+CREAM+'" font-family="Georgia,serif" font-size="30" letter-spacing="10">VOSS</text><text x="80" y="588" fill="'+GOLD+'" font-family="Arial,sans-serif" font-size="13" letter-spacing="6">RISK ADVISORS</text></svg>';
+    return 'data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(svg)));
   }
   function openPost(slug){
     var p=(window._voss_posts||{})[slug];if(!p){go("resources");return;}
