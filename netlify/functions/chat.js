@@ -12,6 +12,7 @@
 //      FROM_EMAIL, AGENCY_EMAIL, CHAT_AI_MODEL (optional)
 const crypto = require("crypto");
 const Anthropic = require("@anthropic-ai/sdk");
+const { chatLeadEmail } = require("./lib/lead-email.js");
 
 const MODEL = process.env.CHAT_AI_MODEL || "claude-opus-5-5";
 const PHONE = "(945) 407-8370";
@@ -23,7 +24,6 @@ const json = (statusCode, body) => ({
   body: JSON.stringify(body),
 });
 const clean = (v, n = 200) => String(v == null ? "" : v).replace(/\s+/g, " ").trim().slice(0, n);
-const esc = (s) => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const signLead = (id) => crypto.createHmac("sha256", process.env.SUPABASE_SERVICE_ROLE || "x").update("voss-chat:" + id).digest("base64url").slice(0, 32);
 
@@ -57,8 +57,8 @@ About the agency:
 What you do:
 - Answer insurance questions warmly and briefly: 1–3 short sentences, plain text, no markdown, no lists. Explain coverage in plain language.
 - Point to the most relevant page when it helps by setting "page" (the site shows a button). Set "quote" to the matching quote-form coverage when the visitor wants a quote, so the site can open the form pre-filled.
-- When the visitor wants a quote, a policy review, help with their policy, or to talk to someone, offer to have a licensed advisor reach out and ask for their name and the best phone number or email. Ask one thing at a time. Also ask what they want covered if it is not clear.
-- Once you have a first name AND (a phone number OR an email) AND they agreed to be contacted, set lead.ready to true and tell them a licensed advisor will reach out within one business day. Then keep helping: ask one useful question at a time an advisor will want to know (what they want covered, when their current policy renews, the property ZIP or vehicles, whether they want to bundle). Never say goodbye unless they do.
+- When the visitor wants a quote, a policy review, help with their policy, or to talk to someone, offer to have a licensed advisor reach out. Collect, one question at a time and in this order: what they want covered (if not clear yet), their first AND last name (ask for both together: "What's your first and last name?"; if they give only a first name, ask for their last name), their phone number, then their email address. We need both a phone number and an email so the advisor can call and send the quote options. If they give one, ask for the other.
+- Once you have a first name, a last name, a phone number AND an email, and they agreed to be contacted, set lead.ready to true and tell them a licensed advisor will reach out within one business day. Only if the visitor clearly refuses to share their last name, phone or email after you asked once, accept what they gave (a first name plus a phone or an email), set lead.declined to true and lead.ready to true. Never pressure them. Then keep helping: ask one useful question at a time an advisor will want to know (what they want covered, when their current policy renews, the property ZIP or vehicles, whether they want to bundle). Never say goodbye unless they do.
 
 Rules:
 - You are an AI assistant. If asked, say so plainly. Never claim to be a person or a licensed agent.
@@ -80,9 +80,10 @@ const SCHEMA = {
     quote: { anyOf: [{ type: "string", enum: QUOTE }, { type: "null" }], description: "Quote-form coverage to pre-select when they want a quote, or null." },
     lead: {
       type: "object", additionalProperties: false,
-      required: ["ready", "first_name", "last_name", "email", "phone", "coverage", "summary"],
+      required: ["ready", "declined", "first_name", "last_name", "email", "phone", "coverage", "summary"],
       properties: {
-        ready: { type: "boolean", description: "True once you have a first name and a phone or email and they agreed to be contacted." },
+        ready: { type: "boolean", description: "True once you have first name, last name, phone and email (or the visitor refused some after being asked) and they agreed to be contacted." },
+        declined: { type: "boolean", description: "True only if the visitor clearly refused to share their last name, phone or email after being asked." },
         first_name: nstr, last_name: nstr, email: nstr, phone: nstr,
         coverage: { ...nstr, description: "What they want covered, in their words." },
         summary: { ...nstr, description: "One sentence for the advisor: who they are and what they need." },
@@ -107,7 +108,7 @@ const sb = (path, opts = {}) => fetch(`${process.env.SUPABASE_URL}/rest/v1/${pat
   },
 });
 
-async function saveLead(lead, convo, pageUrl) {
+async function saveLead(lead, convo, pageUrl, history) {
   const { SUPABASE_URL, SUPABASE_SERVICE_ROLE, RESEND_API_KEY, FROM_EMAIL, AGENCY_EMAIL } = process.env;
   let id = null;
   if (SUPABASE_URL && SUPABASE_SERVICE_ROLE) {
@@ -127,17 +128,11 @@ async function saveLead(lead, convo, pageUrl) {
   }
   if (RESEND_API_KEY && FROM_EMAIL && AGENCY_EMAIL) {
     const name = [lead.first_name, lead.last_name].filter(Boolean).join(" ");
-    const row = (k, v) => v ? `<tr><td style="padding:6px 0;color:#8A8578;font-size:13px;width:110px">${k}</td><td style="padding:6px 0;color:#1C2433;font-size:14px">${esc(v)}</td></tr>` : "";
-    const html = `<div style="font-family:Arial,sans-serif;max-width:600px">
-      <h2 style="font-family:Georgia,serif;color:#0C2340;margin:0 0 4px">New chat lead: ${esc(name)}</h2>
-      <p style="color:#C09C48;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin:0 0 16px">Website chat · reply within one business day</p>
-      <table style="width:100%;border-top:1px solid #eee">${row("Name", name)}${row("Phone", lead.phone)}${row("Email", lead.email)}${row("Coverage", lead.coverage)}${row("Summary", lead.summary)}${row("Page", pageUrl)}</table>
-      <h3 style="font-family:Georgia,serif;color:#0C2340;margin:22px 0 8px">Conversation</h3>
-      <pre style="white-space:pre-wrap;font-family:Arial,sans-serif;font-size:13px;line-height:1.6;background:#FBFAF7;border:1px solid #eee;padding:14px">${esc(convo)}</pre></div>`;
+    const html = chatLeadEmail({ lead, history, pageUrl });
     await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${RESEND_API_KEY}` },
-      body: JSON.stringify({ from: `Voss Risk Advisors <${FROM_EMAIL}>`, to: [AGENCY_EMAIL], subject: `New chat lead: ${name}`, html, ...(lead.email ? { reply_to: lead.email } : {}) }),
+      body: JSON.stringify({ from: `Voss Risk Advisors <${FROM_EMAIL}>`, to: [AGENCY_EMAIL], subject: `New chat lead: ${name}${lead.coverage ? " · " + lead.coverage : ""}`, html, ...(lead.email ? { reply_to: lead.email } : {}) }),
     }).catch((e) => console.error("chat: resend", e && e.message));
   }
   return id;
@@ -208,8 +203,9 @@ exports.handler = async (event) => {
       method: "PATCH", headers: { Prefer: "return=minimal" },
       body: JSON.stringify({ message: "Website chat" + (pageUrl ? " (" + pageUrl + ")" : "") + "\n\n" + convo }),
     }).catch(() => {});
-  } else if (!b.lead_saved && L.ready === true && lead.first_name && (lead.email || lead.phone)) {
-    leadId = await saveLead(lead, convo, pageUrl);
+  } else if (!b.lead_saved && L.ready === true && lead.first_name &&
+             ((lead.last_name && lead.email && lead.phone) || (L.declined === true && (lead.email || lead.phone)))) {
+    leadId = await saveLead(lead, convo, pageUrl, history.concat([{ role: "assistant", content: reply }]));
     saved = true;
   }
 
