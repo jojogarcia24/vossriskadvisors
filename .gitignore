@@ -18,4 +18,6 @@ Thumbs.db
 /public/*.html
 !/public/index.html
 !/public/admin.html
+!/public/admin-clients.html
+!/public/portal.html
 /public/resources/

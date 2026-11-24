@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Client Portal | Voss Risk Advisors</title>
+<meta name="description" content="Voss Risk Advisors client portal: see your policies and renewal dates, download documents and ID cards, and request changes.">
+<meta name="robots" content="noindex,follow">
+<link rel="canonical" href="https://www.vossriskadvisors.com/portal">
+<link rel="icon" href="/img/brand/voss-emblem.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
+<style>
+  :root{--navy:#0C2340;--navy-ink:#001830;--gold:#C09C48;--cream:#F5F0E6;--paper:#FBFAF7;--ink:#1C2433;--muted:#6B665B;--line:#E7E1D6;--green:#3E7B27;--red:#A3412E}
+  *{margin:0;padding:0;box-sizing:border-box}
+  [hidden]{display:none!important}
+  body{font-family:'Montserrat',sans-serif;color:var(--ink);background:var(--paper);line-height:1.65;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+  .serif{font-family:'Cormorant Garamond',serif}
+  a{color:var(--navy)}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 24px;width:100%}
+  header{background:#fff;border-bottom:1px solid var(--line)}
+  header .wrap{display:flex;align-items:center;justify-content:space-between;height:78px}
+  header img{height:64px}
+  .hdr-r{display:flex;gap:18px;align-items:center;font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+  .hdr-r a{text-decoration:none;color:var(--navy)}
+  main{flex:1}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 26px;font-family:inherit;font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:500;border:1px solid var(--navy);background:var(--navy);color:#fff;cursor:pointer;text-decoration:none;transition:all .2s}
+  .btn:hover{background:var(--navy-ink)}
+  .btn.gold{background:var(--gold);border-color:var(--gold);color:var(--navy-ink)}
+  .btn.line{background:#fff;color:var(--navy);border-color:var(--line)}
+  .btn.line:hover{border-color:var(--navy)}
+  .btn:disabled{opacity:.6}
+  .fld{width:100%;border:1px solid #DFE3EA;background:#fff;padding:14px;font-family:inherit;font-size:15px;color:var(--ink);margin-bottom:12px}
+  .fld:focus{outline:none;border-color:var(--navy)}
+  .label{font-size:11px;letter-spacing:.3em;text-transform:uppercase;font-weight:500;color:var(--gold)}
+  .gline{width:60px;height:1px;background:var(--gold);margin:0 auto 18px}
+  /* sign-in */
+  .signin{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 79px)}
+  .si-photo{background:var(--navy) url('/img/homeowners.webp') center/cover;position:relative}
+  .si-photo:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,24,48,.35),rgba(0,24,48,.85))}
+  .si-photo div{position:absolute;left:48px;right:48px;bottom:56px;color:#fff}
+  .si-photo h2{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:44px;line-height:1.05;margin:10px 0 12px}
+  .si-photo p{color:#D7DCE4;font-weight:300}
+  .si-form{display:flex;align-items:center;justify-content:center;padding:48px 24px}
+  .si-card{max-width:420px;width:100%;text-align:center}
+  .si-card h1{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:40px;color:var(--navy);line-height:1.1;margin-bottom:10px}
+  .si-card p{color:var(--muted);font-weight:300;margin-bottom:24px}
+  .si-card .btn{width:100%}
+  .si-fine{font-size:12px;color:var(--muted);margin-top:18px}
+  .ok{background:#EEF5E6;border:1px solid #CFE3BC;color:#2F5A12;padding:14px 16px;font-size:14px;margin-bottom:14px;text-align:left}
+  .bad{background:#FCEBEB;border:1px solid #F09595;color:#791F1F;padding:14px 16px;font-size:14px;margin-bottom:14px;text-align:left}
+  /* dashboard */
+  .hero{background:var(--navy);color:#fff;padding:46px 0 90px}
+  .hero h1{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(34px,4.6vw,52px);line-height:1.05}
+  .hero p{color:#C9D0DB;font-weight:300;margin-top:8px}
+  .lift{margin-top:-60px}
+  .grid{display:grid;grid-template-columns:2fr 1fr;gap:22px;align-items:start}
+  .card{background:#fff;border:1px solid var(--line);padding:24px;margin-bottom:22px}
+  .card h2{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:26px;color:var(--navy);margin-bottom:14px}
+  .pol{display:flex;gap:18px;align-items:center;padding:18px 0;border-top:1px solid var(--line)}
+  .pol:first-of-type{border-top:none;padding-top:4px}
+  .pol-ic{width:54px;height:54px;border-radius:50%;background:var(--paper);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:24px;flex:none}
+  .pol b{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--navy);font-weight:600}
+  .pol .m{font-size:13px;color:var(--muted)}
+  .pol .ren{margin-left:auto;text-align:right;min-width:150px}
+  .pol .ren b{font-size:18px}
+  .bar{height:5px;background:var(--line);border-radius:3px;margin-top:6px;overflow:hidden}
+  .bar span{display:block;height:100%;background:var(--gold)}
+  .doc{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line);text-decoration:none;color:var(--ink)}
+  .doc:first-of-type{border-top:none}
+  .doc i{font-size:24px;color:var(--gold)}
+  .doc span{flex:1}
+  .doc small{display:block;color:var(--muted);font-size:12px}
+  .doc .dl{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--navy)}
+  .adv{text-align:center}
+  .adv .ph{width:120px;height:120px;border-radius:50%;margin:0 auto 12px;background:var(--navy) url('/img/advisor.webp') center 15%/cover;border:3px solid var(--gold)}
+  .adv b{font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--navy);font-weight:600;display:block}
+  .adv .t{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+  .adv .btn{width:100%;margin-top:8px}
+  .acts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .act{border:1px solid var(--line);padding:18px 14px;text-decoration:none;color:var(--navy);display:flex;flex-direction:column;gap:6px;transition:all .2s;background:#fff}
+  .act:hover{border-color:var(--navy);transform:translateY(-3px);box-shadow:0 14px 30px -18px rgba(12,35,64,.35)}
+  .act i{font-size:26px;color:var(--gold)}
+  .act b{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;line-height:1.15}
+  .act small{font-size:12px;color:var(--muted)}
+  .empty{color:var(--muted);font-size:14px}
+  footer{background:var(--navy-ink);color:#93A0B2;font-size:12px;padding:22px 0;text-align:center}
+  footer a{color:#B9C2D0}
+  @media(max-width:900px){.signin{grid-template-columns:1fr}.si-photo{min-height:260px}.si-photo div{left:24px;right:24px;bottom:28px}.si-photo h2{font-size:32px}.grid{grid-template-columns:1fr}.acts{grid-template-columns:1fr 1fr}.pol{flex-wrap:wrap}.pol .ren{margin-left:72px;text-align:left}header img{height:50px}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <a href="/"><img src="/img/brand/voss-logo-light-tight.svg" alt="Voss Risk Advisors"></a>
+  <div class="hdr-r"><a href="/" id="t_site">Website</a><a href="#" id="signout" hidden onclick="signOut();return false">Sign out</a></div>
+</div></header>
+
+<main>
+  <section id="v-signin" class="signin" hidden>
+    <div class="si-photo"><div><span class="label">Client portal</span><h2>Your coverage, all in one place.</h2><p>Policies, renewal dates, documents and ID cards, plus a direct line to your advisor.</p></div></div>
+    <div class="si-form"><div class="si-card">
+      <div class="gline"></div>
+      <h1>Sign in</h1>
+      <p>Enter the email you use with Voss. We'll send you a secure sign-in link. No password needed.</p>
+      <div id="si_msg"></div>
+      <input class="fld" id="si_email" type="email" autocomplete="email" placeholder="Email address">
+      <button class="btn" id="si_btn" onclick="requestLink()">Email me a sign-in link &rarr;</button>
+      <p class="si-fine">Not a client yet? <a href="/contact">Get a free quote</a>. Need help? Call or text <a href="tel:+19454078370">(945) 407-8370</a>.</p>
+    </div></div>
+  </section>
+
+  <section id="v-loading" style="padding:120px 0;text-align:center;color:var(--muted)">Loading your portal…</section>
+
+  <section id="v-dash" hidden>
+    <div class="hero"><div class="wrap"><span class="label" id="t_eyebrow">Client portal</span><h1 class="serif" id="hello">Welcome back</h1><p id="t_sub">Here's everything about your coverage with Voss Risk Advisors.</p></div></div>
+    <div class="wrap lift">
+      <div class="grid">
+        <div>
+          <div class="card"><h2 id="t_pols">Your policies</h2><div id="pols"></div></div>
+          <div class="card"><h2 id="t_docs">Documents</h2><div id="docs"></div></div>
+          <div class="card"><h2 id="t_need">Need something?</h2><div class="acts" id="acts"></div></div>
+        </div>
+        <div>
+          <div class="card adv"><div class="ph"></div><b id="advName">JoJo Garcia</b><div class="t" id="t_adv">Your advisor</div>
+            <a class="btn gold" href="tel:+19454078370"><i class="ti ti-phone"></i> <span id="t_call">Call</span></a>
+            <a class="btn line" href="sms:+19454078370"><i class="ti ti-message-circle"></i> <span id="t_text">Text</span></a>
+            <a class="btn line" href="mailto:info@VossRiskAdvisors.com"><i class="ti ti-mail"></i> Email</a>
+          </div>
+          <div class="card" style="text-align:center"><div style="color:var(--gold);letter-spacing:4px">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p style="font-size:14px;margin:8px 0 14px" id="t_rev">Happy with Voss? A quick Google review helps other Texans find us.</p><a class="btn line" style="width:100%" href="/review" target="_blank" rel="noopener" id="t_revbtn">Leave a review</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<footer>&copy; Voss Risk Advisors LLC &middot; 13155 Noel Rd Ste 900, Dallas, TX 75240 &middot; Licensed in Texas &middot; <a href="/privacy">Privacy</a></footer>
+
+<script>
+const SUPA="https://zykvqpuibmfjrdlrtoyo.supabase.co", ANON="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp5a3ZxcHVpYm1manJkbHJ0b3lvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0NDExMzAsImV4cCI6MjEwMDAxNzEzMH0.edLpuPeQvDJ9PFUY20FXZ5_WMZt9HWqU2ss10ZcbPL4";
+const KEY="voss_portal_session";
+const esc=s=>String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const ICON={Homeowners:"ti-home",Auto:"ti-car",Renters:"ti-armchair","Landlord / Rental":"ti-building-community",Flood:"ti-droplet",Umbrella:"ti-umbrella","Private client / high-value":"ti-diamond","Commercial / business":"ti-briefcase",Life:"ti-heart-handshake",Disability:"ti-shield-heart"};
+let LANG="en";
+const T={es:{t_site:"Sitio web",signout:"Salir",t_eyebrow:"Portal de cliente",t_sub:"Aquí está todo sobre su cobertura con Voss Risk Advisors.",t_pols:"Sus pólizas",t_docs:"Documentos",t_need:"¿Necesita algo?",t_adv:"Su asesor",t_call:"Llamar",t_text:"Texto",t_rev:"¿Contento con Voss? Una reseña en Google ayuda a otros a encontrarnos.",t_revbtn:"Dejar una reseña"}};
+const tr=(en,es)=>LANG==="es"?es:en;
+function fmt(d){return d?new Date(d+"T12:00:00Z").toLocaleDateString(LANG==="es"?"es-US":"en-US",{month:"long",day:"numeric",year:"numeric",timeZone:"UTC"}):"";}
+function show(v){["signin","loading","dash"].forEach(x=>document.getElementById("v-"+x).hidden=x!==v);document.getElementById("signout").hidden=v!=="dash";}
+function getSess(){try{return JSON.parse(localStorage.getItem(KEY)||"null");}catch(e){return null;}}
+function setSess(s){try{s?localStorage.setItem(KEY,JSON.stringify(s)):localStorage.removeItem(KEY);}catch(e){}}
+
+async function requestLink(){
+  const em=document.getElementById("si_email").value.trim(),msg=document.getElementById("si_msg"),b=document.getElementById("si_btn");
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){msg.innerHTML='<div class="bad">Please enter a valid email address.</div>';return;}
+  b.disabled=true;b.textContent="Sending…";
+  try{await fetch("/.netlify/functions/portal",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"request_link",email:em})});
+    msg.innerHTML='<div class="ok"><b>Check your email.</b> If '+esc(em)+' belongs to a Voss client, a sign-in link is on its way. It works once and expires in an hour.</div>';}
+  catch(e){msg.innerHTML='<div class="bad">Something went wrong. Please call or text (945) 407-8370.</div>';}
+  b.disabled=false;b.innerHTML="Email me a sign-in link &rarr;";
+}
+async function refresh(s){
+  if(!s||!s.refresh_token)return null;
+  const r=await fetch(SUPA+"/auth/v1/token?grant_type=refresh_token",{method:"POST",headers:{"Content-Type":"application/json",apikey:ANON},body:JSON.stringify({refresh_token:s.refresh_token})});
+  if(!r.ok)return null;const j=await r.json();const n={access_token:j.access_token,refresh_token:j.refresh_token};setSess(n);return n;
+}
+async function load(){
+  let s=getSess();if(!s){show("signin");return;}
+  let r=await fetch("/.netlify/functions/portal",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"me",access_token:s.access_token})});
+  if(r.status===401){s=await refresh(s);if(s)r=await fetch("/.netlify/functions/portal",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"me",access_token:s.access_token})});}
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok){setSess(null);show("signin");document.getElementById("si_msg").innerHTML='<div class="bad">'+esc(j.error||"Please sign in again.")+'</div>';return;}
+  render(j);
+}
+function render(d){
+  LANG=d.client.lang==="es"?"es":"en";document.documentElement.lang=LANG;
+  if(LANG==="es")Object.entries(T.es).forEach(([id,t])=>{const el=document.getElementById(id);if(el)el.textContent=t;});
+  document.getElementById("hello").textContent=tr("Welcome back, ","Hola, ")+d.client.first_name;
+  document.getElementById("advName").textContent=d.advisor.name;
+  const today=Date.now();
+  document.getElementById("pols").innerHTML=d.policies.length?d.policies.map(p=>{
+    let ren="";if(p.renewal_date){const end=new Date(p.renewal_date+"T12:00:00Z").getTime(),st=p.effective_date?new Date(p.effective_date+"T12:00:00Z").getTime():end-365*864e5;const days=Math.max(0,Math.round((end-today)/864e5)),pct=Math.min(100,Math.max(3,(today-st)/(end-st)*100));
+      ren='<div class="ren"><div class="m">'+tr("Renews","Renueva")+'</div><b class="serif">'+fmt(p.renewal_date)+'</b><div class="m">'+tr("in "+days+" days","en "+days+" días")+'</div><div class="bar"><span style="width:'+pct+'%"></span></div></div>';}
+    return '<div class="pol"><div class="pol-ic"><i class="ti '+(ICON[p.line]||"ti-shield-check")+'"></i></div><div><b>'+esc(p.line)+'</b><div class="m">'+[p.carrier,p.policy_number?tr("Policy #","Póliza #")+p.policy_number:"",p.effective_date?tr("since ","desde ")+fmt(p.effective_date):""].filter(Boolean).map(esc).join(" · ")+'</div></div>'+ren+'</div>';}).join(""):'<p class="empty">'+tr("Your policies will appear here once they're issued.","Sus pólizas aparecerán aquí cuando se emitan.")+'</p>';
+  document.getElementById("docs").innerHTML=d.documents.length?d.documents.map(x=>'<a class="doc" href="'+esc(x.url||"#")+'" target="_blank" rel="noopener"><i class="ti '+(/image/.test(x.content_type||"")?"ti-photo":"ti-file-text")+'"></i><span>'+esc(x.title)+'<small>'+tr("Added ","Agregado ")+fmt(String(x.created_at).slice(0,10))+'</small></span><span class="dl">'+tr("Download","Descargar")+' &rarr;</span></a>').join(""):'<p class="empty">'+tr("No documents yet. We'll add your declarations page and ID cards here. Need something now? Call or text us.","Aún no hay documentos. Aquí agregaremos su página de declaraciones y tarjetas. ¿Lo necesita ya? Llámenos o envíenos un texto.")+'</p>';
+  const acts=[["ti-id",tr("ID cards","Tarjetas de seguro"),tr("Proof of insurance","Prueba de seguro"),"/service"],["ti-file-pencil",tr("Request a change","Pedir un cambio"),tr("Driver, vehicle, address","Conductor, auto, dirección"),"/service"],["ti-file-certificate",tr("Certificate","Certificado"),tr("For a client or landlord","Para un cliente o arrendador"),"/service"],["ti-lifebuoy",tr("File a claim","Presentar un reclamo"),tr("Carrier claim lines","Líneas de reclamos"),"/support"],["ti-plus",tr("Quote something new","Cotizar algo nuevo"),tr("Home, auto, umbrella…","Casa, auto, paraguas…"),LANG==="es"?"/es":"/contact"],["ti-gift",tr("Refer a friend","Recomendar a alguien"),tr("Share Voss","Compartir Voss"),"sms:?&body="+encodeURIComponent(tr("I use Voss Risk Advisors for my insurance. They shop it across carriers: https://www.vossriskadvisors.com","Uso Voss Risk Advisors para mi seguro. Comparan con varias aseguradoras: https://www.vossriskadvisors.com/es"))]];
+  document.getElementById("acts").innerHTML=acts.map(a=>'<a class="act" href="'+esc(a[3])+'"><i class="ti '+a[0]+'"></i><b>'+esc(a[1])+'</b><small>'+esc(a[2])+'</small></a>').join("");
+  show("dash");
+}
+function signOut(){setSess(null);fetch(SUPA+"/auth/v1/logout",{method:"POST",headers:{apikey:ANON}}).catch(()=>{});show("signin");}
+
+// Arriving from the emailed link: Supabase puts the session in the URL hash.
+window.addEventListener("hashchange",()=>{if(/access_token=|error_description=/.test(location.hash))location.reload();});
+(function(){
+  const h=new URLSearchParams((location.hash||"").slice(1));
+  if(h.get("access_token")){setSess({access_token:h.get("access_token"),refresh_token:h.get("refresh_token")});history.replaceState(null,"",location.pathname);}
+  else if(h.get("error_description")){history.replaceState(null,"",location.pathname);show("signin");document.getElementById("si_msg").innerHTML='<div class="bad">That sign-in link has expired or was already used. Request a new one below.</div>';return;}
+  document.getElementById("si_email").addEventListener("keydown",e=>{if(e.key==="Enter")requestLink();});
+  load().catch(()=>show("signin"));
+})();
+</script>
+</body>
+</html>

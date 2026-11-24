@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Clients — Voss Risk Advisors Admin</title>
+<link rel="icon" href="/img/brand/voss-emblem.svg" type="image/svg+xml">
+<style>
+  :root{--navy:#0C2340;--navy-ink:#001830;--gold:#C09C48;--cream:#F5F0E6;--paper:#FBFAF7;--ink:#1C2433;--muted:#6B665B;--line:#e7e2d6;--green:#1E7A4C;--amber:#B9852B;--red:#B23A34;--blue:#2F5D8A}
+  *{box-sizing:border-box}
+  [hidden]{display:none!important}
+  body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--cream);color:var(--ink);font-size:15px;line-height:1.5}
+  h1,h2,h3{font-family:Georgia,'Times New Roman',serif;color:var(--navy);font-weight:normal;margin:0}
+  button{font-family:inherit;cursor:pointer}
+  .btn{border:none;padding:10px 18px;font-size:14px;color:#fff;background:var(--navy);border-radius:4px;display:inline-flex;align-items:center;gap:6px;text-decoration:none}
+  .btn.gold{background:var(--gold);color:var(--navy-ink);font-weight:bold}
+  .btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}
+  .btn.sm{padding:6px 12px;font-size:13px}
+  .btn:disabled{opacity:.5;cursor:default}
+  input,select,textarea{font-family:inherit;font-size:14px;padding:9px 11px;border:1px solid var(--line);border-radius:4px;background:#fff;color:var(--ink);width:100%}
+  label{display:block;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:10px 0 5px}
+  .chk{display:flex;gap:8px;align-items:flex-start;text-transform:none;letter-spacing:0;font-size:13.5px;color:var(--ink);margin:12px 0 0}
+  .chk input{width:auto;margin-top:3px}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 18px}
+  header{background:var(--navy);color:var(--cream);padding:14px 0}
+  header .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:12px;color:var(--cream);text-decoration:none}
+  .brand img{height:42px}
+  .brand .mark{font-family:Georgia,serif;font-size:20px;letter-spacing:.2em}
+  .brand .sub{color:var(--gold);font-size:10px;letter-spacing:.3em;text-transform:uppercase}
+  .tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:16px 0 0;flex-wrap:wrap}
+  .tab{background:none;border:none;padding:10px 16px;font-size:14px;color:var(--muted);border-bottom:3px solid transparent;text-decoration:none}
+  .tab.active{color:var(--navy);border-bottom-color:var(--gold);font-weight:bold}
+  .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:20px 0 14px}
+  .toolbar .grow{flex:1 1 240px}
+  .note{background:#fff;border:1px solid var(--line);border-left:4px solid var(--gold);padding:12px 14px;border-radius:6px;font-size:13.5px;margin:0 0 16px}
+  .list{display:flex;flex-direction:column;gap:10px;margin-bottom:40px}
+  .row{background:#fff;border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:grid;grid-template-columns:1.4fr 1fr 1.2fr auto;gap:14px;align-items:center}
+  .row .nm{font-family:Georgia,serif;font-size:18px;color:var(--navy)}
+  .row .meta{font-size:12.5px;color:var(--muted)}
+  .badge{display:inline-block;font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:10px;background:var(--paper);border:1px solid var(--line);color:var(--ink);margin-right:4px}
+  .badge.chat{background:#EAF1F8;border-color:#C7D8EA;color:var(--blue)}
+  .badge.service{background:#F7EFE0;border-color:#E8D6B3;color:var(--amber)}
+  .badge.es{background:#EEF5E6;border-color:#CFE3BC;color:var(--green)}
+  .badge.bound{background:var(--green);border-color:var(--green);color:#fff}
+  .msg{font-size:12.5px;color:var(--ink);white-space:pre-wrap;max-height:60px;overflow:hidden;cursor:pointer}
+  .msg.open{max-height:none}
+  .card{background:#fff;border:1px solid var(--line);border-radius:8px;padding:18px;margin-bottom:12px}
+  .card-h{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start}
+  .card-h .nm{font-family:Georgia,serif;font-size:21px;color:var(--navy)}
+  .pol{border:1px solid var(--line);border-radius:6px;padding:12px;margin-top:12px;background:var(--paper)}
+  .pol-h{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:14px}
+  .steps{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+  .step{font-size:11.5px;padding:4px 9px;border-radius:12px;border:1px solid var(--line);background:#fff;color:var(--muted)}
+  .step.sent{background:var(--green);border-color:var(--green);color:#fff}
+  .step.agent{background:var(--amber);border-color:var(--amber);color:#fff}
+  .step.failed{background:var(--red);border-color:var(--red);color:#fff}
+  .step.skipped{text-decoration:line-through}
+  .docs{margin-top:12px;font-size:13.5px}
+  .docs a{color:var(--navy)}
+  .toggles{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:13px}
+  .toggles label{display:flex;gap:6px;align-items:center;text-transform:none;letter-spacing:0;color:var(--ink);margin:0;font-size:13px}
+  .toggles input{width:auto}
+  .modal-bg{position:fixed;inset:0;background:rgba(0,24,48,.55);display:flex;align-items:flex-start;justify-content:center;padding:4vh 14px;z-index:50;overflow-y:auto}
+  .modal{background:#fff;border-radius:10px;max-width:680px;width:100%;padding:26px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 14px}
+  .err{color:var(--red);font-size:13.5px;margin-top:10px}
+  #toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:12px 20px;border-radius:6px;font-size:14px;z-index:60;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+  #login{max-width:420px;margin:9vh auto;background:#fff;border:1px solid var(--line);border-radius:8px;padding:34px;text-align:center}
+  #login img{width:200px;margin-bottom:14px}
+  #login input{margin-bottom:10px}
+  .empty{color:var(--muted);text-align:center;padding:40px;background:#fff;border:1px dashed var(--line);border-radius:8px}
+  @media(max-width:860px){.row{grid-template-columns:1fr}.grid2,.grid3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="login" hidden>
+  <img src="/img/brand/voss-logo-light-tight.svg" alt="Voss Risk Advisors">
+  <h1 style="font-size:22px;margin-bottom:6px">Clients</h1>
+  <p style="color:var(--muted);margin:0 0 18px;font-size:14px">Sign in with your admin account.</p>
+  <input id="em" type="email" placeholder="Email" autocomplete="username">
+  <input id="pw" type="password" placeholder="Password" autocomplete="current-password">
+  <button class="btn" style="width:100%;justify-content:center" onclick="login()">Sign in</button>
+  <div class="err" id="loginErr"></div>
+</div>
+
+<div id="app" hidden>
+  <header><div class="wrap">
+    <a class="brand" href="/admin"><img src="/img/brand/voss-emblem.svg" alt=""><div><div class="mark">VOSS</div><div class="sub">Admin &middot; Clients</div></div></a>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <span id="whoami" style="font-size:12px;opacity:.85"></span>
+      <button class="btn ghost sm" onclick="runDrip(this)">▶ Send due messages now</button>
+      <button class="btn ghost sm" onclick="sendReport(this)">✉ Email me the monthly report</button>
+      <button class="btn ghost sm" onclick="logout()">Sign out</button>
+    </div>
+  </div></header>
+
+  <div class="wrap">
+    <div class="tabs">
+      <a class="tab" href="/admin">Carriers</a>
+      <button class="tab active" data-v="leads" onclick="view('leads')">Leads</button>
+      <button class="tab" data-v="clients" onclick="view('clients')">Clients</button>
+      <button class="tab" data-v="renewals" onclick="view('renewals')">Renewals</button>
+    </div>
+
+    <section id="v-leads">
+      <div class="toolbar">
+        <h1 style="font-size:26px">Leads</h1><span style="flex:1"></span>
+        <input class="grow" id="leadSearch" placeholder="Search name, email, coverage…" oninput="renderLeads()" style="max-width:320px">
+        <select id="leadFilter" onchange="renderLeads()" style="max-width:190px"><option value="open">Open leads</option><option value="all">All</option><option value="bound">Bound</option><option value="lost">Lost</option><option value="service">Service requests</option></select>
+      </div>
+      <div class="note">When a quote closes and the carrier issues the policy, click <b>Policy issued</b>. That creates the client, sends the welcome email (and text), and starts the follow-up campaign: review request on day 3, policy explainer day 10, coverage checkup day 30, referral ask day 60, and a renewal reminder 45 days before renewal.</div>
+      <div class="list" id="leads"></div>
+    </section>
+
+    <section id="v-clients" hidden>
+      <div class="toolbar">
+        <h1 style="font-size:26px">Clients</h1><span style="flex:1"></span>
+        <input class="grow" id="clientSearch" placeholder="Search clients…" oninput="renderClients()" style="max-width:320px">
+        <button class="btn gold" onclick="openIssue(null,null)">＋ Add client / policy</button>
+      </div>
+      <div class="note" id="smsNote"></div>
+      <div id="clients"></div>
+    </section>
+
+    <section id="v-renewals" hidden>
+      <div class="toolbar"><h1 style="font-size:26px">Upcoming renewals</h1></div>
+      <div class="list" id="renewals"></div>
+    </section>
+  </div>
+</div>
+
+<!-- Policy issued modal -->
+<div class="modal-bg" id="issueModal" hidden onclick="if(event.target===this)closeModals()">
+  <div class="modal">
+    <h2 style="font-size:24px;margin-bottom:4px">Policy issued</h2>
+    <p style="color:var(--muted);margin:0 0 6px;font-size:13.5px">Saves the client and policy, sends the welcome email right away, and starts the follow-up campaign.</p>
+    <input type="hidden" id="i_lead"><input type="hidden" id="i_client">
+    <div class="grid2">
+      <div><label>First name</label><input id="i_first"></div>
+      <div><label>Last name</label><input id="i_last"></div>
+      <div><label>Email</label><input id="i_email" type="email"></div>
+      <div><label>Mobile phone</label><input id="i_phone" type="tel"></div>
+    </div>
+    <div class="grid2">
+      <div><label>Coverage line</label><select id="i_line" onchange="autoRenewal()"><option>Homeowners</option><option>Auto</option><option>Renters</option><option>Landlord / Rental</option><option>Flood</option><option>Umbrella</option><option>Private client / high-value</option><option>Commercial / business</option><option>Life</option><option>Disability</option></select></div>
+      <div><label>Carrier</label><input id="i_carrier" list="carrierList" placeholder="Start typing…"><datalist id="carrierList"></datalist></div>
+      <div><label>Policy number</label><input id="i_number"></div>
+      <div><label>Annual premium (optional, for your report)</label><input id="i_premium" inputmode="decimal" placeholder="$"></div>
+      <div><label>Effective date</label><input id="i_eff" type="date" onchange="autoRenewal()"></div>
+      <div><label>Renewal date</label><input id="i_ren" type="date"></div>
+    </div>
+    <label>Language for client messages</label>
+    <select id="i_lang"><option value="en">English</option><option value="es">Español</option></select>
+    <label class="chk"><input type="checkbox" id="i_sms" checked> Client agreed to receive texts (they did if they used the quote form or chat). Texts include "Reply STOP to opt out."</label>
+    <label>Notes (internal)</label><textarea id="i_notes" rows="2"></textarea>
+    <div class="err" id="i_err"></div>
+    <div style="display:flex;gap:10px;margin-top:18px;justify-content:flex-end">
+      <button class="btn ghost" onclick="closeModals()">Cancel</button>
+      <button class="btn gold" id="i_save" onclick="saveIssue()">Save &amp; send welcome →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Upload modal -->
+<div class="modal-bg" id="upModal" hidden onclick="if(event.target===this)closeModals()">
+  <div class="modal">
+    <h2 style="font-size:24px;margin-bottom:4px">Add a document</h2>
+    <p style="color:var(--muted);margin:0 0 6px;font-size:13.5px">The client sees it in their portal (dec page, ID cards, certificate…). PDF or image, under 4.5 MB.</p>
+    <input type="hidden" id="u_client">
+    <label>Title</label><input id="u_title" placeholder="e.g. 2026 Declarations page">
+    <label>Policy</label><select id="u_policy"></select>
+    <label>File</label><input id="u_file" type="file" accept=".pdf,image/*">
+    <div class="err" id="u_err"></div>
+    <div style="display:flex;gap:10px;margin-top:18px;justify-content:flex-end">
+      <button class="btn ghost" onclick="closeModals()">Cancel</button>
+      <button class="btn gold" id="u_save" onclick="saveUpload()">Upload</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" hidden></div>
+
+<script>
+const API="/.netlify/functions/clients-admin", AUTH_API="/.netlify/functions/admin-auth", CARRIER_API="/.netlify/functions/carriers-admin";
+let TOKEN=sessionStorage.getItem("voss_admin_token")||"", USER=null; try{USER=JSON.parse(sessionStorage.getItem("voss_admin_user")||"null");}catch(e){}
+let LEADS=[], CLIENTS=[], TWILIO=false;
+const STEPS=[["welcome","Welcome"],["review","Review ask"],["explainer","Explainer"],["checkup","Checkup"],["referral","Referral"],["renewal","Renewal"]];
+const esc=s=>String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const fmt=d=>d?new Date(String(d).length===10?d+"T12:00:00Z":d).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric",timeZone:String(d).length===10?"UTC":undefined}):"";
+function toast(t){const el=document.getElementById("toast");el.textContent=t;el.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(()=>el.hidden=true,4200);}
+
+async function call(url,action,payload){
+  const r=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action,token:TOKEN,...(payload||{})})});
+  const j=await r.json().catch(()=>({error:"Bad response"}));
+  if(r.status===401&&action!=="login"){logout();throw new Error("Please sign in again.");}
+  if(!r.ok)throw new Error(j.error||("Error "+r.status));
+  return j;
+}
+const api=(a,p)=>call(API,a,p);
+
+async function login(){
+  document.getElementById("loginErr").textContent="";
+  try{const d=await call(AUTH_API,"login",{email:em.value.trim(),password:pw.value});TOKEN=d.token;USER=d.user;sessionStorage.setItem("voss_admin_token",TOKEN);sessionStorage.setItem("voss_admin_user",JSON.stringify(USER));start();}
+  catch(e){document.getElementById("loginErr").textContent=e.message;}
+}
+function logout(){sessionStorage.removeItem("voss_admin_token");sessionStorage.removeItem("voss_admin_user");TOKEN="";document.getElementById("app").hidden=true;document.getElementById("login").hidden=false;}
+pw.addEventListener("keydown",e=>{if(e.key==="Enter")login();});
+
+async function start(){
+  document.getElementById("login").hidden=true;document.getElementById("app").hidden=false;
+  document.getElementById("whoami").textContent=USER&&USER.email?USER.email:"";
+  await Promise.all([loadLeads(),loadClients()]);
+  call(CARRIER_API,"list").then(d=>{const names=(d.carriers||[]).filter(c=>c.status==="approved").map(c=>c.name);document.getElementById("carrierList").innerHTML=names.map(n=>`<option value="${esc(n)}">`).join("");}).catch(()=>{});
+  const v=(location.hash||"").slice(1);if(["leads","clients","renewals"].includes(v))view(v);
+}
+function view(v){document.querySelectorAll(".tab[data-v]").forEach(t=>t.classList.toggle("active",t.dataset.v===v));["leads","clients","renewals"].forEach(x=>document.getElementById("v-"+x).hidden=x!==v);history.replaceState(null,"","#"+v);}
+
+// ---------- leads ----------
+async function loadLeads(){LEADS=(await api("list_leads")).leads||[];renderLeads();}
+function srcBadges(l){const s=(l.source||"website").toLowerCase();let b=`<span class="badge ${s==="chat"?"chat":s==="service"?"service":""}">${esc(s==="website"?"quote form":s)}</span>`;if(/Idioma preferido: Español/.test(l.message||""))b+=`<span class="badge es">Español</span>`;return b;}
+function renderLeads(){
+  const q=leadSearch.value.toLowerCase(),f=leadFilter.value;
+  const rows=LEADS.filter(l=>{const s=(l.source||"").toLowerCase();
+    if(f==="open"&&(["bound","lost"].includes(l.status)||s==="service"))return false;
+    if(f==="bound"&&l.status!=="bound")return false; if(f==="lost"&&l.status!=="lost")return false; if(f==="service"&&s!=="service")return false;
+    return !q||[l.first_name,l.last_name,l.email,l.coverage_type,l.message].join(" ").toLowerCase().includes(q);});
+  document.getElementById("leads").innerHTML=rows.length?rows.map(l=>`
+    <div class="row">
+      <div><div class="nm">${esc(l.first_name)} ${esc(l.last_name)}</div><div class="meta">${esc(l.email)}${l.phone?" · "+esc(l.phone):""}<br>${fmt(l.created_at)}</div></div>
+      <div>${srcBadges(l)}<div style="font-size:14px;margin-top:4px">${esc(l.coverage_type||"—")}</div>${l.address?`<div class="meta">${esc(l.address)}</div>`:""}</div>
+      <div class="msg" onclick="this.classList.toggle('open')" title="Click to expand">${esc(l.message||"")}</div>
+      <div style="display:flex;flex-direction:column;gap:6px;min-width:150px">
+        <select onchange="setLead('${l.id}',this.value)">${["new","contacted","quoted","bound","lost"].map(s=>`<option ${l.status===s?"selected":""}>${s}</option>`).join("")}</select>
+        ${(l.source||"")==="service"?"":`<button class="btn gold sm" onclick="openIssue('${l.id}',null)">Policy issued →</button>`}
+      </div>
+    </div>`).join(""):`<div class="empty">No leads here yet.</div>`;
+}
+async function setLead(id,status){try{await api("set_lead_status",{id,status});const l=LEADS.find(x=>x.id===id);if(l)l.status=status;renderLeads();toast("Lead marked "+status);}catch(e){toast(e.message);}}
+
+// ---------- clients ----------
+async function loadClients(){const d=await api("list_clients");CLIENTS=d.clients||[];TWILIO=d.twilio;renderClients();renderRenewals();
+  document.getElementById("smsNote").innerHTML=TWILIO?"✓ Automatic texting is on (Twilio). Texts go to clients who agreed to receive them.":"<b>Texts:</b> automatic texting isn't set up yet, so on days a text is due you'll get a <b>“texts to send today”</b> email with tap-to-send buttons for your phone. To send them automatically, add TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN and TWILIO_FROM in Netlify.";}
+function stepPills(c,p){
+  const msgs=(c.drip_messages||[]).filter(m=>m.policy_id===p.id);
+  return STEPS.map(([k,label])=>{const ms=msgs.filter(m=>m.step===k);if(!ms.length)return"";
+    const em=ms.find(m=>m.channel==="email")||ms[0],st=em.status,sms=ms.find(m=>m.channel==="sms");
+    const when=st==="pending"?"due "+fmt(em.due_at):st==="sent"||st==="agent"?"sent "+fmt(em.sent_at):st;
+    return `<span class="step ${st}" title="${esc(em.error||"")}">${label}${sms?" + text":""} · ${esc(when)}</span>`;}).join("");
+}
+function renderClients(){
+  const q=clientSearch.value.toLowerCase();
+  const rows=CLIENTS.filter(c=>!q||[c.first_name,c.last_name,c.email,c.phone,(c.policies||[]).map(p=>p.line+" "+(p.carrier||"")).join(" ")].join(" ").toLowerCase().includes(q));
+  document.getElementById("clients").innerHTML=rows.length?rows.map(c=>`
+    <div class="card">
+      <div class="card-h">
+        <div><div class="nm">${esc(c.first_name)} ${esc(c.last_name)}</div><div class="meta" style="font-size:13px;color:var(--muted)">${esc(c.email)}${c.phone?" · "+esc(c.phone):""} · client since ${fmt(c.created_at)}${c.last_portal_login_at?" · last portal visit "+fmt(c.last_portal_login_at):""}</div></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn ghost sm" onclick="openIssue(null,'${c.id}')">＋ Policy</button>
+          <button class="btn ghost sm" onclick="openUpload('${c.id}')">⬆ Document</button>
+          <button class="btn ghost sm" onclick="invite('${c.id}',this)">✉ ${c.portal_invited_at?"Resend":"Send"} portal link</button>
+        </div>
+      </div>
+      ${(c.policies||[]).map(p=>`
+        <div class="pol">
+          <div class="pol-h"><div><b>${esc(p.line)}</b>${p.carrier?" · "+esc(p.carrier):""}${p.policy_number?" · #"+esc(p.policy_number):""} ${p.status==="cancelled"?'<span class="badge">cancelled</span>':""}</div>
+            <div>Effective ${fmt(p.effective_date)} · Renews <input type="date" value="${p.renewal_date||""}" style="width:auto;padding:3px 6px;font-size:13px" onchange="updPolicy('${p.id}',{renewal_date:this.value})">
+            ${p.status!=="cancelled"?`<button class="btn ghost sm" onclick="if(confirm('Mark this policy cancelled? Remaining campaign messages for it will be skipped.'))updPolicy('${p.id}',{status:'cancelled'})">Cancel</button>`:""}</div></div>
+          <div class="steps">${stepPills(c,p)}</div>
+        </div>`).join("")}
+      <div class="docs">${(c.policy_documents||[]).length?"<b>Documents:</b> "+(c.policy_documents||[]).map(d=>`${esc(d.title)} <a href="#" onclick="delDoc('${d.id}');return false" title="Remove">✕</a>`).join(" · "):'<span style="color:var(--muted)">No documents yet.</span>'}</div>
+      <div class="toggles">
+        <label><input type="checkbox" ${c.sms_opt_in?"checked":""} onchange="setClient('${c.id}',{sms_opt_in:this.checked})"> Texts OK</label>
+        <label><input type="checkbox" ${c.lang==="es"?"checked":""} onchange="setClient('${c.id}',{lang:this.checked?'es':'en'})"> Español</label>
+        <label><input type="checkbox" ${c.drip_paused?"checked":""} onchange="setClient('${c.id}',{drip_paused:this.checked})"> Pause campaign</label>
+        <label><input type="checkbox" ${c.unsubscribed?"checked":""} onchange="setClient('${c.id}',{unsubscribed:this.checked})"> Unsubscribed from marketing</label>
+      </div>
+    </div>`).join(""):`<div class="empty">No clients yet. Mark a lead <b>Policy issued</b> or add one with the gold button.</div>`;
+}
+function renderRenewals(){
+  const today=new Date().toISOString().slice(0,10),rows=[];
+  CLIENTS.forEach(c=>(c.policies||[]).forEach(p=>{if(p.status!=="cancelled"&&p.renewal_date&&p.renewal_date>=today)rows.push({c,p});}));
+  rows.sort((a,b)=>a.p.renewal_date.localeCompare(b.p.renewal_date));
+  document.getElementById("renewals").innerHTML=rows.length?rows.map(({c,p})=>{const days=Math.round((new Date(p.renewal_date+"T12:00:00Z")-Date.now())/864e5);
+    return `<div class="row"><div><div class="nm">${esc(c.first_name)} ${esc(c.last_name)}</div><div class="meta">${esc(c.phone||c.email)}</div></div><div><b>${esc(p.line)}</b><div class="meta">${esc(p.carrier||"")}</div></div><div><b>${fmt(p.renewal_date)}</b><div class="meta">${days<=45?'<span style="color:var(--red)">':""}in ${days} days${days<=45?"</span>":""}</div></div><div>${c.phone?`<a class="btn ghost sm" href="tel:${esc(c.phone)}">Call</a>`:""}</div></div>`;}).join(""):`<div class="empty">No upcoming renewals.</div>`;
+}
+async function setClient(id,fields){try{await api("set_client",{id,fields});const c=CLIENTS.find(x=>x.id===id);Object.assign(c,fields);toast("Saved");}catch(e){toast(e.message);}}
+async function updPolicy(id,fields){try{await api("update_policy",{id,fields});await loadClients();toast("Policy updated");}catch(e){toast(e.message);}}
+async function invite(id,btn){btn.disabled=true;try{await api("portal_invite",{client_id:id});toast("Portal link emailed");await loadClients();}catch(e){toast(e.message);}btn.disabled=false;}
+async function delDoc(id){if(!confirm("Remove this document from the client's portal?"))return;try{await api("delete_doc",{id});await loadClients();toast("Document removed");}catch(e){toast(e.message);}}
+async function runDrip(btn){btn.disabled=true;try{const d=await api("run_drip");const c=d.counts||{};toast(`Sent ${c.sent||0}, texts for you ${c.agent||0}, skipped ${c.skipped||0}${c.failed?", failed "+c.failed:""}`);await loadClients();}catch(e){toast(e.message);}btn.disabled=false;}
+async function sendReport(btn){btn.disabled=true;try{const d=await api("report");toast("Report emailed to "+d.to);}catch(e){toast(e.message);}btn.disabled=false;}
+
+// ---------- modals ----------
+function closeModals(){document.querySelectorAll(".modal-bg").forEach(m=>m.hidden=true);}
+function addMonths(d,n){const x=new Date(d+"T12:00:00Z");x.setUTCMonth(x.getUTCMonth()+n);return x.toISOString().slice(0,10);}
+function autoRenewal(){const e=i_eff.value;if(!e||i_ren.dataset.touched)return;i_ren.value=addMonths(e,/Auto/.test(i_line.value)?6:12);}
+i_ren.addEventListener("input",()=>i_ren.dataset.touched="1");
+const LINE_MAP={"Landlord / Rental":"Landlord / Rental","Bundle / multiple":"Homeowners"};
+function openIssue(leadId,clientId){
+  const l=leadId?LEADS.find(x=>x.id===leadId):null,c=clientId?CLIENTS.find(x=>x.id===clientId):null,src=l||c||{};
+  i_lead.value=leadId||"";i_client.value=clientId||"";
+  i_first.value=src.first_name||"";i_last.value=src.last_name||"";i_email.value=src.email||"";i_phone.value=src.phone||"";
+  const cov=l&&l.coverage_type?(LINE_MAP[l.coverage_type]||l.coverage_type):"Homeowners";
+  i_line.value=[...i_line.options].some(o=>o.value===cov)?cov:"Homeowners";
+  i_carrier.value="";i_number.value="";i_premium.value="";i_notes.value="";delete i_ren.dataset.touched;
+  i_eff.value=new Date().toISOString().slice(0,10);i_ren.value="";autoRenewal();
+  i_lang.value=c?c.lang:(l&&/Idioma preferido: Español/.test(l.message||"")?"es":"en");
+  i_sms.checked=c?c.sms_opt_in:true;i_err.textContent="";
+  document.getElementById("issueModal").hidden=false;
+}
+async function saveIssue(){
+  i_err.textContent="";const b=document.getElementById("i_save");b.disabled=true;b.textContent="Saving…";
+  try{
+    const d=await api("issue",{lead_id:i_lead.value||null,client:{first_name:i_first.value,last_name:i_last.value,email:i_email.value,phone:i_phone.value,lang:i_lang.value,sms_opt_in:i_sms.checked},
+      policy:{line:i_line.value,carrier:i_carrier.value,policy_number:i_number.value,effective_date:i_eff.value,renewal_date:i_ren.value,annual_premium:i_premium.value,notes:i_notes.value}});
+    closeModals();const s=d.sent||{};toast(`Saved. Welcome ${s.sent?"sent":"queued"}${s.agent?" (text is in your “texts to send” email)":""}. Campaign scheduled.`);
+    await Promise.all([loadLeads(),loadClients()]);view("clients");
+  }catch(e){i_err.textContent=e.message;}
+  b.disabled=false;b.innerHTML="Save &amp; send welcome →";
+}
+function openUpload(clientId){const c=CLIENTS.find(x=>x.id===clientId);u_client.value=clientId;u_title.value="";u_file.value="";u_err.textContent="";
+  u_policy.innerHTML='<option value="">(general)</option>'+(c.policies||[]).map(p=>`<option value="${p.id}">${esc(p.line)}${p.carrier?" · "+esc(p.carrier):""}</option>`).join("");document.getElementById("upModal").hidden=false;}
+async function saveUpload(){
+  const f=u_file.files[0];u_err.textContent="";if(!f){u_err.textContent="Choose a file.";return;}if(f.size>4.5*1024*1024){u_err.textContent="Files must be under 4.5 MB.";return;}
+  const b=document.getElementById("u_save");b.disabled=true;b.textContent="Uploading…";
+  try{const data=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(",")[1]);r.onerror=rej;r.readAsDataURL(f);});
+    await api("upload_doc",{client_id:u_client.value,policy_id:u_policy.value||null,title:u_title.value||f.name,filename:f.name,content_type:f.type,data_base64:data});
+    closeModals();toast("Document added to the client's portal");await loadClients();}
+  catch(e){u_err.textContent=e.message;}
+  b.disabled=false;b.textContent="Upload";
+}
+
+if(TOKEN)start().catch(()=>logout());else document.getElementById("login").hidden=false;
+</script>
+</body>
+</html>

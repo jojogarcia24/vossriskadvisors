@@ -25,6 +25,15 @@
 [functions."newsletter-monthly"]
   schedule = "0 15 1 * *"
 
+# Post-issue client campaign: sends due welcome / review / checkup / referral /
+# renewal touches every day at 15:20 UTC (~9:20-10:20am CT). See lib/drip.js.
+[functions."drip-runner"]
+  schedule = "20 15 * * *"
+
+# Monthly business report to AGENCY_EMAIL on the 1st at 14:40 UTC (~9am CT).
+[functions."monthly-report"]
+  schedule = "40 14 1 * *"
+
 [[redirects]]
   from = "/api/quote"
   to   = "/.netlify/functions/submit-quote"
@@ -34,6 +43,12 @@
 [[redirects]]
   from = "/admin"
   to   = "/admin.html"
+  status = 200
+
+# Clients, leads, policies and the client campaign (admin)
+[[redirects]]
+  from = "/admin/clients"
+  to   = "/admin-clients.html"
   status = 200
 
 [[redirects]]
