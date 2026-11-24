@@ -44,11 +44,20 @@ const TOPICS = [
   { t: "homeowners insurance tips for Dallas-area homeowners", sig: ["homeowner"] },
   { t: "auto insurance basics for Texas drivers", sig: ["auto insurance", "car insurance", "driver"] },
   { t: "flood risk and flood insurance for North Texas properties", sig: ["flood"] },
-  { t: "landlord and rental property insurance for Texas investors", sig: ["landlord", "rental"] },
+  { t: "landlord and rental property insurance for Texas investors", sig: ["landlord", "rental propert"] },
   { t: "how bundling home and auto insurance works in Texas", sig: ["bundl"] },
   { t: "what to check at your policy renewal", sig: ["renewal", "renew"] },
   { t: "how independent agencies shop coverage for you", sig: ["independent agent", "independent agenc", "shop coverage"] },
   { t: "preparing your Texas home for storm and hail season", sig: ["storm", "hail"] },
+  { t: "renters insurance for Texas apartment and home renters (what it covers, why leases require it)", sig: ["renters", "apartment"] },
+  { t: "personal umbrella insurance: who needs it and how it sits over home and auto", sig: ["umbrella"] },
+  { t: "insuring a high-value home, jewelry, art, and collections in Texas", sig: ["high-value", "high value", "collection", "jewelry"] },
+  { t: "adding a teen driver to your auto policy in Texas", sig: ["teen"] },
+  { t: "small business insurance basics for Texas owners (general liability, BOP, workers' comp)", sig: ["small business", "general liability", "bop", "workers"] },
+  { t: "commercial auto and contractor insurance for Texas trades", sig: ["commercial auto", "contractor"] },
+  { t: "term vs. permanent life insurance explained in plain English", sig: ["term life", "permanent life", "life insurance"] },
+  { t: "disability income insurance for self-employed Texans and 1099 earners", sig: ["disability", "1099", "self-employed"] },
+  { t: "insurance checklist for first-time Texas home buyers", sig: ["first-time", "first time", "home buyer"] },
 ];
 
 const BLOCKLIST = [
@@ -85,12 +94,22 @@ const IMAGE_POOL = {
   ],
   landlord: ["/img/blog/landlord-1.jpg", "/img/blog/landlord-2.webp", "/img/blog/home-1.jpg", "/img/landlord.webp"],
   home: ["/img/blog/home-1.jpg", "/img/blog/home-2.jpg", "/img/blog/home-3.webp", "/img/homeowners.webp"],
+  renters: ["/img/renters.webp"],
+  umbrella: ["/img/umbrella.webp", "/img/blog/flood-2.jpg"],
+  private: ["/img/private-client.webp", "/img/blog/auto-2.jpg", "/img/blog/auto-6.jpg"],
+  business: ["/img/commercial.webp"],
+  life: ["/img/life.webp", "/img/disability.webp"],
 };
 const poolFor = (cat) => {
   const c = (cat || "").toLowerCase();
   if (c.indexOf("auto") > -1) return IMAGE_POOL.auto;
   if (c.indexOf("flood") > -1) return IMAGE_POOL.flood;
   if (c.indexOf("landlord") > -1 || c.indexOf("rental") > -1) return IMAGE_POOL.landlord;
+  if (c.indexOf("renter") > -1) return IMAGE_POOL.renters;
+  if (c.indexOf("umbrella") > -1) return IMAGE_POOL.umbrella;
+  if (c.indexOf("private") > -1) return IMAGE_POOL.private;
+  if (c.indexOf("business") > -1 || c.indexOf("commercial") > -1) return IMAGE_POOL.business;
+  if (c.indexOf("life") > -1 || c.indexOf("disab") > -1) return IMAGE_POOL.life;
   return IMAGE_POOL.home;
 };
 const pickImage = (cat) => {
@@ -102,6 +121,11 @@ const catAlt = (cat) => {
   if (c.indexOf("auto") > -1) return "A car on a North Texas road";
   if (c.indexOf("flood") > -1) return "Storm clouds over a Dallas-area neighborhood";
   if (c.indexOf("landlord") > -1 || c.indexOf("rental") > -1) return "A Texas rental property";
+  if (c.indexOf("renter") > -1) return "A bright, plant-filled apartment";
+  if (c.indexOf("umbrella") > -1) return "A modern Texas home at dusk";
+  if (c.indexOf("private") > -1) return "A luxury home with a pool";
+  if (c.indexOf("business") > -1 || c.indexOf("commercial") > -1) return "A Texas business owner at work";
+  if (c.indexOf("life") > -1 || c.indexOf("disab") > -1) return "A family at home together";
   return "A well-kept Dallas-area home";
 };
 
@@ -177,15 +201,19 @@ function isDuplicate(title, recent) {
 async function generate(topic, recentTitles, avoidExtra) {
   const system =
     "You write blog posts for Voss Risk Advisors, an INDEPENDENT insurance agency in Dallas, Texas, " +
-    "licensed for Personal Lines Property & Casualty (home, auto, landlord/rental, flood). " +
+    "licensed in Texas for Property & Casualty and Life, Accident & Health. Voss places homeowners, auto, renters, " +
+    "landlord/rental, flood, personal umbrella, private client (high-value homes and collections), commercial " +
+    "(BOP, general liability, workers' comp, commercial auto, umbrella, cyber, E&O), life (term and permanent), and " +
+    "disability income coverage. Marketplace (ACA) health is NOT offered yet: do not market it. " +
     "STRICT RULES: (1) Never state specific prices, premiums, percentages off, or rates. " +
-    "(2) Never guarantee savings, approval, or outcomes. (3) Never give legal or tax advice. " +
-    "(4) Only discuss personal lines coverage Voss can write; do NOT market commercial/business insurance. " +
+    "(2) Never guarantee savings, approval, or outcomes. (3) Never give legal, tax, investment, or medical advice; " +
+    "for life insurance never project cash values or returns. " +
+    "(4) Only discuss coverage Voss can place; never name specific carriers or claim appointments. " +
     "(5) Educational and helpful, plain English, Texas/Dallas context, ~600 words. " +
     "(6) No hype words like 'cheapest' or 'guaranteed'. " +
     "(7) Do NOT reuse or lightly reword any of the recent titles you are given — choose a genuinely " +
     "distinct, specific angle and a distinct, specific title. " +
-    "Return ONLY valid JSON, no preamble, with keys: title, category (one of Home, Auto, Flood, Landlord, General), " +
+    "Return ONLY valid JSON, no preamble, with keys: title, category (one of Home, Auto, Renters, Flood, Landlord, Umbrella, Private Client, Business, Life, General), " +
     "excerpt (one sentence), body_md (markdown, use ## for subheads).";
 
   const recentBlock = recentTitles.length

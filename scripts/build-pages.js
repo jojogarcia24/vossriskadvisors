@@ -59,6 +59,11 @@ function render(page, opts = {}) {
   h = setTag(h, /<meta property="og:description" content="[^"]*">/, `<meta property="og:description" content="${attr(desc)}">`, "og:description");
   h = setTag(h, /<meta name="twitter:title" content="[^"]*">/, `<meta name="twitter:title" content="${attr(title)}">`, "twitter:title");
   h = setTag(h, /<meta name="twitter:description" content="[^"]*">/, `<meta name="twitter:description" content="${attr(desc)}">`, "twitter:description");
+  // Spanish page: language and locale for search engines.
+  if (page.id === "es") {
+    h = h.replace('<html lang="en">', '<html lang="es">');
+    h = h.replace('<meta property="og:locale" content="en_US">', '<meta property="og:locale" content="es_US">');
+  }
   if (opts.noindex || NOINDEX.has(page.id)) h = h.replace(/<meta name="robots" content="[^"]*">/, '<meta name="robots" content="noindex,follow">');
 
   // Breadcrumbs for search results.

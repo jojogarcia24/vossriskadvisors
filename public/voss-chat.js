@@ -16,7 +16,7 @@
 
   var PAGE_LABEL = { homeowners: 'Homeowners', auto: 'Auto', renters: 'Renters', landlord: 'Landlord & Rental', flood: 'Flood', umbrella: 'Umbrella',
     'private-client': 'Private Client', commercial: 'Commercial', life: 'Life', disability: 'Disability', health: 'Health (waitlist)', coverage: 'All coverage',
-    carriers: 'Our carriers', support: 'Claims & payments', about: 'About us', resources: 'Guides', faq: 'FAQ', contact: 'Contact', book: 'Book a call' };
+    carriers: 'Our carriers', support: 'Claims & payments', service: 'Policy service', about: 'About us', resources: 'Guides', faq: 'FAQ', contact: 'Contact', book: 'Book a call', es: 'Página en español' };
 
   var css = '' +
     '.vc-bub{position:fixed;right:22px;bottom:22px;z-index:9000;height:58px;padding:0 22px 0 7px;border-radius:999px;border:0;cursor:pointer;background:#0C2340;color:#fff;box-shadow:0 16px 36px -12px rgba(0,24,48,.55);display:flex;align-items:center;gap:11px;font:500 14px Montserrat,system-ui,sans-serif;letter-spacing:.02em;transition:transform .2s,box-shadow .2s}' +
@@ -69,13 +69,15 @@
   var body = pan.querySelector('.vc-bd'), chips = pan.querySelector('.vc-chips'), form = pan.querySelector('.vc-ft'), input = pan.querySelector('.vc-in'), goBtn = pan.querySelector('.vc-go');
 
   var GREETING = 'Hi! I\'m the Voss Risk Advisors assistant. Ask me anything about home, auto, renters, umbrella, business, or life coverage, or I can have a licensed advisor shop a quote for you.';
+  var GREETING_ES = '¡Hola! Soy el asistente de Voss Risk Advisors. Pregúnteme sobre seguros de casa, auto, inquilino, negocio o vida, o un asesor con licencia puede cotizar su seguro.';
+  function isEs() { return /^\/es\/?$/.test(location.pathname); }
 
   function nav(page) { if (typeof window.go === 'function') { window.go(page); if (window.innerWidth <= 560) setOpen(false); } else location.href = '/' + page; }
   function openQuote(cov) { if (typeof window.quote === 'function') { window.quote(cov); if (window.innerWidth <= 560) setOpen(false); } else location.href = '/contact'; }
 
   function render() {
     body.innerHTML = '';
-    body.appendChild(el('div', 'vc-m a', esc(GREETING)));
+    body.appendChild(el('div', 'vc-m a', esc(isEs() ? GREETING_ES : GREETING)));
     state.msgs.forEach(function (m) {
       if (m.role === 'user') { body.appendChild(el('div', 'vc-m u', esc(m.content))); return; }
       body.appendChild(el('div', 'vc-m a', esc(m.content)));
@@ -89,7 +91,7 @@
     });
     if (state.busy) body.appendChild(el('div', 'vc-typ', '<b></b><b></b><b></b>'));
     chips.innerHTML = '';
-    if (!state.msgs.length) ['Get a quote', 'Do I need flood insurance?', 'What does renters cover?', 'How much umbrella do I need?', 'Talk to an advisor'].forEach(function (t) {
+    if (!state.msgs.length) (isEs() ? ['Quiero una cotización', '¿Necesito seguro de inundación?', '¿Qué cubre el seguro de inquilino?', 'Hablar con un asesor'] : ['Get a quote', 'Do I need flood insurance?', 'What does renters cover?', 'How much umbrella do I need?', 'Talk to an advisor']).forEach(function (t) {
       var c = el('button', 'vc-chip', esc(t)); c.type = 'button'; c.onclick = function () { send(t); }; chips.appendChild(c);
     });
     body.scrollTop = body.scrollHeight;

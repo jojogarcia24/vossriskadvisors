@@ -89,6 +89,7 @@ exports.handler = async (event) => {
   // They are NOT quotes — we aren't licensed for those lines yet — so they get
   // waitlist-appropriate emails and are tagged source="waitlist".
   const isWaitlist = /_waitlist$/.test(coverage);
+  const isSpanish = String(data.lang || "").toLowerCase() === "es";
   const WL_LABELS = {
     life_waitlist: "life insurance",
     disability_waitlist: "disability income",
@@ -132,7 +133,7 @@ exports.handler = async (event) => {
     : "";
   const agencyInner = `
     <h2 style="font-family:Georgia,serif;color:${NAVY};font-size:22px;margin:0 0 6px">${isWaitlist ? "New waitlist signup" : "New quote request"}</h2>
-    <p style="color:${GOLD};font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin:0 0 18px">${isWaitlist ? esc(wlLabel) + " &middot; coming soon" : "Website lead"}</p>
+    <p style="color:${GOLD};font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin:0 0 18px">${isWaitlist ? esc(wlLabel) + " &middot; coming soon" : isSpanish ? "Website lead &middot; Spanish speaker (reply in Spanish)" : "Website lead"}</p>
     <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;border-top:1px solid #eee">
       ${row("Name", `${first} ${last}`)}
       ${row("Email", email)}
@@ -143,7 +144,16 @@ exports.handler = async (event) => {
     </table>`;
 
   // ----- Client confirmation (branded) -----
-  const clientInner = isWaitlist ? `
+  // Spanish-language confirmation for requests from the /es page.
+  const clientInnerEs = `
+    <h2 style="font-family:Georgia,serif;color:${NAVY};font-size:23px;margin:0 0 14px">Gracias, ${esc(first)}. Recibimos su solicitud.</h2>
+    <p style="color:${INK};font-size:15px;line-height:1.7;margin:0 0 16px">
+      Un asesor con licencia de Voss Risk Advisors se comunicará con usted en <strong>un día hábil</strong> para cotizar su seguro con varias aseguradoras y encontrar la mejor opción.
+    </p>
+    <p style="color:${INK};font-size:15px;line-height:1.7;margin:0 0 6px">
+      ¿Es urgente? Llámenos o envíenos un mensaje de texto al <strong>${PHONE}</strong>.
+    </p>`;
+  const clientInner = isSpanish && !isWaitlist ? clientInnerEs : isWaitlist ? `
     <h2 style="font-family:Georgia,serif;color:${NAVY};font-size:23px;margin:0 0 14px">Thanks, ${esc(first)} — you're on the list.</h2>
     <p style="color:${INK};font-size:15px;line-height:1.7;margin:0 0 16px">
       We'll reach out the moment <strong>${esc(wlLabel)}</strong> is available at Voss Risk Advisors. There's nothing more you need to do right now — we just wanted to confirm we have you.
@@ -175,9 +185,9 @@ exports.handler = async (event) => {
 
   await Promise.all([
     // agency alert: replies go to the client
-    AGENCY_EMAIL ? send(AGENCY_EMAIL, `New quote request — ${first} ${last}`, shell(agencyInner), email) : null,
+    AGENCY_EMAIL ? send(AGENCY_EMAIL, `${isSpanish ? "[Español] " : ""}New quote request — ${first} ${last}`, shell(agencyInner), email) : null,
     // client confirmation: replies go to the agency inbox (FROM_EMAIL default)
-    send(email, "We received your quote request — Voss Risk Advisors", shell(clientInner)),
+    send(email, isSpanish && !isWaitlist ? "Recibimos su solicitud de cotización — Voss Risk Advisors" : "We received your quote request — Voss Risk Advisors", shell(clientInner)),
   ]);
 
   return json(200, { ok: true });

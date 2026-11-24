@@ -40,6 +40,52 @@ function card(inner, pad = "26px 28px") {
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid ${LINE};border-radius:8px;margin:0 0 18px"><tr><td style="padding:${pad}">${inner}</td></tr></table>`;
 }
 
+
+// Shared shell: navy header with logo, eyebrow bar, cream body with cards, footer.
+function layout({ title, preheader, eyebrow, eyebrowNote, cards, footerNote }) {
+  return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}</title></head>
+<body style="margin:0;padding:0;background:${CREAM}">
+<div style="display:none;max-height:0;overflow:hidden;color:${CREAM}">${esc(preheader || "")}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${CREAM}"><tr><td align="center" style="padding:24px 12px">
+  <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:100%">
+    <tr><td style="background:${NAVY};padding:28px 32px;border-radius:8px 8px 0 0" align="center">
+      <img src="${LOGO_URL}" width="44" height="44" alt="Voss Risk Advisors" style="display:block;border:0;margin:0 auto 12px;border-radius:8px">
+      <div style="font-family:Georgia,'Times New Roman',serif;color:${CREAM};font-size:26px;letter-spacing:.18em">VOSS</div>
+      <div style="height:1px;width:40px;background:${GOLD};margin:10px auto"></div>
+      <div style="color:${GOLD};font-family:Arial,Helvetica,sans-serif;font-size:10px;letter-spacing:.34em;text-transform:uppercase">Risk Advisors</div>
+    </td></tr>
+    <tr><td style="background:${NAVY_INK};padding:14px 32px" align="center">
+      <span style="font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:${GOLD}">${esc(eyebrow)}</span>${eyebrowNote ? `<span style="font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#C9D0DB"> &middot; ${esc(eyebrowNote)}</span>` : ""}
+    </td></tr>
+    <tr><td style="background:${CREAM};padding:22px 0 4px">${cards}</td></tr>
+    <tr><td style="background:${NAVY_INK};padding:20px 32px;border-radius:0 0 8px 8px">
+      <div style="color:${CREAM};font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.7">
+        <strong>Voss Risk Advisors LLC</strong> &middot; 13155 Noel Rd Ste 900, Dallas, TX 75240 &middot; (945) 407-8370<br>
+        ${footerNote || "Licensed in Texas &middot; Property &amp; Casualty &middot; Life, Accident &amp; Health"}
+      </div>
+      <div style="margin-top:10px"><a href="${SITE}" style="color:${GOLD};font-family:Arial,Helvetica,sans-serif;font-size:12px;text-decoration:none">vossriskadvisors.com</a></div>
+    </td></tr>
+  </table>
+</td></tr></table>
+</body></html>`;
+}
+
+// A card with a gold eyebrow and label/value rows. rows: [[label, htmlValue], ...]
+function detailsCard(eyebrow, rows) {
+  rows = rows.filter((r) => r[1]);
+  if (!rows.length) return "";
+  return card(`<div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:${GOLD};margin-bottom:6px">${esc(eyebrow)}</div>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">${rows.map((r, i) => detailRow(r[0], r[1], i === rows.length - 1)).join("")}</table>`);
+}
+
+// A text card: heading + paragraphs (already-escaped HTML allowed) + optional buttons row.
+function textCard({ eyebrow, heading, paragraphs = [], buttons = "" }) {
+  return card(`${eyebrow ? `<div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:${GOLD};margin-bottom:8px">${esc(eyebrow)}</div>` : ""}
+    ${heading ? `<div style="font-family:Georgia,'Times New Roman',serif;font-size:24px;color:${NAVY};line-height:1.25;margin-bottom:10px">${heading}</div>` : ""}
+    ${paragraphs.map((p) => `<p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.7;color:${INK};margin:0 0 12px">${p}</p>`).join("")}
+    ${buttons ? `<table role="presentation" cellpadding="0" cellspacing="0" style="margin-top:8px"><tr>${buttons}</tr></table>` : ""}`);
+}
+
 /* lead: { first_name, last_name, email, phone, coverage, summary }, history: messages incl. final reply */
 function chatLeadEmail({ lead, history, pageUrl }) {
   const name = [lead.first_name, lead.last_name].filter(Boolean).join(" ") || "Website visitor";
@@ -71,7 +117,7 @@ function chatLeadEmail({ lead, history, pageUrl }) {
     ["Coverage", esc(lead.coverage)],
     ["From page", pageUrl ? `<a href="${esc(pageUrl)}" style="color:${NAVY}">${esc(pageUrl.replace(/^https?:\/\//, ""))}</a>` : ""],
   ].filter((r) => r[1]);
-  const detailsCard = card(`
+  const contactCard = card(`
     <div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:${GOLD};margin-bottom:6px">Contact details</div>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0">${rows.map((r, i) => detailRow(r[0], r[1], i === rows.length - 1)).join("")}</table>`);
 
@@ -81,34 +127,7 @@ function chatLeadEmail({ lead, history, pageUrl }) {
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0">${bubbles(history)}</table>
     </td></tr></table>`);
 
-  return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>New chat lead: ${esc(name)}</title></head>
-<body style="margin:0;padding:0;background:${CREAM}">
-<div style="display:none;max-height:0;overflow:hidden;color:${CREAM}">${esc(lead.summary || name + " asked for a quote in the website chat.")}</div>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${CREAM}"><tr><td align="center" style="padding:24px 12px">
-  <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:100%">
-    <tr><td style="background:${NAVY};padding:28px 32px;border-radius:8px 8px 0 0" align="center">
-      <img src="${LOGO_URL}" width="44" height="44" alt="Voss Risk Advisors" style="display:block;border:0;margin:0 auto 12px;border-radius:8px">
-      <div style="font-family:Georgia,'Times New Roman',serif;color:${CREAM};font-size:26px;letter-spacing:.18em">VOSS</div>
-      <div style="height:1px;width:40px;background:${GOLD};margin:10px auto"></div>
-      <div style="color:${GOLD};font-family:Arial,Helvetica,sans-serif;font-size:10px;letter-spacing:.34em;text-transform:uppercase">Risk Advisors</div>
-    </td></tr>
-    <tr><td style="background:${NAVY_INK};padding:14px 32px" align="center">
-      <span style="font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:${GOLD}">New website chat lead</span>
-      <span style="font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#C9D0DB"> &middot; reply within one business day</span>
-    </td></tr>
-    <tr><td style="background:${CREAM};padding:22px 0 4px">
-      ${leadCard}${detailsCard}${convoCard}
-    </td></tr>
-    <tr><td style="background:${NAVY_INK};padding:20px 32px;border-radius:0 0 8px 8px">
-      <div style="color:${CREAM};font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.7">
-        <strong>Voss Risk Advisors LLC</strong> &middot; 13155 Noel Rd Ste 900, Dallas, TX 75240<br>
-        Saved in Supabase &rarr; <em>quote_requests</em> (source: chat). Reply to this email to answer ${esc(lead.first_name || "them")} directly.
-      </div>
-      <div style="margin-top:10px"><a href="${SITE}" style="color:${GOLD};font-family:Arial,Helvetica,sans-serif;font-size:12px;text-decoration:none">vossriskadvisors.com</a></div>
-    </td></tr>
-  </table>
-</td></tr></table>
-</body></html>`;
+  return layout({ title: `New chat lead: ${name}`, preheader: lead.summary || name + " asked for a quote in the website chat.", eyebrow: "New website chat lead", eyebrowNote: "reply within one business day", cards: leadCard + contactCard + convoCard, footerNote: `Saved in Supabase &rarr; <em>quote_requests</em> (source: chat). Reply to this email to answer ${esc(lead.first_name || "them")} directly.` });
 }
 
-module.exports = { chatLeadEmail };
+module.exports = { chatLeadEmail, layout, card, detailsCard, textCard, button, esc, prettyPhone, digits, NAVY, GOLD, INK, MUTED };
