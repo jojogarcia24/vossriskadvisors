@@ -104,6 +104,22 @@ It reuses `ANTHROPIC_API_KEY`, `SUPABASE_*`, `RESEND_API_KEY`, `FROM_EMAIL` and
 - Schema: `supabase/clients-schema.sql` (RLS on, service role only) and the
   private `client-docs` storage bucket. Templates: `netlify/functions/lib/drip.js`.
 
+## Realtor referrals and renewal re-shops
+
+- **/realtors**: agents refer a buyer (closing date, coverage, consent). Saved as a
+  lead with `source = referral` and the agent's details on `quote_requests`;
+  emails go to the agency (closing date flagged), the agent (thank-you plus
+  personal link) and the buyer (intro naming the agent). Agents' personal links
+  (`/contact?ref=Name`) credit quote-form leads to them.
+- When a referral lead is marked **quoted** or **Policy issued** in admin, the
+  agent gets a status email, only if they confirmed the buyer agreed
+  (`share_status`). No premiums or policy numbers are shared.
+- **Renewal re-shop tasks** (`tasks` table): drip-runner creates one about 50 days
+  before each renewal (due 30 days out) and emails a digest. Work them in
+  Admin → Tasks: renewed / moved carrier / lost rolls the policy forward (or
+  cancels it) and reschedules the renewal reminder.
+- Schema: `supabase/referrals-tasks-schema.sql`.
+
 ## Pages and search (SEO)
 
 Every page has its own URL (`/renters`, `/umbrella`, `/resources/<article>`…).
@@ -131,6 +147,7 @@ netlify/functions/
   drip-runner.js             Daily: sends due campaign emails/texts
   monthly-report.js          Monthly report email to the agency
   client-unsubscribe.js      Opt-out link for campaign marketing emails
+  realtor-referral.js        Realtor referrals from /realtors (agency, agent, buyer emails)
   weekly-post.js             Scheduled weekly AI article -> Supabase
   carriers-admin.js          Carrier tracker API (CRUD, CSV, Claude bulletin review)
   carriers-webhook.js        Receives Google Sheet edits (Google -> Voss sync)

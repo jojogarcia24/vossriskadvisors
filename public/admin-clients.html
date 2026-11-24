@@ -44,6 +44,15 @@
   .badge.service{background:#F7EFE0;border-color:#E8D6B3;color:var(--amber)}
   .badge.es{background:#EEF5E6;border-color:#CFE3BC;color:var(--green)}
   .badge.bound{background:var(--green);border-color:var(--green);color:#fff}
+  .badge.ref{background:#F3EAF7;border-color:#DCC7E6;color:#6B3E8A}
+  .badge.urgent{background:#FCEBEB;border-color:#F09595;color:var(--red)}
+  .count{display:inline-block;min-width:20px;padding:1px 6px;border-radius:10px;background:var(--line);color:var(--ink);font-size:11px;margin-left:4px}
+  .count.hot{background:var(--red);color:#fff}
+  .task{border-left:5px solid var(--line)}
+  .task.today{border-left-color:var(--amber)}
+  .task.overdue{border-left-color:var(--red)}
+  .task-done{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+  .task-done select{max-width:340px}
   .msg{font-size:12.5px;color:var(--ink);white-space:pre-wrap;max-height:60px;overflow:hidden;cursor:pointer}
   .msg.open{max-height:none}
   .card{background:#fff;border:1px solid var(--line);border-radius:8px;padding:18px;margin-bottom:12px}
@@ -101,6 +110,7 @@
     <div class="tabs">
       <a class="tab" href="/admin">Carriers</a>
       <button class="tab active" data-v="leads" onclick="view('leads')">Leads</button>
+      <button class="tab" data-v="tasks" onclick="view('tasks')">Tasks <span class="count" id="taskCount" hidden></span></button>
       <button class="tab" data-v="clients" onclick="view('clients')">Clients</button>
       <button class="tab" data-v="renewals" onclick="view('renewals')">Renewals</button>
     </div>
@@ -123,6 +133,14 @@
       </div>
       <div class="note" id="smsNote"></div>
       <div id="clients"></div>
+    </section>
+
+    <section id="v-tasks" hidden>
+      <div class="toolbar"><h1 style="font-size:26px">Renewal re-shops</h1></div>
+      <div class="note">A task appears about 50 days before each renewal, due 30 days out, so you can re-quote before the client's renewal email (45 days out). When you're done, pick the outcome: the policy rolls into its next term (or is marked lost) and the next renewal reminder is scheduled automatically.</div>
+      <div class="list" id="tasks"></div>
+      <h2 style="font-size:20px;margin:10px 0 10px">Recently completed</h2>
+      <div class="list" id="tasksDone"></div>
     </section>
 
     <section id="v-renewals" hidden>
@@ -212,15 +230,16 @@ pw.addEventListener("keydown",e=>{if(e.key==="Enter")login();});
 async function start(){
   document.getElementById("login").hidden=true;document.getElementById("app").hidden=false;
   document.getElementById("whoami").textContent=USER&&USER.email?USER.email:"";
-  await Promise.all([loadLeads(),loadClients()]);
+  await Promise.all([loadLeads(),loadClients(),loadTasks()]);
   call(CARRIER_API,"list").then(d=>{const names=(d.carriers||[]).filter(c=>c.status==="approved").map(c=>c.name);document.getElementById("carrierList").innerHTML=names.map(n=>`<option value="${esc(n)}">`).join("");}).catch(()=>{});
-  const v=(location.hash||"").slice(1);if(["leads","clients","renewals"].includes(v))view(v);
+  const v=(location.hash||"").slice(1);if(["leads","tasks","clients","renewals"].includes(v))view(v);
 }
-function view(v){document.querySelectorAll(".tab[data-v]").forEach(t=>t.classList.toggle("active",t.dataset.v===v));["leads","clients","renewals"].forEach(x=>document.getElementById("v-"+x).hidden=x!==v);history.replaceState(null,"","#"+v);}
+function view(v){document.querySelectorAll(".tab[data-v]").forEach(t=>t.classList.toggle("active",t.dataset.v===v));["leads","tasks","clients","renewals"].forEach(x=>document.getElementById("v-"+x).hidden=x!==v);history.replaceState(null,"","#"+v);}
 
 // ---------- leads ----------
 async function loadLeads(){LEADS=(await api("list_leads")).leads||[];renderLeads();}
-function srcBadges(l){const s=(l.source||"website").toLowerCase();let b=`<span class="badge ${s==="chat"?"chat":s==="service"?"service":""}">${esc(s==="website"?"quote form":s)}</span>`;if(/Idioma preferido: Español/.test(l.message||""))b+=`<span class="badge es">Español</span>`;return b;}
+function srcBadges(l){const s=(l.source||"website").toLowerCase();let b=`<span class="badge ${s==="chat"?"chat":s==="service"?"service":s==="referral"?"ref":""}">${esc(s==="website"?"quote form":s)}</span>`;
+  if(l.closing_date){const d=Math.round((new Date(l.closing_date+"T12:00:00Z")-Date.now())/864e5);b+=`<span class="badge ${d<=14&&d>=0?"urgent":""}">closes ${fmt(l.closing_date)}${d>=0?" · "+d+"d":""}</span>`;}if(/Idioma preferido: Español/.test(l.message||""))b+=`<span class="badge es">Español</span>`;return b;}
 function renderLeads(){
   const q=leadSearch.value.toLowerCase(),f=leadFilter.value;
   const rows=LEADS.filter(l=>{const s=(l.source||"").toLowerCase();
@@ -230,7 +249,7 @@ function renderLeads(){
   document.getElementById("leads").innerHTML=rows.length?rows.map(l=>`
     <div class="row">
       <div><div class="nm">${esc(l.first_name)} ${esc(l.last_name)}</div><div class="meta">${esc(l.email)}${l.phone?" · "+esc(l.phone):""}<br>${fmt(l.created_at)}</div></div>
-      <div>${srcBadges(l)}<div style="font-size:14px;margin-top:4px">${esc(l.coverage_type||"—")}</div>${l.address?`<div class="meta">${esc(l.address)}</div>`:""}</div>
+      <div>${srcBadges(l)}<div style="font-size:14px;margin-top:4px">${esc(l.coverage_type||"—")}</div>${l.address?`<div class="meta">${esc(l.address)}</div>`:""}${l.referred_by_name?`<div class="meta" style="color:var(--navy)">↳ Agent: <b>${esc(l.referred_by_name)}</b>${l.referred_by_brokerage?" · "+esc(l.referred_by_brokerage):""}${l.referred_by_phone?` · <a href="tel:${esc(l.referred_by_phone)}">${esc(l.referred_by_phone)}</a>`:""}${l.share_status?" · updates on":""}</div>`:""}</div>
       <div class="msg" onclick="this.classList.toggle('open')" title="Click to expand">${esc(l.message||"")}</div>
       <div style="display:flex;flex-direction:column;gap:6px;min-width:150px">
         <select onchange="setLead('${l.id}',this.value)">${["new","contacted","quoted","bound","lost"].map(s=>`<option ${l.status===s?"selected":""}>${s}</option>`).join("")}</select>
@@ -238,7 +257,7 @@ function renderLeads(){
       </div>
     </div>`).join(""):`<div class="empty">No leads here yet.</div>`;
 }
-async function setLead(id,status){try{await api("set_lead_status",{id,status});const l=LEADS.find(x=>x.id===id);if(l)l.status=status;renderLeads();toast("Lead marked "+status);}catch(e){toast(e.message);}}
+async function setLead(id,status){try{const d=await api("set_lead_status",{id,status});const l=LEADS.find(x=>x.id===id);if(l)l.status=status;renderLeads();toast("Lead marked "+status+(d.agentNotified?" · referring agent updated":""));}catch(e){toast(e.message);}}
 
 // ---------- clients ----------
 async function loadClients(){const d=await api("list_clients");CLIENTS=d.clients||[];TWILIO=d.twilio;renderClients();renderRenewals();
@@ -287,11 +306,41 @@ function renderRenewals(){
     return `<div class="row"><div><div class="nm">${esc(c.first_name)} ${esc(c.last_name)}</div><div class="meta">${esc(c.phone||c.email)}</div></div><div><b>${esc(p.line)}</b><div class="meta">${esc(p.carrier||"")}</div></div><div><b>${fmt(p.renewal_date)}</b><div class="meta">${days<=45?'<span style="color:var(--red)">':""}in ${days} days${days<=45?"</span>":""}</div></div><div>${c.phone?`<a class="btn ghost sm" href="tel:${esc(c.phone)}">Call</a>`:""}</div></div>`;}).join(""):`<div class="empty">No upcoming renewals.</div>`;
 }
 async function setClient(id,fields){try{await api("set_client",{id,fields});const c=CLIENTS.find(x=>x.id===id);Object.assign(c,fields);toast("Saved");}catch(e){toast(e.message);}}
-async function updPolicy(id,fields){try{await api("update_policy",{id,fields});await loadClients();toast("Policy updated");}catch(e){toast(e.message);}}
+async function updPolicy(id,fields){try{await api("update_policy",{id,fields});await Promise.all([loadClients(),loadTasks()]);toast("Policy updated");}catch(e){toast(e.message);}}
 async function invite(id,btn){btn.disabled=true;try{await api("portal_invite",{client_id:id});toast("Portal link emailed");await loadClients();}catch(e){toast(e.message);}btn.disabled=false;}
 async function delDoc(id){if(!confirm("Remove this document from the client's portal?"))return;try{await api("delete_doc",{id});await loadClients();toast("Document removed");}catch(e){toast(e.message);}}
-async function runDrip(btn){btn.disabled=true;try{const d=await api("run_drip");const c=d.counts||{};toast(`Sent ${c.sent||0}, texts for you ${c.agent||0}, skipped ${c.skipped||0}${c.failed?", failed "+c.failed:""}`);await loadClients();}catch(e){toast(e.message);}btn.disabled=false;}
+async function runDrip(btn){btn.disabled=true;try{const d=await api("run_drip");const c=d.counts||{};toast(`Sent ${c.sent||0}, texts for you ${c.agent||0}, skipped ${c.skipped||0}${c.failed?", failed "+c.failed:""}${c.tasks_created?", new renewal tasks "+c.tasks_created:""}`);await Promise.all([loadClients(),loadTasks()]);}catch(e){toast(e.message);}btn.disabled=false;}
 async function sendReport(btn){btn.disabled=true;try{const d=await api("report");toast("Report emailed to "+d.to);}catch(e){toast(e.message);}btn.disabled=false;}
+
+// ---------- renewal tasks ----------
+let TASKS=[];
+const OUTCOME={renewed_same:"Renewed, same carrier",moved_carrier:"Moved to a new carrier",lost:"Lost the client"};
+async function loadTasks(){const d=await api("list_tasks");TASKS=d.tasks||[];const today=new Date().toISOString().slice(0,10);
+  const due=TASKS.filter(t=>t.due_date<=today).length,c=document.getElementById("taskCount");c.hidden=!TASKS.length;c.textContent=TASKS.length;c.classList.toggle("hot",due>0);
+  renderTasks();document.getElementById("tasksDone").innerHTML=(d.done||[]).length?(d.done||[]).map(t=>`<div class="row" style="grid-template-columns:2fr 1fr 1fr"><div>${esc(t.title)}</div><div><span class="badge">${esc(OUTCOME[t.outcome]||t.outcome||"")}</span></div><div class="meta">${fmt(t.done_at)}${t.done_by?" · "+esc(t.done_by):""}</div></div>`).join(""):`<div class="empty">Nothing completed yet.</div>`;}
+function renderTasks(){
+  const today=new Date().toISOString().slice(0,10);
+  document.getElementById("tasks").innerHTML=TASKS.length?TASKS.map(t=>{const c=t.clients||{},p=t.policies||{};const days=Math.round((new Date(t.renewal_date+"T12:00:00Z")-Date.now())/864e5);const overdue=t.due_date<today,dueToday=t.due_date===today;
+    return `<div class="card task ${overdue?"overdue":dueToday?"today":""}">
+      <div class="card-h"><div><div class="nm">${esc(c.first_name||"")} ${esc(c.last_name||"")}</div>
+        <div class="meta" style="font-size:13px;color:var(--muted)"><b>${esc(p.line||"")}</b>${p.carrier?" · "+esc(p.carrier):""}${p.policy_number?" · #"+esc(p.policy_number):""} · renews <b>${fmt(t.renewal_date)}</b> (${days} days)</div>
+        <div class="meta" style="font-size:13px;margin-top:2px">${overdue?'<span style="color:var(--red)"><b>Overdue</b></span> · ':dueToday?'<span style="color:var(--amber)"><b>Due today</b></span> · ':""}re-shop by ${fmt(t.due_date)}</div></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">${c.phone?`<a class="btn ghost sm" href="tel:${esc(c.phone)}">Call</a><a class="btn ghost sm" href="sms:${esc(c.phone)}">Text</a>`:""}${c.email?`<a class="btn ghost sm" href="mailto:${esc(c.email)}?subject=${encodeURIComponent("Your upcoming renewal")}">Email</a>`:""}<button class="btn ghost sm" onclick="snooze('${t.id}')">Snooze 7 days</button></div></div>
+      <div class="task-done">
+        <select id="o_${t.id}" onchange="taskOutcome('${t.id}')"><option value="">Mark done: pick the outcome…</option>${Object.entries(OUTCOME).map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select>
+        <div class="task-more" id="m_${t.id}" hidden>
+          <div class="grid3"><div class="mc"><label>New carrier</label><input id="c_${t.id}" list="carrierList" placeholder="Carrier"></div><div><label>Policy number (if new)</label><input id="n_${t.id}"></div><div><label>Next renewal date</label><input id="r_${t.id}" type="date"></div></div>
+        </div>
+        <label>Notes</label><input id="t_${t.id}" placeholder="e.g. quoted 4 carriers, stayed for roof coverage">
+        <button class="btn gold sm" style="margin-top:10px" onclick="completeTask('${t.id}',this)">Complete task</button>
+      </div></div>`;}).join(""):`<div class="empty">No renewals to re-shop right now. Tasks appear here about 50 days before each renewal.</div>`;
+}
+function taskOutcome(id){const o=document.getElementById("o_"+id).value,m=document.getElementById("m_"+id);m.hidden=!(o==="renewed_same"||o==="moved_carrier");m.querySelector(".mc").style.display=o==="moved_carrier"?"":"none";}
+async function completeTask(id,btn){const o=document.getElementById("o_"+id).value;if(!o){toast("Pick the outcome first.");return;}
+  if(o==="lost"&&!confirm("Mark this policy lost? Its remaining campaign messages will stop."))return;
+  btn.disabled=true;try{await api("complete_task",{id,outcome:o,carrier:(document.getElementById("c_"+id)||{}).value,policy_number:(document.getElementById("n_"+id)||{}).value,renewal_date:(document.getElementById("r_"+id)||{}).value,notes:document.getElementById("t_"+id).value});
+    toast(o==="lost"?"Marked lost.":"Done. Policy rolled to its next term and the next renewal reminder is scheduled.");await Promise.all([loadTasks(),loadClients()]);}catch(e){toast(e.message);btn.disabled=false;}}
+async function snooze(id){try{await api("snooze_task",{id,days:7});toast("Snoozed 7 days");await loadTasks();}catch(e){toast(e.message);}}
 
 // ---------- modals ----------
 function closeModals(){document.querySelectorAll(".modal-bg").forEach(m=>m.hidden=true);}
@@ -316,8 +365,8 @@ async function saveIssue(){
   try{
     const d=await api("issue",{lead_id:i_lead.value||null,client:{first_name:i_first.value,last_name:i_last.value,email:i_email.value,phone:i_phone.value,lang:i_lang.value,sms_opt_in:i_sms.checked},
       policy:{line:i_line.value,carrier:i_carrier.value,policy_number:i_number.value,effective_date:i_eff.value,renewal_date:i_ren.value,annual_premium:i_premium.value,notes:i_notes.value}});
-    closeModals();const s=d.sent||{};toast(`Saved. Welcome ${s.sent?"sent":"queued"}${s.agent?" (text is in your “texts to send” email)":""}. Campaign scheduled.`);
-    await Promise.all([loadLeads(),loadClients()]);view("clients");
+    closeModals();const s=d.sent||{};toast(`Saved. Welcome ${s.sent?"sent":"queued"}${s.agent?" (text is in your “texts to send” email)":""}. Campaign scheduled.${d.agentNotified?" Referring agent updated.":""}`);
+    await Promise.all([loadLeads(),loadClients(),loadTasks()]);view("clients");
   }catch(e){i_err.textContent=e.message;}
   b.disabled=false;b.innerHTML="Save &amp; send welcome →";
 }

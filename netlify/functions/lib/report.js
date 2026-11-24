@@ -13,6 +13,7 @@ function sourceOf(q) {
   if (s === "chat") return "Website chat";
   if (s === "service") return "Service requests";
   if (s === "waitlist") return "Waitlist signups";
+  if (s === "referral") return "Realtor referrals";
   if (/Idioma preferido: Español/.test(q.message || "")) return "Spanish quote form";
   return "Quote form";
 }
@@ -48,7 +49,7 @@ async function buildReport(start) {
   const in60 = new Date(now.getTime() + 60 * 86400000).toISOString().slice(0, 10);
   const safe = (p) => p.catch(() => []);
 
-  const [leads, prevLeads, clients, policies, drips, renewals, posts, subs] = await Promise.all([
+  const [leads, prevLeads, clients, policies, drips, renewals, posts, subs, openTasks] = await Promise.all([
     safe(sb("GET", `quote_requests?${range("created_at", start, end)}&select=created_at,source,coverage_type,status,message`)),
     safe(sb("GET", `quote_requests?${range("created_at", prevStart, start)}&select=source`)),
     safe(sb("GET", `clients?${range("created_at", start, end)}&select=id`)),
@@ -57,6 +58,7 @@ async function buildReport(start) {
     safe(sb("GET", `policies?status=eq.active&renewal_date=gte.${now.toISOString().slice(0, 10)}&renewal_date=lte.${in60}&select=line,carrier,renewal_date,clients(first_name,last_name,phone)&order=renewal_date.asc`)),
     safe(sb("GET", `blog_posts?status=eq.published&${range("published_at", start, end)}&select=title`)),
     safe(sb("GET", `newsletter_subscribers?${range("created_at", start, end)}&select=id`)),
+    safe(sb("GET", "tasks?status=eq.open&select=id")),
   ]);
 
   const sales = leads.filter((q) => !["service", "waitlist"].includes((q.source || "").toLowerCase()));
@@ -90,6 +92,7 @@ async function buildReport(start) {
       ["Campaign emails", String(emails)],
       ["Campaign texts", String(texts)],
       ["Service requests", String(service)],
+      ["Open renewal re-shops", String(openTasks.length)],
       ["Newsletter signups", String(subs.length)],
       ["Blog posts published", String(posts.length)],
     ]) +

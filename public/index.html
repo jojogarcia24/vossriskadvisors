@@ -493,6 +493,8 @@
   .flood-look{margin-top:30px}
   .fl-row{display:flex;gap:10px;flex-wrap:wrap}
   .fl-row .fld{flex:1;min-width:200px;margin:0}
+  .ref-pill{display:flex;align-items:center;gap:8px;background:#EEF5E6;border:1px solid #CFE3BC;color:#2F5A12;padding:10px 14px;font-size:13.5px;margin:0 0 12px}
+  .ref-pill i{font-size:18px}
   .flash-txt{color:var(--gold)!important}
   .wz-shake{animation:shake .4s}
   @keyframes shake{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
@@ -569,6 +571,31 @@
   .adv-band .adv-line{color:#fff;border-color:rgba(255,255,255,.4)}
   .adv-band .adv-line:hover{border-color:#fff;background:rgba(255,255,255,.08)}
   @media(max-width:980px){.adv-grid{grid-template-columns:1fr;gap:36px;text-align:center}.adv-ring{width:240px;height:240px}.adv-band .gline{margin:0 auto 20px}.adv-band p{margin-left:auto;margin-right:auto}.adv-meta,.adv-band .btn-row{justify-content:center}.adv-band{padding:64px 0}}
+  /* --- Realtors page --- */
+  .rl-hero{padding:170px 0 90px}
+  .rl-hero h1{font-size:clamp(40px,5.4vw,72px);line-height:1.02}
+  .rl-lede{max-width:640px;margin:20px auto 0;color:#D7DCE4;font-weight:300;font-size:17px;line-height:1.75}
+  .rl-line{color:#fff!important;border-color:rgba(255,255,255,.5)!important}
+  .rl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .rl-card{background:var(--white);border:1px solid var(--line);padding:28px 26px;transition:transform .3s,box-shadow .3s}
+  .rl-card:hover{transform:translateY(-4px);box-shadow:0 18px 40px -22px rgba(12,35,64,.35)}
+  .rl-card i{font-size:28px;color:var(--gold)}
+  .rl-card h4{font-size:22px;color:var(--navy);font-weight:600;margin:12px 0 8px;line-height:1.2}
+  .rl-card p{font-size:14px;color:var(--muted);line-height:1.7}
+  .rl-form-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:60px;align-items:start}
+  .rl-h2{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(32px,4vw,46px);color:var(--navy);margin:14px 0 14px;line-height:1.08}
+  .rl-p{color:var(--muted);font-weight:300;line-height:1.8;margin-bottom:18px}
+  .rl-p a{color:var(--navy)}
+  .rl-steps{list-style:none;counter-reset:s;margin:0 0 22px}
+  .rl-steps li{counter-increment:s;position:relative;padding:12px 0 12px 46px;border-bottom:1px solid var(--line);font-size:15px;color:var(--ink);font-weight:300}
+  .rl-steps li:before{content:counter(s);position:absolute;left:0;top:10px;width:30px;height:30px;border-radius:50%;background:var(--navy);color:var(--gold);font-family:'Cormorant Garamond',serif;font-size:18px;display:flex;align-items:center;justify-content:center}
+  .rl-steps b{font-weight:500}
+  .rl-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+  .rl-chips button{font-family:inherit;border:1px solid var(--line-cool);background:var(--white);color:var(--navy);padding:9px 14px;border-radius:999px;font-size:13px;cursor:pointer}
+  .rl-chips button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .rl-out{margin-top:14px;padding:14px 16px;background:var(--white);border:1px dashed var(--gold);font-size:14.5px;color:var(--navy);word-break:break-all}
+  @media(max-width:980px){.rl-grid{grid-template-columns:1fr 1fr}.rl-form-grid{grid-template-columns:1fr;gap:30px}.rl-hero{padding:130px 0 60px}}
+  @media(max-width:600px){.rl-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -630,6 +657,7 @@
   <a href="/support">Claims &amp; Payments</a>
   <a href="/service">Policy service</a>
   <a href="/portal">Client login</a>
+  <a href="/realtors">For realtors</a>
   <a href="/about">About</a>
   <a href="/resources">Resources</a>
   <a href="/book">Book a call</a>
@@ -1884,6 +1912,8 @@
         <div class="frow"><input class="fld" id="q_first" type="text" autocomplete="given-name" placeholder="First name"><input class="fld" id="q_last" type="text" autocomplete="family-name" placeholder="Last name"></div>
         <input class="fld" id="q_email" type="email" autocomplete="email" placeholder="Email address">
         <input class="fld" id="q_phone" type="tel" autocomplete="tel" placeholder="Phone number">
+        <div class="ref-pill" id="ref_pill" hidden><i class="ti ti-user-check"></i> Referred by <b id="ref_name"></b></div>
+        <input class="fld" id="q_ref" type="text" placeholder="Referred by a real estate agent? Their name (optional)">
         <p class="wz-q" style="margin-top:6px"><span>Best way to reach you?</span></p>
         <div class="wz-pref" role="radiogroup" aria-label="Contact preference">
           <button type="button" data-pref="Call" class="on"><i class="ti ti-phone"></i>Call</button>
@@ -2182,6 +2212,88 @@
 </section>
 
 
+<section class="page" data-page="realtors" data-title="For Realtors: Refer Buyers for Home Insurance | Voss Risk Advisors" data-desc="Texas real estate agents: refer buyers to Voss Risk Advisors for homeowners, flood and auto insurance shopped across carriers, fast evidence of insurance for the lender, and status updates so closings stay on track.">
+  <div class="subhero photo rl-hero" style="background-image:url('/img/landlord.webp')"><div class="wrap">
+    <div class="crumb"><a href="/">Home</a> &rsaquo; For realtors</div>
+    <span class="label" style="display:block;margin-bottom:14px">For real estate agents</span>
+    <h1 class="serif">Insurance that keeps<br>your closings on track.</h1>
+    <p class="rl-lede">Send us your buyers. We shop their coverage across multiple carriers, get evidence of insurance to the lender fast, and keep you posted, so insurance is never the thing that delays closing.</p>
+    <div class="btn-row" style="justify-content:center;margin-top:26px">
+      <a class="btn btn-gold" onclick="document.getElementById('rl-form').scrollIntoView({behavior:'smooth'})">Refer a client &rarr;</a>
+      <a class="btn btn-line rl-line" onclick="document.getElementById('rl-link').scrollIntoView({behavior:'smooth'})">Get your referral link</a>
+    </div>
+  </div></div>
+
+  <section class="sec"><div class="wrap">
+    <div class="sec-head"><div class="gline"></div><span class="label">Why agents send us their buyers</span><h2 class="serif">One less thing to chase before closing.</h2></div>
+    <div class="rl-grid">
+      <div class="rl-card"><i class="ti ti-bolt"></i><h4 class="serif">Quotes inside the option period</h4><p>Options typically back within one business day, so your buyer knows the insurance picture before the option period ends.</p></div>
+      <div class="rl-card"><i class="ti ti-file-certificate"></i><h4 class="serif">Evidence of insurance, fast</h4><p>We send the binder and evidence of insurance straight to the lender and title company when the policy is issued.</p></div>
+      <div class="rl-card"><i class="ti ti-building-community"></i><h4 class="serif">Many carriers, tough Texas homes</h4><p>Older roofs, flood zones, investment properties, high-value homes. As an independent agency we shop the market instead of one company.</p></div>
+      <div class="rl-card"><i class="ti ti-bell-ringing"></i><h4 class="serif">You stay in the loop</h4><p>With your client's OK, we email you when they have options and again when the policy is issued.</p></div>
+      <div class="rl-card"><i class="ti ti-shield-lock"></i><h4 class="serif">We never sell your client's info</h4><p>Your referral stays with us. No lead reselling, no call-center handoffs. One licensed advisor handles it.</p></div>
+      <div class="rl-card"><i class="ti ti-language"></i><h4 class="serif">Hablamos español</h4><p>Spanish-speaking buyers get the same service in Spanish, from quote to closing.</p></div>
+    </div>
+  </div></section>
+
+  <section class="sec band-wrap" id="rl-form"><div class="wrap rl-form-grid">
+    <div>
+      <div class="gline"></div><span class="label">Refer a client</span>
+      <h2 class="serif rl-h2">Takes about a minute.</h2>
+      <p class="rl-p">Tell us who your buyer is and when they close. We reach out within one business day, sooner if closing is close. Your client gets a friendly intro email naming you, and you get a confirmation.</p>
+      <ol class="rl-steps">
+        <li><b>You refer.</b> Send the buyer's info and closing date.</li>
+        <li><b>We shop.</b> Quotes from multiple carriers, explained in plain English.</li>
+        <li><b>They close covered.</b> Evidence of insurance goes to the lender, and you get the update.</li>
+      </ol>
+      <p class="rl-p" style="font-size:14px">Rather call? <a href="tel:+19454078370">(945) 407-8370</a> &middot; <a href="sms:+19454078370">Text us</a></p>
+    </div>
+    <div class="qform">
+      <h3 class="serif">Referral</h3>
+      <div class="fsub">We'll remember your details for next time.</div>
+      <div id="rl_msg" style="display:none;padding:14px 16px;font-size:14px;margin-bottom:14px"></div>
+      <p class="wz-q">You</p>
+      <div class="frow"><input class="fld" id="rl_agent_name" type="text" autocomplete="name" placeholder="Your name"><input class="fld" id="rl_agent_brokerage" type="text" autocomplete="organization" placeholder="Brokerage"></div>
+      <div class="frow"><input class="fld" id="rl_agent_email" type="email" autocomplete="email" placeholder="Your email"><input class="fld" id="rl_agent_phone" type="tel" autocomplete="tel" placeholder="Your phone"></div>
+      <p class="wz-q" style="margin-top:6px">Your client</p>
+      <div class="frow"><input class="fld" id="rl_client_first" type="text" placeholder="Client first name"><input class="fld" id="rl_client_last" type="text" placeholder="Client last name"></div>
+      <div class="frow"><input class="fld" id="rl_client_email" type="email" placeholder="Client email"><input class="fld" id="rl_client_phone" type="tel" placeholder="Client phone"></div>
+      <input class="fld" id="rl_address" type="text" placeholder="Property address (street, city, ZIP)">
+      <label class="wz-fl" for="rl_closing">Closing date</label>
+      <input class="fld" id="rl_closing" type="date">
+      <p class="wz-q" style="margin-top:6px"><span>Coverage needed</span></p>
+      <div class="rl-chips" id="rl_cov">
+        <button type="button" data-cov="Homeowners" class="on">Homeowners</button><button type="button" data-cov="Flood">Flood</button><button type="button" data-cov="Auto">Auto</button><button type="button" data-cov="Landlord / Rental">Landlord / rental</button><button type="button" data-cov="Umbrella">Umbrella</button><button type="button" data-cov="Life">Life</button>
+      </div>
+      <textarea class="fld" id="rl_notes" placeholder="Anything we should know? (roof age, pool, investor, Spanish speaker, tight timeline…)"></textarea>
+      <label class="wl-check"><input type="checkbox" id="rl_consent"> My client agreed to be contacted by Voss Risk Advisors about insurance.</label>
+      <label class="wl-check"><input type="checkbox" id="rl_share"> My client is OK with Voss sending me status updates (options sent, policy issued). No premiums or policy details are shared.</label>
+      <input id="rl_hp" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" placeholder="Company" style="position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;opacity:0">
+      <a class="btn btn-solid" id="rl_submit" onclick="submitReferral()" style="width:100%;justify-content:center">Send referral &rarr;</a>
+    </div>
+  </div></section>
+
+  <section class="sec" id="rl-link"><div class="wrap" style="max-width:820px">
+    <div class="sec-head"><div class="gline"></div><span class="label">Your personal referral link</span><h2 class="serif">Share it. We'll know they came from you.</h2><p>Put it in your buyer packet, email signature, or text it to a client. When they request a quote through it, the referral is credited to you.</p></div>
+    <div class="calc rl-linkbox">
+      <div class="fl-row"><input class="fld" id="rl_link_name" type="text" placeholder="Your name as clients know you" oninput="rlLink()"><a class="btn btn-solid" onclick="rlCopy()">Copy link</a></div>
+      <div class="rl-out" id="rl_link_out">vossriskadvisors.com/contact?ref=…</div>
+      <div class="btn-row" style="margin-top:12px"><a class="btn btn-line" id="rl_text" href="sms:?&body=">Text it to a client</a><a class="btn btn-line" id="rl_mail" href="mailto:?subject=">Email it</a></div>
+    </div>
+  </div></section>
+
+  <section class="sec band-wrap"><div class="wrap">
+    <div class="sec-head"><div class="gline"></div><span class="label">Agent FAQ</span><h2 class="serif">Questions agents ask</h2></div>
+    <div class="faq">
+      <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q"><span>How fast can you get my buyer covered?</span><i class="ti ti-plus"></i></div><div class="faq-a">Most quotes come back within one business day once we have the property details. Tell us the closing date and we'll prioritize accordingly. Binding and evidence of insurance follow as soon as your buyer picks an option and the carrier approves it.</div></div>
+      <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q"><span>What do you need from me?</span><i class="ti ti-plus"></i></div><div class="faq-a">Just your buyer's name, a phone or email, the property address, and the closing date. We'll collect everything else directly from your client.</div></div>
+      <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q"><span>Will you keep me updated?</span><i class="ti ti-plus"></i></div><div class="faq-a">Yes, if your client agrees. We email you when they have options and when the policy is issued. We don't share premiums or policy details.</div></div>
+      <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q"><span>Do you pay referral fees?</span><i class="ti ti-plus"></i></div><div class="faq-a">Insurance law restricts paying commissions to people who aren't licensed insurance agents, so we don't pay referral fees. We earn your referrals by taking great care of your clients and keeping your closings on schedule.</div></div>
+      <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q"><span>Can you help with investors and rental properties?</span><i class="ti ti-plus"></i></div><div class="faq-a">Yes. We place landlord and dwelling policies for single rentals and portfolios, plus flood and umbrella coverage. See our <a href="/landlord">landlord page</a>.</div></div>
+    </div>
+  </div></section>
+</section>
+
 <section class="page" data-page="es" data-title="Seguros en Dallas, Texas | Hablamos Español | Voss Risk Advisors" data-desc="Agencia de seguros independiente en Dallas, Texas. Cotizamos seguros de casa, auto, inquilinos, negocio y vida con varias aseguradoras. Hablamos español. Cotización gratis." lang="es">
   <div class="hero es-hero">
     <div class="wrap hero-in">
@@ -2323,6 +2435,7 @@
         <li><a href="mailto:info@VossRiskAdvisors.com">info@VossRiskAdvisors.com</a></li>
         <li><a href="/support">Claims &amp; Payments</a></li>
         <li><a href="/portal">Client login</a></li>
+        <li><a href="/realtors">For realtors</a></li>
         <li><a href="/service">Policy service &amp; ID cards</a></li>
         <li><a href="https://www.elitelivingrealty.com/energy?src=insurance" target="_blank" rel="noopener">Electricity setup</a></li>
       </ul></div>
@@ -2517,7 +2630,7 @@
     if(has('Disability')){var da=gv('q_dis_age'),dt=gv('q_dis_tobacco'),di=gv('q_dis_income'),doc=gv('q_dis_occ');if(da)parts.push('Disability, age: '+da);if(dt)parts.push('Disability, tobacco: '+dt);if(di)parts.push('Monthly income to protect: '+di);if(doc)parts.push('Disability, occupation: '+doc);}
     if(gv('q_notes'))parts.push(gv('q_notes'));
     var addr=document.getElementById('grp_addr').style.display==='none'?'':gv('q_addr');
-    var p={first_name:gv('q_first'),last_name:gv('q_last'),email:gv('q_email'),phone:gv('q_phone'),coverage_type:cov,address:addr,message:parts.join('\n'),hp:gv('q_company'),elapsed_ms:Date.now()-VOSS_T0};
+    var p={first_name:gv('q_first'),last_name:gv('q_last'),email:gv('q_email'),phone:gv('q_phone'),coverage_type:cov,address:addr,message:parts.join('\n'),hp:gv('q_company'),elapsed_ms:Date.now()-VOSS_T0,referred_by:gv('q_ref')};
     if(!p.first_name||!p.last_name||!p.email){show('#FCEBEB','#F09595','#791F1F','Please add your name and email so we can reach you.');return;}
     if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(p.email)){show('#FCEBEB','#F09595','#791F1F','Please double-check your email address.');return;}
     btn.textContent='Sending…';
@@ -2527,7 +2640,7 @@
       if(window.gtag){gtag('event','generate_lead',{coverage_type:p.coverage_type||''});}
       btn.innerHTML='Request my quote &rarr;';
       document.querySelectorAll('#qwiz input, #qwiz textarea, #qwiz select').forEach(function(el){el.value='';});
-      wzSetSelected([]);wzGo(1);
+      wzSetSelected([]);wzGo(1);applyRef();
       go('thanks');
     }catch(e){
       show('#FAEEDA','#EF9F27','#633806',"We couldn't send that just now. Please call or text <b>(945) 407-8370</b>, or try again in a minute.");
@@ -2723,6 +2836,54 @@
   (function(){var u=window.VOSS_REVIEW_URL;if(!u||!/^https:\/\//.test(u))return;
     document.querySelectorAll('.review-link').forEach(function(a){a.href=u;a.addEventListener('click',function(){if(window.gtag)gtag('event','review_click');});});
     document.querySelectorAll('.review-only').forEach(function(el){el.hidden=false;});})();
+
+  // --- Realtor referral link: /contact?ref=Agent+Name (remembered for the visit) ---
+  function applyRef(){
+    var r='';try{r=new URLSearchParams(location.search).get('ref')||sessionStorage.getItem('voss_ref')||'';}catch(e){}
+    r=String(r).replace(/[<>]/g,'').trim().slice(0,120);if(!r)return;
+    try{sessionStorage.setItem('voss_ref',r);}catch(e){}
+    var f=document.getElementById('q_ref');if(f&&!f.value)f.value=r;
+    var pill=document.getElementById('ref_pill');if(pill){document.getElementById('ref_name').textContent=r;pill.hidden=false;}
+  }
+  applyRef();
+
+  // --- Realtors: referral form (agent details remembered) + personal link ---
+  var RL_AGENT=['rl_agent_name','rl_agent_brokerage','rl_agent_email','rl_agent_phone'];
+  (function(){try{var a=JSON.parse(localStorage.getItem('voss_agent')||'null');if(a)RL_AGENT.forEach(function(id){var el=document.getElementById(id);if(el&&a[id])el.value=a[id];});if(a&&a.rl_agent_name){var n=document.getElementById('rl_link_name');if(n){n.value=a.rl_agent_name;rlLink();}}}catch(e){}})();
+  document.querySelectorAll('#rl_cov button').forEach(function(b){b.addEventListener('click',function(){b.classList.toggle('on');});});
+  function rlLinkUrl(){var n=(document.getElementById('rl_link_name').value||'').trim();return n?'https://www.vossriskadvisors.com/contact?ref='+encodeURIComponent(n):'';}
+  function rlLink(){var u=rlLinkUrl(),out=document.getElementById('rl_link_out');if(!out)return;out.textContent=u?u.replace('https://www.',''):'vossriskadvisors.com/contact?ref=…';
+    var msg='I work with Voss Risk Advisors for my buyers’ insurance. They shop it across carriers and get it done before closing: '+u;
+    document.getElementById('rl_text').href='sms:?&body='+encodeURIComponent(msg);document.getElementById('rl_mail').href='mailto:?subject='+encodeURIComponent('Home insurance for your purchase')+'&body='+encodeURIComponent(msg);}
+  function rlCopy(){var u=rlLinkUrl();if(!u){document.getElementById('rl_link_name').focus();return;}
+    (navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(function(){var o=document.getElementById('rl_link_out');o.textContent='Copied! '+u.replace('https://www.','');}).catch(function(){window.prompt('Copy your link:',u);});
+    if(window.gtag)gtag('event','realtor_link_copy');}
+  async function submitReferral(){
+    var msg=document.getElementById('rl_msg'),btn=document.getElementById('rl_submit');
+    function show(ok,t){msg.style.display='block';msg.style.background=ok?'#EEF5E6':'#FCEBEB';msg.style.border='1px solid '+(ok?'#CFE3BC':'#F09595');msg.style.color=ok?'#2F5A12':'#791F1F';msg.innerHTML=t;}
+    var v=function(id){return (document.getElementById(id).value||'').trim();};
+    var covs=[];document.querySelectorAll('#rl_cov button.on').forEach(function(b){covs.push(b.getAttribute('data-cov'));});
+    var p={agent_name:v('rl_agent_name'),agent_brokerage:v('rl_agent_brokerage'),agent_email:v('rl_agent_email'),agent_phone:v('rl_agent_phone'),
+      client_first:v('rl_client_first'),client_last:v('rl_client_last'),client_email:v('rl_client_email'),client_phone:v('rl_client_phone'),
+      property_address:v('rl_address'),closing_date:v('rl_closing'),coverages:covs,notes:v('rl_notes'),
+      client_consent:document.getElementById('rl_consent').checked,share_status:document.getElementById('rl_share').checked,hp:v('rl_hp'),elapsed_ms:Date.now()-VOSS_T0};
+    if(!p.agent_name||!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(p.agent_email)){show(false,'Please add your name and a valid email.');return;}
+    if(!p.client_first||(!p.client_email&&p.client_phone.replace(/\D/g,'').length<10)){show(false,'Please add your client’s name and an email or phone.');return;}
+    if(!p.client_consent){show(false,'Please confirm your client agreed to be contacted.');return;}
+    try{var keep={};RL_AGENT.forEach(function(id){keep[id]=v(id);});localStorage.setItem('voss_agent',JSON.stringify(keep));}catch(e){}
+    msg.style.display='none';btn.textContent='Sending…';
+    try{
+      var r=await fetch('/.netlify/functions/realtor-referral',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});
+      var j=await r.json().catch(function(){return {};});
+      if(!r.ok)throw new Error(j.error||'');
+      if(window.gtag)gtag('event','generate_lead',{source:'realtor_referral'});
+      show(true,'<b>Thank you!</b> We’ve got '+p.client_first+'. We’ll reach out within one business day, and a confirmation is on its way to your inbox.');
+      ['rl_client_first','rl_client_last','rl_client_email','rl_client_phone','rl_address','rl_closing','rl_notes'].forEach(function(id){document.getElementById(id).value='';});
+      document.getElementById('rl_consent').checked=false;document.getElementById('rl_share').checked=false;
+      msg.scrollIntoView({behavior:'smooth',block:'center'});
+    }catch(e){show(false,(e&&e.message)||'We couldn’t send that. Please call or text <b>(945) 407-8370</b>.');}
+    btn.innerHTML='Send referral &rarr;';
+  }
 
   // --- Keyboard access for clickable cards ---
   document.addEventListener('keydown',function(e){

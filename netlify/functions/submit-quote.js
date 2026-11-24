@@ -90,6 +90,8 @@ exports.handler = async (event) => {
   // waitlist-appropriate emails and are tagged source="waitlist".
   const isWaitlist = /_waitlist$/.test(coverage);
   const isSpanish = String(data.lang || "").toLowerCase() === "es";
+  // Came through a realtor's personal link (/contact?ref=Name) or typed who referred them.
+  const referredBy = String(data.referred_by || "").replace(/\s+/g, " ").trim().slice(0, 120);
   const WL_LABELS = {
     life_waitlist: "life insurance",
     disability_waitlist: "disability income",
@@ -113,7 +115,7 @@ exports.handler = async (event) => {
         Authorization: `Bearer ${SUPABASE_SERVICE_ROLE}`,
         Prefer: "return=minimal",
       },
-      body: JSON.stringify({ first_name: first, last_name: last, email, phone, coverage_type: coverage, address, message, source: isWaitlist ? "waitlist" : "website" }),
+      body: JSON.stringify({ first_name: first, last_name: last, email, phone, coverage_type: coverage, address, message, source: isWaitlist ? "waitlist" : referredBy ? "referral" : "website", ...(referredBy ? { referred_by_name: referredBy } : {}) }),
     });
     if (!r.ok) console.error("Supabase insert failed:", await r.text());
   } catch (e) { console.error("Supabase error:", e); }
@@ -140,6 +142,7 @@ exports.handler = async (event) => {
       ${row("Phone", phone || "—")}
       ${row(isWaitlist ? "Interest" : "Coverage", isWaitlist ? wlLabel : (coverage || "—"))}
       ${row("Address", address)}
+      ${row("Referred by", referredBy)}
       ${row("Details", message)}
     </table>`;
 
