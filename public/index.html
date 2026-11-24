@@ -385,7 +385,7 @@
           <a onclick="go('commercial')">Commercial</a>
           <a onclick="go('life')">Life</a>
           <a onclick="go('disability')">Disability</a>
-          <a onclick="go('health')">Health &mdash; Marketplace <span class="nsoon">Soon</span></a>
+          <a onclick="go('health')">Health &mdash; Marketplace</a>
         </div>
       </div>
       <a onclick="go('carriers')" data-nav="carriers">Carriers</a>
@@ -410,7 +410,7 @@
   <a class="small" onclick="go('commercial')">Commercial</a>
   <a class="small" onclick="go('life')">Life</a>
   <a class="small" onclick="go('disability')">Disability</a>
-  <a class="small" onclick="go('health')">Health — Marketplace <span class="nsoon">Soon</span></a>
+  <a class="small" onclick="go('health')">Health — Marketplace</a>
   <a onclick="go('carriers')" style="margin-top:22px">Carriers</a>
   <a onclick="go('support')">Claims &amp; Payments</a>
   <a onclick="go('about')">About</a>
@@ -485,11 +485,11 @@
         <p>Income protection for self-employed Texans and 1099 real estate agents.</p>
         <span class="go-link">Learn more &rarr;</span>
       </div>
-      <div class="cov soon" onclick="go('health')">
+      <div class="cov" onclick="go('health')">
         <div class="ic"><i class="ti ti-stethoscope"></i></div>
         <h3 class="serif">Health — Marketplace</h3>
         <p>Individual &amp; family ACA plans, with help finding the premium tax credit you qualify for.</p>
-        <span class="badge">Coming soon</span>
+        <span class="go-link">Learn more &rarr;</span>
       </div>
       </div>
     </div>
@@ -661,11 +661,11 @@
         <p>Income protection for self-employed Texans and 1099 real estate agents.</p>
         <span class="go-link">Learn more &rarr;</span>
       </div>
-      <div class="cov soon" onclick="go('health')">
+      <div class="cov" onclick="go('health')">
         <div class="ic"><i class="ti ti-stethoscope"></i></div>
         <h3 class="serif">Health — Marketplace</h3>
         <p>Individual &amp; family ACA plans, with help finding the premium tax credit you qualify for.</p>
-        <span class="badge">Coming soon</span>
+        <span class="go-link">Learn more &rarr;</span>
       </div>
     </div>
   </div></section>
@@ -1084,38 +1084,61 @@
       <div class="wrap">
         <div class="crumb"><a onclick="go('coverage')">Coverage</a> &rsaquo; Health — Marketplace</div>
         <div class="subhero-ic"><i class="ti ti-stethoscope"></i></div>
-        <h1 class="serif">Marketplace Health <span class="nsoon">Coming soon</span></h1>
+        <h1 class="serif">Marketplace Health</h1>
       </div>
     </div>
     <div class="sec">
       <div class="wrap detail-grid">
         <div>
           <div class="gline"></div>
-          <p class="lead">Marketplace (ACA) health plans are individual and family health insurance you buy on HealthCare.gov — and most people qualify for a <strong>premium tax credit</strong> that lowers the monthly cost. We're getting set up to help you compare plans and find the credit you qualify for. <strong>It's coming soon.</strong> Open enrollment for 2027 coverage runs <strong>Nov 1, 2026 – Jan 15, 2027</strong>. Need coverage before we're ready? You can enroll directly at <a href="https://www.healthcare.gov" target="_blank" rel="noopener">HealthCare.gov</a>.</p>
-          <h3 class="serif dhead">What we'll help with</h3>
-          <ul class="checks">
-          <li><i class="ti ti-check"></i>Individual &amp; family plans on HealthCare.gov</li>
-          <li><i class="ti ti-check"></i>Finding the premium tax credit you may qualify for</li>
-          <li><i class="ti ti-check"></i>Coverage for the self-employed and between-jobs</li>
-          <li><i class="ti ti-check"></i>Making sense of open enrollment (Nov 1 – Jan 15)</li>
-          <li><i class="ti ti-check"></i>We'll never ask for medical details online — that's a phone conversation</li>
-          </ul>
-          <p class="carrier-note" style="margin-top:28px">Voss Risk Advisors is completing Marketplace (ACA) registration. This page is general information and a waitlist — not insurance, tax, or medical advice, and not an offer of coverage. For official plan and subsidy information, or to enroll now, visit <a href="https://www.healthcare.gov" target="_blank" rel="noopener">HealthCare.gov</a>.</p>
+          <p class="lead">Marketplace (ACA) health plans are individual and family health insurance on HealthCare.gov — and most people qualify for a <strong>premium tax credit</strong> that lowers the monthly cost. We help you compare plans, find the credit you qualify for, and enroll — especially helpful for self-employed and 1099 earners. Open enrollment for 2027 coverage runs <strong>Nov 1, 2026 – Jan 15, 2027</strong>.</p>
+          <p class="carrier-note" style="margin-top:28px">Voss Risk Advisors is a Texas-licensed, Marketplace-registered agent. This page is general information — not tax or medical advice, and not an offer of coverage. We never collect medical details online. You can also review plans or enroll directly at <a href="https://www.healthcare.gov" target="_blank" rel="noopener">HealthCare.gov</a>.</p>
         </div>
         <aside class="detail-cta">
-          <h4 class="serif">Join the waitlist</h4>
-          <p>Be first to know when we can help you enroll. We'll reach out — no obligation.</p>
-          <div id="wl_health_msg" style="display:none;font-size:13px;margin:0 0 12px"></div>
-          <div class="frow"><input class="fld" id="wl_health_first" type="text" placeholder="First name"><input class="fld" id="wl_health_last" type="text" placeholder="Last name"></div>
-          <input class="fld" id="wl_health_email" type="email" placeholder="Email address">
-          <input class="fld" id="wl_health_phone" type="tel" placeholder="Phone (optional)">
-          <label class="wl-check"><input type="checkbox" id="wl_health_agent"> I'm a real estate agent</label>
-          <label class="wl-check"><input type="checkbox" id="wl_health_consent"> I agree that Voss Risk Advisors may contact me by phone, text, or email about this. Consent isn't a condition of purchase.</label>
-          <input id="wl_health_co" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" placeholder="Company" style="position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;opacity:0">
-          <a class="btn btn-solid" onclick="submitWaitlist('health',this)">Join the waitlist &rarr;</a>
+          <h4 class="serif">Get help with a Marketplace plan</h4>
+          <p>Share a few basics and we'll find your tax credit and the right plan. No medical details needed.</p>
+          <div id="h_msg" style="display:none;font-size:13px;margin:0 0 12px"></div>
+          <div class="frow"><input class="fld" id="h_first" type="text" placeholder="First name"><input class="fld" id="h_last" type="text" placeholder="Last name"></div>
+          <input class="fld" id="h_email" type="email" placeholder="Email address">
+          <input class="fld" id="h_phone" type="tel" placeholder="Phone">
+          <div class="frow"><input class="fld" id="h_zip" type="text" placeholder="ZIP code"><input class="fld" id="h_county" type="text" placeholder="County"></div>
+          <div class="frow"><input class="fld" id="h_household" type="number" placeholder="Household size"><input class="fld" id="h_income" type="text" placeholder="Household income (yearly)"></div>
+          <input class="fld" id="h_ages" type="text" placeholder="Ages of those needing coverage">
+          <select class="fld" id="h_current"><option value="">Current coverage?</option><option>None</option><option>Marketplace / ACA</option><option>Employer</option><option>COBRA</option><option>Medicaid / CHIP</option><option>Other</option></select>
+          <label class="wl-check"><input type="checkbox" id="h_agent"> I'm a real estate agent</label>
+          <label class="wl-check"><input type="checkbox" id="h_consent"> I authorize Voss Risk Advisors and its licensed agent to help me apply for and enroll in a Health Insurance Marketplace plan, including reviewing my eligibility for financial assistance such as premium tax credits. My information will be kept confidential and used only to assist with my Marketplace enrollment; my consent is voluntary, not a condition of buying anything, and I may revoke it anytime.</label>
+          <input id="h_co" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" placeholder="Company" style="position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;opacity:0">
+          <a class="btn btn-solid" onclick="submitHealth(this)">Request help &rarr;</a>
         </aside>
       </div>
     </div>
+    <div class="sec" style="padding-top:0">
+      <div class="wrap">
+        <div class="sec-head"><div class="gline"></div><span class="label">What we help with</span><h2 class="serif">Marketplace coverage, made simple</h2></div>
+        <div class="cov-grid">
+          <div class="cov"><div class="ic"><i class="ti ti-report-money"></i></div><h3 class="serif">Find your tax credit</h3><p>Most people qualify for a premium tax credit — we help you find yours.</p></div>
+          <div class="cov"><div class="ic"><i class="ti ti-heartbeat"></i></div><h3 class="serif">Compare plans</h3><p>Individual and family plans on HealthCare.gov, side by side.</p></div>
+          <div class="cov"><div class="ic"><i class="ti ti-briefcase"></i></div><h3 class="serif">Self-employed friendly</h3><p>Built for 1099 earners, the self-employed, and between-jobs.</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="sec" style="padding-top:0">
+      <div class="wrap">
+        <div class="sec-head"><div class="gline"></div><span class="label">Simple process</span><h2 class="serif">How it works</h2></div>
+        <div class="cov-grid">
+          <div class="cov"><div class="ic"><i class="ti ti-circle-number-1"></i></div><h3 class="serif">Share a few basics</h3><p>ZIP, household size, and estimated income — no medical details.</p></div>
+          <div class="cov"><div class="ic"><i class="ti ti-circle-number-2"></i></div><h3 class="serif">We find your plans &amp; credit</h3><p>We check your tax credit and compare plans that fit.</p></div>
+          <div class="cov"><div class="ic"><i class="ti ti-circle-number-3"></i></div><h3 class="serif">Enroll through HealthSherpa</h3><p>We walk you through enrollment and stay your point of contact.</p></div>
+        </div>
+      </div>
+    </div>
+    <section class="strip">
+      <div class="wrap">
+        <h2 class="serif">Find the coverage — and the credit — you qualify for</h2>
+        <p>Open enrollment runs Nov 1 – Jan 15. A quick conversation gets you started.</p>
+        <a class="btn btn-gold" onclick="go('health')">Request help enrolling &rarr;</a>
+      </div>
+    </section>
   </section>
 
 <!-- CARRIERS -->
@@ -1442,7 +1465,7 @@
         <li><a onclick="go('commercial')">Commercial</a></li>
         <li><a onclick="go('life')">Life</a></li>
         <li><a onclick="go('disability')">Disability</a></li>
-        <li><a onclick="go('health')">Health — Marketplace <span class="nsoon">Soon</span></a></li>
+        <li><a onclick="go('health')">Health — Marketplace</a></li>
       </ul></div>
       <div><h5>Agency</h5><ul>
         <li><a onclick="go('about')">About</a></li>
@@ -1602,6 +1625,28 @@
       show('#4F7A28',"You're on the list — we'll reach out the moment "+labels[line]+" is available.");
       ['first','last','email','phone'].forEach(function(s){g(s).value='';});g('agent').checked=false;g('consent').checked=false;
       btn.textContent='Added ✓';
+    }catch(e){show('#B9741B',"Couldn't submit just now — please call (945) 407-8370.");btn.textContent=t;}
+  }
+  async function submitHealth(btn){
+    var g=function(id){var el=document.getElementById(id);return el?(el.value||'').trim():'';};
+    var msg=document.getElementById('h_msg');
+    function show(c,t){msg.style.display='block';msg.style.color=c;msg.innerHTML=t;}
+    var first=g('h_first'),last=g('h_last'),email=g('h_email'),phone=g('h_phone');
+    var consent=document.getElementById('h_consent').checked,agent=document.getElementById('h_agent').checked,hp=g('h_co');
+    if(!first||!last||!email){show('#C0392B','Please add your name and email.');return;}
+    if(!consent){show('#C0392B','Please check the consent box so we can help with your Marketplace application.');return;}
+    var p={first_name:first,last_name:last,email:email,phone:phone,
+      zip:g('h_zip'),county:g('h_county'),household_size:g('h_household'),income:g('h_income'),ages:g('h_ages'),current_coverage:g('h_current'),
+      is_agent:agent,consent:true,consent_version:'2026-11',hp:hp,elapsed_ms:Date.now()-VOSS_T0};
+    var t=btn.textContent;btn.textContent='Sending…';
+    try{
+      var r=await fetch('/.netlify/functions/submit-health',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});
+      if(!r.ok)throw 0;
+      if(window.gtag){gtag('event','generate_lead',{coverage_type:'health_marketplace'});}
+      show('#4F7A28',"Thanks — we'll reach out within one business day to help you find your plan and the tax credit you qualify for.");
+      ['h_first','h_last','h_email','h_phone','h_zip','h_county','h_household','h_income','h_ages','h_current'].forEach(function(i){var el=document.getElementById(i);if(el)el.value='';});
+      document.getElementById('h_consent').checked=false;document.getElementById('h_agent').checked=false;
+      btn.textContent='Sent ✓';
     }catch(e){show('#B9741B',"Couldn't submit just now — please call (945) 407-8370.");btn.textContent=t;}
   }
   async function subscribeNews(){
