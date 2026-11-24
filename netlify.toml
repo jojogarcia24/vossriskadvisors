@@ -73,3 +73,10 @@
   from = "/blog/review"
   to   = "/.netlify/functions/blog-review"
   status = 200
+
+# Short link to text clients for a Google review: vossriskadvisors.com/review
+[[redirects]]
+  from = "/review"
+  to   = "https://g.page/r/CShRWWRbi0jMEAI/review"
+  status = 302
+  force = true
