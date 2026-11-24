@@ -24,7 +24,15 @@ _November 2026. A page-by-page scan of the live single-page site (`public/index.
 
 ---
 
-## Fix first: trust problems visible on the live site today
+## Update: second round (also in this PR)
+
+Done: **Renters**, **Umbrella** (with a calculator), and **Private Client** pages · the placeholder testimonials replaced by an honest "Our promise to you" section · stats band replaced with real figures (10 coverage lines, 1-day response, $0 to compare, P&C + Life & Health licensed) · Privacy, Terms, and Accessibility pages rewritten (texting, AI chat, licensing) with the "Template" notices removed · footer, emails, and schema now list **Life, Accident & Health** · **social share image** (`og:image`) · **AI chat assistant** that answers questions and captures leads · **Text us** in the header, mobile bar, contact page, footer, and chat · **3-step quote form** with progress bar, multi-select coverage, and contact preference · **FEMA flood-zone lookup** and **renters/umbrella calculators** · **every page has its own URL** (`/renters`, `/resources/<article>`) with its own title, description, canonical link, breadcrumbs, a generated sitemap, and a 404 page · embedded images moved to files (page weight 1.3 MB → about 180 KB).
+
+Still open: Google reviews (once you have clients, see below), an advisor photo or video, carrier logos, policy service request forms, life-stage guides, Spanish.
+
+**Getting reviews from zero:** create or claim the Google Business Profile for 13155 Noel Rd, then ask every new client for a review after they bind, with a direct review link in the thank-you email. Don't buy or swap reviews; Google and the FTC prohibit it.
+
+## Fix first: trust problems on the live site (fixed in this PR)
 
 1. **The testimonials are labeled "Client testimonial · placeholder"** on the home page. This is the most damaging thing on the site. Replace them with real Google reviews (with permission) or remove the section until you have some.
 2. **The stats band ("Many / 1:1 / TX / 100%")** looks like filler. Use real numbers: carrier appointments (e.g. "20+ carriers"), typical quote turnaround ("Same-day quotes"), Google rating, and the year licensed.

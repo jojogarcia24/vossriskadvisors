@@ -51,7 +51,7 @@ const shell = (inner) => `
               ${PHONE} &middot; <a href="mailto:info@VossRiskAdvisors.com" style="color:${GOLD};text-decoration:none">info@VossRiskAdvisors.com</a>
             </div>
             <div style="color:${MUTED};font-size:10px;line-height:1.6;margin-top:12px">
-              Licensed in Texas &middot; Personal Lines Property &amp; Casualty &middot; Mon&ndash;Fri, 9am&ndash;6pm CT
+              Licensed in Texas &middot; Property &amp; Casualty &middot; Life, Accident &amp; Health &middot; Mon&ndash;Fri, 9am&ndash;6pm CT
             </div>
           </td>
         </tr>

@@ -74,12 +74,36 @@ The generator's instructions forbid specific rates, savings guarantees, legal ad
 
 ---
 
+## Website chat assistant
+
+The chat bubble on every page is an AI assistant (`netlify/functions/chat.js`)
+that answers coverage questions, links to the right page, opens the quote form
+pre-filled, and — once a visitor leaves a name and phone or email — saves a lead
+to `quote_requests` (source `chat`) and emails `AGENCY_EMAIL` the conversation.
+It reuses `ANTHROPIC_API_KEY`, `SUPABASE_*`, `RESEND_API_KEY`, `FROM_EMAIL` and
+`AGENCY_EMAIL`. Optional: `CHAT_AI_MODEL` (defaults to `claude-opus-5-5`).
+
+## Pages and search (SEO)
+
+Every page has its own URL (`/renters`, `/umbrella`, `/resources/<article>`…).
+Each `<section class="page">` in `public/index.html` carries `data-title` and
+`data-desc`; `scripts/build-pages.js` turns those into per-page titles,
+descriptions, canonical URLs, social tags and breadcrumbs at deploy. To add a
+page: add a section with both attributes, then link to it with
+`<a href="/your-page">`. Preview locally with `node scripts/build-pages.js`.
+
 ## File map
 ```
-public/index.html            The website (single self-contained file)
+public/index.html            The website (one file, a <section class="page"> per page) — edit this
+public/voss-chat.js          Website chat bubble (AI assistant + Text us)
+public/img/                  Photos, card images (img/cards/), logo, social share image
 public/admin.html            Carrier Appointments admin portal (password-gated)
+scripts/build-pages.js       Runs on every Netlify deploy: writes a crawlable page per
+                             section (public/renters.html, public/resources/<slug>.html…),
+                             404.html and sitemap.xml. Those files are git-ignored.
 netlify/functions/
   submit-quote.js            Quote form -> Supabase + Resend emails
+  chat.js                    Chat assistant (Claude) -> answers + saves chat leads
   weekly-post.js             Scheduled weekly AI article -> Supabase
   carriers-admin.js          Carrier tracker API (CRUD, CSV, Claude bulletin review)
   carriers-webhook.js        Receives Google Sheet edits (Google -> Voss sync)
