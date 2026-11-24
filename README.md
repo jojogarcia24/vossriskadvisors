@@ -83,6 +83,27 @@ to `quote_requests` (source `chat`) and emails `AGENCY_EMAIL` the conversation.
 It reuses `ANTHROPIC_API_KEY`, `SUPABASE_*`, `RESEND_API_KEY`, `FROM_EMAIL` and
 `AGENCY_EMAIL`. Optional: `CHAT_AI_MODEL` (defaults to `claude-opus-5-5`).
 
+## Clients, portal, follow-up campaign, monthly report
+
+- **Admin → Clients & Leads** (`/admin/clients`): every quote, chat and service request.
+  When a policy is issued, click **Policy issued**. That saves the client and
+  policy (`clients`, `policies` tables), emails the welcome, and queues the
+  campaign in `drip_messages`: review request (day 3), policy explainer (day 10),
+  coverage checkup (day 30), referral ask (day 60), renewal reminder (45 days
+  before renewal). Welcome, review and renewal also go by text. Upload documents
+  (dec pages, ID cards) for the client portal from the same page.
+- **Texts:** set `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM` to send
+  automatically to clients who opted in. Without them, the agency gets a daily
+  "texts to send" email with tap-to-send buttons.
+- **Client portal** (`/portal`): clients sign in with a one-time email link
+  (Supabase Auth, generated server side, sent through Resend). In Supabase →
+  Authentication → URL Configuration, add `https://www.vossriskadvisors.com/portal`
+  to **Redirect URLs** (links that land elsewhere are forwarded anyway).
+- **Monthly report:** `monthly-report.js` emails `AGENCY_EMAIL` on the 1st; the
+  admin page can send it on demand.
+- Schema: `supabase/clients-schema.sql` (RLS on, service role only) and the
+  private `client-docs` storage bucket. Templates: `netlify/functions/lib/drip.js`.
+
 ## Pages and search (SEO)
 
 Every page has its own URL (`/renters`, `/umbrella`, `/resources/<article>`…).
@@ -104,6 +125,12 @@ scripts/build-pages.js       Runs on every Netlify deploy: writes a crawlable pa
 netlify/functions/
   submit-quote.js            Quote form -> Supabase + Resend emails
   chat.js                    Chat assistant (Claude) -> answers + saves chat leads
+  service-request.js         Policy service requests (ID cards, COIs, changes)
+  clients-admin.js           Admin: leads, "policy issued", documents, portal invites
+  portal.js                  Client portal sign-in link + data
+  drip-runner.js             Daily: sends due campaign emails/texts
+  monthly-report.js          Monthly report email to the agency
+  client-unsubscribe.js      Opt-out link for campaign marketing emails
   weekly-post.js             Scheduled weekly AI article -> Supabase
   carriers-admin.js          Carrier tracker API (CRUD, CSV, Claude bulletin review)
   carriers-webhook.js        Receives Google Sheet edits (Google -> Voss sync)

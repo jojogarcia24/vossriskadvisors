@@ -6,7 +6,7 @@
 
 const NAVY = "#0C2340", NAVY_INK = "#001830", GOLD = "#C09C48",
       CREAM = "#F5F0E6", PAPER = "#FBFAF7", INK = "#1C2433", MUTED = "#6B665B", LINE = "#E7E1D6";
-const LOGO_URL = "https://www.vossriskadvisors.com/email-logo.png";
+const BRAND_LOGO = "https://www.vossriskadvisors.com/img/brand/voss-logo-dark-tight.png"; // full logo, light-on-dark
 const SITE = "https://www.vossriskadvisors.com";
 
 const esc = (s) => String(s == null ? "" : s)
@@ -48,11 +48,8 @@ function layout({ title, preheader, eyebrow, eyebrowNote, cards, footerNote }) {
 <div style="display:none;max-height:0;overflow:hidden;color:${CREAM}">${esc(preheader || "")}</div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${CREAM}"><tr><td align="center" style="padding:24px 12px">
   <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:100%">
-    <tr><td style="background:${NAVY};padding:28px 32px;border-radius:8px 8px 0 0" align="center">
-      <img src="${LOGO_URL}" width="44" height="44" alt="Voss Risk Advisors" style="display:block;border:0;margin:0 auto 12px;border-radius:8px">
-      <div style="font-family:Georgia,'Times New Roman',serif;color:${CREAM};font-size:26px;letter-spacing:.18em">VOSS</div>
-      <div style="height:1px;width:40px;background:${GOLD};margin:10px auto"></div>
-      <div style="color:${GOLD};font-family:Arial,Helvetica,sans-serif;font-size:10px;letter-spacing:.34em;text-transform:uppercase">Risk Advisors</div>
+    <tr><td style="background:${NAVY};padding:26px 32px 22px;border-radius:8px 8px 0 0" align="center">
+      <img src="${BRAND_LOGO}" width="150" height="146" alt="Voss Risk Advisors" style="display:block;border:0;margin:0 auto;width:150px;max-width:60%;height:auto">
     </td></tr>
     <tr><td style="background:${NAVY_INK};padding:14px 32px" align="center">
       <span style="font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:${GOLD}">${esc(eyebrow)}</span>${eyebrowNote ? `<span style="font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#C9D0DB"> &middot; ${esc(eyebrowNote)}</span>` : ""}

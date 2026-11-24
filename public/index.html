@@ -555,6 +555,20 @@
   .review-box{margin:40px auto 0;max-width:520px;padding:26px 28px;border:1px solid var(--line);background:var(--paper)}
   .review-box .stars{color:var(--gold);letter-spacing:4px;font-size:16px;margin-bottom:10px}
   .review-box p{color:var(--ink);font-size:15px;line-height:1.7;margin-bottom:16px}
+  /* --- Meet your advisor (home) --- */
+  .adv-band{background:var(--navy);color:#fff;padding:90px 0;overflow:hidden}
+  .adv-grid{display:grid;grid-template-columns:380px 1fr;gap:70px;align-items:center}
+  .adv-ring{width:340px;height:340px;border-radius:50%;padding:8px;background:linear-gradient(135deg,var(--gold),rgba(192,156,72,.25));margin:0 auto;box-shadow:0 30px 60px -30px rgba(0,0,0,.6)}
+  .adv-ring img{width:100%;height:100%;border-radius:50%;object-fit:cover;object-position:center 18%;display:block;background:#000}
+  .adv-band .gline{margin-bottom:20px}
+  .adv-band .label{display:block;margin-bottom:16px}
+  .adv-band h2{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(32px,4vw,50px);line-height:1.06;margin-bottom:18px}
+  .adv-band p{color:#C9D0DB;font-weight:300;font-size:16.5px;line-height:1.8;max-width:600px;margin-bottom:20px}
+  .adv-meta{display:flex;flex-wrap:wrap;gap:10px 20px;margin-bottom:28px;font-size:13px;color:#E4E0D6}
+  .adv-meta i{color:var(--gold);margin-right:4px}
+  .adv-band .adv-line{color:#fff;border-color:rgba(255,255,255,.4)}
+  .adv-band .adv-line:hover{border-color:#fff;background:rgba(255,255,255,.08)}
+  @media(max-width:980px){.adv-grid{grid-template-columns:1fr;gap:36px;text-align:center}.adv-ring{width:240px;height:240px}.adv-band .gline{margin:0 auto 20px}.adv-band p{margin-left:auto;margin-right:auto}.adv-meta,.adv-band .btn-row{justify-content:center}.adv-band{padding:64px 0}}
 </style>
 </head>
 <body>
@@ -587,6 +601,7 @@
       <a href="/support" data-nav="support">Claims</a>
       <a href="/about" data-nav="about">About</a>
       <a href="/resources" data-nav="resources">Resources</a>
+      <a href="/portal" class="hd-text" title="Client portal"><i class="ti ti-user-circle"></i> Login</a>
       <a href="/es" class="hd-text" lang="es" title="Hablamos español">Español</a>
       <a href="sms:+19454078370" class="hd-text" title="Text us (945) 407-8370"><i class="ti ti-message-circle"></i> Text us</a>
       <a href="/contact" data-nav="contact" class="hd-cta">Get a quote</a>
@@ -614,6 +629,7 @@
   <a href="/carriers" style="margin-top:22px">Carriers</a>
   <a href="/support">Claims &amp; Payments</a>
   <a href="/service">Policy service</a>
+  <a href="/portal">Client login</a>
   <a href="/about">About</a>
   <a href="/resources">Resources</a>
   <a href="/book">Book a call</a>
@@ -803,6 +819,20 @@
       <div class="quote promise"><div class="pr-ic"><i class="ti ti-user-heart"></i></div><h4 class="serif">The same advisor, every time</h4><p>No call centers and no handoffs. The person who quotes your policy helps with renewals, changes, and claims.</p></div>
     </div>
     <p class="founding">Become one of our founding clients. <a href="/contact">Get your free quote &rarr;</a></p>
+  </div></section>
+  <section class="adv-band"><div class="wrap adv-grid">
+    <div class="adv-photo"><div class="adv-ring"><img src="/img/advisor.webp" alt="JoJo Garcia, founder of Voss Risk Advisors" loading="lazy" width="600" height="600"></div></div>
+    <div>
+      <div class="gline"></div><span class="label">Meet your advisor</span>
+      <h2 class="serif">A real person who knows your name.</h2>
+      <p>I'm JoJo Garcia, founder of Voss Risk Advisors. When you call, you get me, not a call center. I'll shop your coverage across our carriers, explain your options in plain English, and stay with you through every renewal, change, and claim.</p>
+      <div class="adv-meta"><span><i class="ti ti-certificate"></i> Licensed in Texas</span><span><i class="ti ti-shield-check"></i> P&amp;C + Life, Accident &amp; Health</span><span><i class="ti ti-language"></i> Hablamos español</span></div>
+      <div class="btn-row">
+        <a class="btn btn-gold" href="tel:+19454078370"><i class="ti ti-phone"></i> Call (945) 407-8370</a>
+        <a class="btn btn-line adv-line" href="sms:+19454078370"><i class="ti ti-message-circle"></i> Text me</a>
+        <a class="btn btn-line adv-line" href="/book">Book a call</a>
+      </div>
+    </div>
   </div></section>
 
   <section class="sec"><div class="wrap">
@@ -1874,6 +1904,7 @@
   <section class="sec"><div class="wrap">
     <div class="sec-head"><div class="gline"></div><span class="label">Need a hand?</span><h2 class="serif">File a claim or make a payment.</h2><p>Claims and payments are handled directly through your carrier. Find yours below — and if you're not sure who your carrier is or need help, just call us at <a href="tel:+19454078370" style="color:var(--gold)">(945) 407-8370</a>.</p></div>
     <a class="svc-banner" href="/service"><i class="ti ti-file-pencil"></i><span><b>Need a policy change, ID cards, or a certificate of insurance?</b> Send a service request and your advisor will handle it.</span><span class="svc-go">Policy service &rarr;</span></a>
+    <a class="svc-banner" href="/portal"><i class="ti ti-user-circle"></i><span><b>Already a client?</b> Sign in to your portal to see your policies, renewal dates, and documents.</span><span class="svc-go">Client login &rarr;</span></a>
     <div class="cl-grid">
         <div class="clcard"><h4 class="serif">Steadily</h4><div class="cllinks"><a href="https://www.steadily.com/claims" target="_blank" rel="noopener">File a claim</a><a href="https://www.steadily.com/" target="_blank" rel="noopener">Make a payment</a></div></div>
         <div class="clcard"><h4 class="serif">Obie</h4><div class="cllinks"><a href="https://www.obieinsurance.com/support/case-request" target="_blank" rel="noopener">File a claim</a><a href="https://www.obieinsurance.com/" target="_blank" rel="noopener">Make a payment</a></div></div>
@@ -1890,7 +1921,7 @@
 <section class="page" data-page="service" data-title="Policy Service: ID Cards, Certificates &amp; Changes | Voss Risk Advisors" data-desc="Existing Voss clients: add a driver or vehicle, get ID cards, request a certificate of insurance, change your address or lender. Your advisor replies within one business day.">
   <div class="subhero"><div class="wrap"><div class="crumb"><a href="/">Home</a> &rsaquo; Policy service</div><div class="subhero-ic"><i class="ti ti-file-pencil"></i></div><h1 class="serif">Policy service</h1></div></div>
   <section class="sec"><div class="wrap">
-    <div class="sec-head"><div class="gline"></div><span class="label">For existing clients</span><h2 class="serif">What do you need?</h2><p>Pick a request and send the details. Your advisor replies within one business day. Need to file a claim instead? <a href="/support" style="color:var(--navy);text-decoration:underline">Go to Claims &amp; Payments</a>.</p></div>
+    <div class="sec-head"><div class="gline"></div><span class="label">For existing clients</span><h2 class="serif">What do you need?</h2><p>Pick a request and send the details. Want your documents? <a href="/portal" style="color:var(--navy);text-decoration:underline">Sign in to your client portal</a>. Your advisor replies within one business day. Need to file a claim instead? <a href="/support" style="color:var(--navy);text-decoration:underline">Go to Claims &amp; Payments</a>.</p></div>
     <div class="svc-tiles" role="group" aria-label="Request type">
       <button type="button" data-svc="add-driver"><i class="ti ti-user-plus"></i><b>Add a driver</b><small>New or teen driver</small></button>
       <button type="button" data-svc="add-vehicle"><i class="ti ti-car"></i><b>Add or replace a vehicle</b><small>Bought or traded a car</small></button>
@@ -2291,6 +2322,7 @@
         <li class="review-only" hidden><a class="review-link" target="_blank" rel="noopener">&#9733; Leave us a review</a></li>
         <li><a href="mailto:info@VossRiskAdvisors.com">info@VossRiskAdvisors.com</a></li>
         <li><a href="/support">Claims &amp; Payments</a></li>
+        <li><a href="/portal">Client login</a></li>
         <li><a href="/service">Policy service &amp; ID cards</a></li>
         <li><a href="https://www.elitelivingrealty.com/energy?src=insurance" target="_blank" rel="noopener">Electricity setup</a></li>
       </ul></div>
@@ -2315,6 +2347,9 @@
 </footer>
 
 <script>
+  // A client portal sign-in link that lands anywhere but /portal (e.g. if the
+  // redirect URL isn't allow-listed in Supabase) is forwarded to the portal.
+  (function(){var h=location.hash||'';if(/access_token=|error_description=/.test(h)&&!/^\/portal/.test(location.pathname)){location.replace('/portal'+h);}})();
 
   // ---- Live blog from Supabase (optional). Fill these in after deploy to
   //      make the Resources section pull published posts automatically.
@@ -2555,7 +2590,7 @@
   document.addEventListener('click',function(e){
     if(e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;
     var a=e.target.closest&&e.target.closest('a[href^="/"]');if(!a||a.target==='_blank'||a.hasAttribute('download'))return;
-    var href=a.getAttribute('href');if(/^\/(admin|api|\.netlify|unsubscribe|newsletter|blog\/review)/.test(href))return;
+    var href=a.getAttribute('href');if(/^\/(admin|api|\.netlify|unsubscribe|newsletter|blog\/review|portal|review)/.test(href))return;
     var id=idFor(href.split('?')[0].split('#')[0]);
     if(id==='home'&&href.split('?')[0]!=='/')return; // unknown path: let the browser handle it
     e.preventDefault();go(id);
