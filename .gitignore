@@ -13,3 +13,9 @@ node_modules/
 .DS_Store
 Thumbs.db
 *.log
+
+# Generated at deploy by scripts/build-pages.js (edit public/index.html instead)
+/public/*.html
+!/public/index.html
+!/public/admin.html
+/public/resources/

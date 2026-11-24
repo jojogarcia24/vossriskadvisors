@@ -3,6 +3,9 @@
 [build]
   publish   = "public"
   functions = "netlify/functions"
+  # Writes a crawlable page per section (public/<page>.html), 404.html and
+  # sitemap.xml from public/index.html. See scripts/build-pages.js.
+  command   = "node scripts/build-pages.js"
 
 # The Supabase project URL and anon (public) key are embedded in
 # public/index.html on purpose — they're safe client-side and protected by
