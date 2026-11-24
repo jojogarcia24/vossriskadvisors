@@ -40,7 +40,7 @@ function rateLimited(ip) {
 
 // Pages the assistant can point to (the widget shows a button for them).
 const PAGES = ["homeowners", "auto", "renters", "landlord", "flood", "umbrella", "private-client", "commercial",
-  "life", "disability", "health", "coverage", "carriers", "support", "service", "about", "resources", "faq", "contact", "book", "es"];
+  "life", "disability", "health", "coverage", "carriers", "support", "service", "about", "resources", "faq", "contact", "book", "es", "realtors"];
 // Quote-form coverage values the widget can pre-select.
 const QUOTE = ["Homeowners", "Auto", "Renters", "Landlord / Rental", "Flood", "Umbrella", "Private client / high-value",
   "Commercial / business", "Life", "Disability", "Bundle / multiple"];

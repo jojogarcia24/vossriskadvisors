@@ -317,4 +317,36 @@ async function runDue({ clientId, now = new Date() } = {}) {
   return counts;
 }
 
-module.exports = { scheduleDrip, runDue, email, smsText, gapIdeas, sb, sendEmail, SMS_STEPS };
+
+// ---------- renewal re-shop tasks ----------
+// One task per policy renewal, created ~50 days out and due 30 days before the
+// renewal date, so there's time to re-quote before the client's 45-day email
+// lands. Returns the tasks created on this call.
+async function ensureRenewalTasks(now = new Date()) {
+  const today = now.toISOString().slice(0, 10);
+  const horizon = new Date(now.getTime() + 50 * DAY).toISOString().slice(0, 10);
+  const pols = await sb("GET", `policies?status=eq.active&renewal_date=gte.${today}&renewal_date=lte.${horizon}&select=id,client_id,line,carrier,renewal_date,clients(first_name,last_name)`);
+  if (!pols.length) return [];
+  const rows = pols.map((p) => {
+    const due = new Date(new Date(p.renewal_date + "T12:00:00Z").getTime() - 30 * DAY).toISOString().slice(0, 10);
+    const who = p.clients ? `${p.clients.first_name} ${p.clients.last_name}`.trim() : "Client";
+    return { type: "renewal_reshop", client_id: p.client_id, policy_id: p.id, renewal_date: p.renewal_date, due_date: due < today ? today : due, title: `Re-shop ${who}'s ${p.line.toLowerCase()} renewal${p.carrier ? " (" + p.carrier + ")" : ""}` };
+  });
+  return sb("POST", "tasks?on_conflict=policy_id,type,renewal_date", rows, "return=representation,resolution=ignore-duplicates");
+}
+
+// Email the agency the renewal re-shops that just came up.
+async function sendTaskDigest(tasks) {
+  if (!tasks.length || !process.env.AGENCY_EMAIL) return;
+  const fmt = (d) => new Date(d + "T12:00:00Z").toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
+  const html = E.layout({
+    title: `${tasks.length} renewal${tasks.length > 1 ? "s" : ""} to re-shop`,
+    preheader: tasks.map((t) => t.title).join("; "),
+    eyebrow: "Renewal re-shops", eyebrowNote: "added to your task list",
+    cards: E.detailsCard("Coming up", tasks.map((t) => [`Renews ${fmt(t.renewal_date)}`, `${E.esc(t.title)}<br><span style="color:#6B665B;font-size:13px">Re-shop by ${fmt(t.due_date)}</span>`]))
+      + E.textCard({ paragraphs: ["Quote each one with your other carriers, then mark the task done in your admin with the outcome (renewed, moved to a new carrier, or lost). The client's renewal email goes out 45 days before renewal."], buttons: E.button("Open my tasks", SITE.replace(/\/$/, "") + "/admin/clients#tasks", true) }),
+  });
+  await sendEmail(process.env.AGENCY_EMAIL, `📋 ${tasks.length} renewal${tasks.length > 1 ? "s" : ""} to re-shop`, html);
+}
+
+module.exports = { ensureRenewalTasks, sendTaskDigest, scheduleDrip, runDue, email, smsText, gapIdeas, sb, sendEmail, SMS_STEPS };

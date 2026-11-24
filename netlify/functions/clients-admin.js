@@ -14,6 +14,12 @@
 //   set_client {id, fields}             sms_opt_in, lang, drip_paused, unsubscribed, phone, notes
 //   run_drip                            send anything due right now
 //   report {month?: "YYYY-MM"}          email the monthly report to you now
+//   list_tasks                          open renewal re-shop tasks (creates any that are due)
+//   complete_task {id, outcome, carrier?, policy_number?, renewal_date?, notes?}
+//                                       outcome: renewed_same | moved_carrier | lost
+//   snooze_task {id, days}
+// Referral leads: marking "quoted" or "Policy issued" emails the referring agent
+// a status update when the buyer agreed (share_status).
 //
 // Env: SUPABASE_URL, SUPABASE_SERVICE_ROLE, RESEND_API_KEY, FROM_EMAIL, AGENCY_EMAIL,
 //      TWILIO_ACCOUNT_SID / TWILIO_AUTH_TOKEN / TWILIO_FROM (optional, for automatic texts)
@@ -22,6 +28,7 @@ const { json, authOk } = require("./lib/carriers");
 const D = require("./lib/drip.js");
 const A = require("./lib/portal-auth.js");
 const { buildReport } = require("./lib/report.js");
+const { notifyAgent } = require("./lib/referral-updates.js");
 
 const clean = (v, n = 300) => String(v == null ? "" : v).replace(/\s+/g, " ").trim().slice(0, n);
 const date = (v) => /^\d{4}-\d{2}-\d{2}$/.test(String(v || "")) ? v : null;
@@ -31,6 +38,18 @@ const POLICY_FIELDS = ["line", "carrier", "policy_number", "effective_date", "re
 
 function addYears(d, n) { const x = new Date(d + "T12:00:00Z"); x.setUTCFullYear(x.getUTCFullYear() + n); return x.toISOString().slice(0, 10); }
 function addMonths(d, n) { const x = new Date(d + "T12:00:00Z"); x.setUTCMonth(x.getUTCMonth() + n); return x.toISOString().slice(0, 10); }
+
+// Replace a policy's not-yet-sent renewal touches with ones for its renewal date.
+async function rescheduleRenewal(policy) {
+  await D.sb("DELETE", `drip_messages?policy_id=eq.${policy.id}&step=eq.renewal&status=eq.pending`, null, "return=minimal");
+  if (!policy.renewal_date || policy.status === "cancelled") return;
+  const [client] = await D.sb("GET", `clients?id=eq.${policy.client_id}&select=*`);
+  const at = new Date(policy.renewal_date + "T15:00:00Z").getTime() - 45 * 86400000;
+  if (!client || at <= Date.now()) return;
+  const rows = [{ client_id: client.id, policy_id: policy.id, step: "renewal", channel: "email", due_at: new Date(at).toISOString(), status: "pending", sent_at: null, error: null }];
+  if (client.phone) rows.push({ ...rows[0], channel: "sms" });
+  await D.sb("POST", "drip_messages?on_conflict=policy_id,step,channel", rows, "return=minimal,resolution=merge-duplicates");
+}
 
 async function sendInvite(client, invite) {
   await A.ensureAuthUser(client.email);
@@ -51,13 +70,15 @@ exports.handler = async (event) => {
   try {
     switch (d.action) {
       case "list_leads": {
-        const leads = await D.sb("GET", "quote_requests?select=id,created_at,first_name,last_name,email,phone,coverage_type,address,message,source,status&order=created_at.desc&limit=300");
+        const leads = await D.sb("GET", "quote_requests?select=id,created_at,first_name,last_name,email,phone,coverage_type,address,message,source,status,referred_by_name,referred_by_email,referred_by_phone,referred_by_brokerage,closing_date,share_status&order=created_at.desc&limit=300");
         return json(200, { leads });
       }
       case "set_lead_status": {
         if (!LEAD_STATUS.includes(d.status)) return json(400, { error: "Bad status" });
-        await D.sb("PATCH", `quote_requests?id=eq.${encodeURIComponent(d.id)}`, { status: d.status }, "return=minimal");
-        return json(200, { ok: true });
+        const [lead] = await D.sb("PATCH", `quote_requests?id=eq.${encodeURIComponent(d.id)}`, { status: d.status }, "return=representation");
+        let agentNotified = false;
+        if (d.status === "quoted" && lead) { try { agentNotified = await notifyAgent(lead, "quoted"); } catch (e) { console.error("notifyAgent", e.message); } }
+        return json(200, { ok: true, agentNotified });
       }
       case "list_clients": {
         const clients = await D.sb("GET", "clients?select=*,policies(*),policy_documents(id,title,policy_id,created_at,content_type,size_bytes),drip_messages(id,policy_id,step,channel,status,due_at,sent_at,error)&order=created_at.desc&limit=500");
@@ -81,28 +102,23 @@ exports.handler = async (event) => {
           annual_premium: p.annual_premium !== "" && p.annual_premium != null && !isNaN(Number(String(p.annual_premium).replace(/[$,]/g, ""))) ? Number(String(p.annual_premium).replace(/[$,]/g, "")) : null,
           notes: clean(p.notes, 1000) || null,
         }, "return=representation");
-        if (d.lead_id) await D.sb("PATCH", `quote_requests?id=eq.${encodeURIComponent(d.lead_id)}`, { status: "bound" }, "return=minimal").catch(() => {});
+        let agentNotified = false;
+        if (d.lead_id) {
+          const [lead] = await D.sb("PATCH", `quote_requests?id=eq.${encodeURIComponent(d.lead_id)}`, { status: "bound" }, "return=representation").catch(() => []);
+          try { agentNotified = await notifyAgent(lead, "issued", policy); } catch (e) { console.error("notifyAgent", e.message); }
+        }
         const queued = await D.scheduleDrip(client, policy);
         let sent = null, invite = null;
         try { sent = await D.runDue({ clientId: client.id }); } catch (e) { sent = { error: e.message }; }
         try { if (d.send_portal_invite !== false) { await A.ensureAuthUser(email); invite = "ready"; } } catch (e) { invite = "error: " + e.message; }
-        return json(200, { ok: true, client_id: client.id, policy_id: policy.id, queued: queued.length, sent, invite, by });
+        return json(200, { ok: true, client_id: client.id, policy_id: policy.id, queued: queued.length, sent, invite, agentNotified, by });
       }
       case "update_policy": {
         const f = {};
         for (const k of POLICY_FIELDS) if (d.fields && k in d.fields) f[k] = k.endsWith("_date") ? date(d.fields[k]) : k === "annual_premium" ? (d.fields[k] === "" ? null : Number(String(d.fields[k]).replace(/[$,]/g, ""))) : clean(d.fields[k], 500);
         const [policy] = await D.sb("PATCH", `policies?id=eq.${encodeURIComponent(d.id)}`, f, "return=representation");
-        // A new renewal date re-schedules a renewal touch that hasn't gone out yet.
-        if (policy && f.renewal_date) {
-          await D.sb("DELETE", `drip_messages?policy_id=eq.${policy.id}&step=eq.renewal&status=eq.pending`, null, "return=minimal");
-          const [client] = await D.sb("GET", `clients?id=eq.${policy.client_id}&select=*`);
-          const at = new Date(f.renewal_date + "T15:00:00Z").getTime() - 45 * 86400000;
-          if (at > Date.now()) {
-            const rows = [{ client_id: client.id, policy_id: policy.id, step: "renewal", channel: "email", due_at: new Date(at).toISOString() }];
-            if (client.phone) rows.push({ ...rows[0], channel: "sms" });
-            await D.sb("POST", "drip_messages?on_conflict=policy_id,step,channel", rows, "return=minimal,resolution=merge-duplicates");
-          }
-        }
+        // A new renewal date (or a cancellation) re-schedules renewal touches not yet sent.
+        if (policy && (f.renewal_date || f.status)) await rescheduleRenewal(policy);
         return json(200, { ok: true, policy });
       }
       case "upload_doc": {
@@ -136,7 +152,51 @@ exports.handler = async (event) => {
         await D.sb("PATCH", `clients?id=eq.${encodeURIComponent(d.id)}`, f, "return=minimal");
         return json(200, { ok: true });
       }
-      case "run_drip": return json(200, { ok: true, counts: await D.runDue() });
+      case "run_drip": {
+        const counts = await D.runDue();
+        const created = await D.ensureRenewalTasks();
+        await D.sendTaskDigest(created).catch(() => {});
+        return json(200, { ok: true, counts: { ...counts, tasks_created: created.length } });
+      }
+      case "list_tasks": {
+        await D.ensureRenewalTasks().catch((e) => console.error("ensureRenewalTasks", e.message));
+        const tasks = await D.sb("GET", "tasks?status=eq.open&select=*,clients(first_name,last_name,email,phone),policies(line,carrier,policy_number,renewal_date,effective_date)&order=due_date.asc");
+        const done = await D.sb("GET", "tasks?status=eq.done&select=id,title,outcome,done_at,done_by&order=done_at.desc&limit=20");
+        return json(200, { tasks, done });
+      }
+      case "snooze_task": {
+        const days = Math.min(30, Math.max(1, Number(d.days) || 7));
+        const [t] = await D.sb("GET", `tasks?id=eq.${encodeURIComponent(d.id)}&select=due_date`);
+        if (!t) return json(404, { error: "Task not found." });
+        const base = Math.max(Date.now(), new Date(t.due_date + "T12:00:00Z").getTime());
+        await D.sb("PATCH", `tasks?id=eq.${encodeURIComponent(d.id)}`, { due_date: new Date(base + days * 86400000).toISOString().slice(0, 10) }, "return=minimal");
+        return json(200, { ok: true });
+      }
+      case "complete_task": {
+        const OUT = ["renewed_same", "moved_carrier", "lost"];
+        if (!OUT.includes(d.outcome)) return json(400, { error: "Pick an outcome." });
+        const [t] = await D.sb("GET", `tasks?id=eq.${encodeURIComponent(d.id)}&select=*`);
+        if (!t) return json(404, { error: "Task not found." });
+        let policy = null;
+        if (t.policy_id) {
+          const [p] = await D.sb("GET", `policies?id=eq.${t.policy_id}&select=*`);
+          if (p && d.outcome === "lost") {
+            [policy] = await D.sb("PATCH", `policies?id=eq.${p.id}`, { status: "cancelled", notes: [p.notes, `Lost at renewal ${t.renewal_date}`].filter(Boolean).join("\n") }, "return=representation");
+          } else if (p) {
+            // Roll the policy into its next term.
+            const eff = t.renewal_date || p.renewal_date;
+            const next = date(d.renewal_date) || (/auto/i.test(p.line) ? addMonths(eff, 6) : addYears(eff, 1));
+            const f = { effective_date: eff, renewal_date: next, status: "active" };
+            if (d.outcome === "moved_carrier" && clean(d.carrier)) f.carrier = clean(d.carrier, 120);
+            if (clean(d.policy_number)) f.policy_number = clean(d.policy_number, 80);
+            if (d.outcome === "moved_carrier") f.notes = [p.notes, `Moved from ${p.carrier || "previous carrier"} at renewal ${eff}`].filter(Boolean).join("\n");
+            [policy] = await D.sb("PATCH", `policies?id=eq.${p.id}`, f, "return=representation");
+          }
+          if (policy) await rescheduleRenewal(policy);
+        }
+        await D.sb("PATCH", `tasks?id=eq.${t.id}`, { status: "done", outcome: d.outcome, notes: clean(d.notes, 1000) || null, done_at: new Date().toISOString(), done_by: by }, "return=minimal");
+        return json(200, { ok: true, policy });
+      }
       case "report": {
         const m = /^(\d{4})-(\d{2})$/.exec(d.month || "");
         const start = m ? new Date(Date.UTC(+m[1], +m[2] - 1, 1, 6)) : null;
